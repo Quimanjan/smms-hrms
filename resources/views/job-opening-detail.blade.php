@@ -3,176 +3,195 @@
 @section('title', $jobOpening->title . ' | Job Opening')
 
 @section('styles')
+@include('partials.mg-theme')
+@verbatim
 <style>
-    :root {
-        --primary: #b22222;
-        --text: #172033;
-        --muted: #64748b;
-        --page: #f4f7fb;
-        --border: #dce3ed;
-    }
+/* Job opening detail page */
+.detail-banner {
+    margin: clamp(-48px, -4vw, -28px) 0 0;
+    position: relative;
+    z-index: 1;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 30px 60px -30px rgba(74, 10, 18, 0.5);
+}
+.detail-banner img { display: block; width: 100%; height: auto; }
+@media (prefers-reduced-motion: no-preference) {
+    .detail-banner img { animation: mg-banner-zoom 14s ease-in-out infinite alternate; }
+}
+@keyframes mg-banner-zoom { from { transform: scale(1); } to { transform: scale(1.04); } }
+.detail-body { padding-top: clamp(36px, 5vw, 64px) !important; }
 
-    * { box-sizing: border-box; }
+.detail-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.95rem;
+}
+.detail-status::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #6fd08c; }
+.detail-status.is-closed::before { background: #f0a3a3; }
 
-    body {
-        min-height: 100vh;
-        margin: 0;
-        padding: 90px 20px 36px;
-        color: var(--text);
-        background: var(--page);
-        font-family: Inter, system-ui, Segoe UI, Roboto, Arial, sans-serif;
-    }
+.detail-tags { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; margin-top: 22px; }
+.detail-cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
 
-    .detail-topbar {
-        position: fixed;
-        z-index: 10;
-        inset: 0 0 auto;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 20px;
-        padding: 14px 28px;
-        background: linear-gradient(to bottom, rgba(229, 228, 228, .98), rgba(255, 255, 255, .98));
-        box-shadow: 0 4px 12px rgba(15, 23, 42, .08);
-    }
+.detail-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.8fr);
+    gap: clamp(28px, 5vw, 72px);
+    align-items: start;
+    padding-block: clamp(40px, 6vw, 80px) clamp(64px, 8vw, 104px);
+}
 
-    .detail-brand {
-        display: inline-flex;
-        align-items: center;
-        gap: 12px;
-        color: var(--primary);
-        font-size: clamp(18px, 2.2vw, 30px);
-        font-weight: 800;
-        text-decoration: none;
-    }
+.detail-section + .detail-section { margin-top: 44px; }
+.detail-section .mg-h2::after { content: ''; display: block; width: 56px; height: 2px; margin-top: 14px; background: var(--mg-gold); }
+.detail-section p { max-width: 64ch; margin: 18px 0 0; color: #3b2f32; white-space: pre-line; }
 
-    .detail-brand img { width: 60px; height: 60px; object-fit: contain; }
-    .detail-actions { display: flex; align-items: center; gap: 10px; }
+.detail-list { list-style: none; margin: 18px 0 0; padding: 0; }
+.detail-list li { position: relative; max-width: 64ch; padding: 10px 0 10px 30px; border-bottom: 1px solid var(--mg-line); color: #3b2f32; }
+.detail-list li::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 19px;
+    width: 9px;
+    height: 9px;
+    transform: rotate(45deg);
+    background: var(--mg-gold);
+}
 
-    .detail-button {
-        display: inline-flex;
-        min-height: 40px;
-        align-items: center;
-        justify-content: center;
-        border: 1px solid var(--primary);
-        border-radius: 6px;
-        padding: 0 14px;
-        color: #fff;
-        background: var(--primary);
-        font-size: 13px;
-        font-weight: 700;
-        text-decoration: none;
-        transition: background-color .15s ease, color .15s ease;
-    }
+.detail-aside { position: sticky; top: calc(var(--mg-bar) + 24px); display: grid; gap: 18px; }
 
-    .detail-button:hover { color: var(--primary); background: #fff; }
-    .detail-button--secondary { color: #334155; border-color: #cbd5e1; background: #fff; }
-    .detail-button--secondary:hover { color: var(--primary); border-color: var(--primary); }
+.detail-panel { padding: 26px; border: 1px solid var(--mg-line); border-radius: 18px; background: var(--mg-mist); }
+.detail-panel h2 { margin: 0 0 6px; font-family: var(--mg-display); font-weight: 400; font-size: 1.3rem; color: var(--mg-oxblood); }
+.detail-panel dl { margin: 0; }
+.detail-panel dl div { display: flex; justify-content: space-between; gap: 16px; padding: 11px 0; border-bottom: 1px solid var(--mg-line); }
+.detail-panel dl div:last-child { border-bottom: 0; padding-bottom: 0; }
+.detail-panel dt { color: var(--mg-stone); }
+.detail-panel dd { margin: 0; font-weight: 600; text-align: right; }
+.detail-panel ul { margin: 8px 0 0; padding: 0; list-style: none; }
+.detail-panel ul li { padding: 10px 0; border-bottom: 1px solid var(--mg-line); }
+.detail-panel ul li:last-child { border-bottom: 0; padding-bottom: 0; }
+.detail-panel ul small { display: block; color: var(--mg-stone); font-size: 0.88rem; }
 
-    .detail-page { width: min(1120px, 100%); margin: 26px auto 0; }
-    .detail-crumb { margin: 0 0 10px; color: #475569; font-size: 13px; }
-    .detail-grid { display: grid; grid-template-columns: minmax(0, 1fr) 330px; align-items: start; gap: 16px; }
-    .detail-card { border: 1px solid var(--border); border-radius: 8px; background: #fff; }
+.detail-panel--apply { border: 0; color: #fff; background: linear-gradient(160deg, var(--mg-oxblood) 0%, var(--mg-oxblood-deep) 100%); }
+.detail-panel--apply h2 { color: var(--mg-gold-soft); }
+.detail-panel--apply p { margin: 6px 0 18px; color: rgba(255, 255, 255, 0.82); }
+.detail-panel--apply .mg-btn { width: 100%; }
 
-    .detail-main { padding: 22px; }
-    .detail-main h1 { margin: 0; font-size: clamp(20px, 2.5vw, 28px); line-height: 1.35; }
-    .detail-meta { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 14px; color: #52647e; font-size: 13px; }
-    .detail-meta span { display: inline-flex; align-items: center; gap: 7px; }
-    .detail-status { display: inline-block; margin-top: 14px; border-radius: 999px; padding: 5px 10px; color: #166534; background: #f0fdf4; font-size: 12px; font-weight: 700; }
-    .detail-section { margin-top: 22px; border-top: 1px solid #e8edf3; padding-top: 18px; }
-    .detail-section h2 { margin: 0 0 8px; font-size: 16px; }
-    .detail-section p { margin: 0; color: #475569; font-size: 14px; line-height: 1.65; }
-
-    .detail-side { display: grid; gap: 12px; }
-    .detail-side-card { overflow: hidden; }
-    .detail-side-card h2 { margin: 0; border-bottom: 1px solid var(--border); padding: 12px 14px; font-size: 14px; }
-    .detail-side-card ul { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
-    .detail-side-card li { border-bottom: 1px solid var(--border); padding: 11px 14px; color: #475569; font-size: 12px; line-height: 1.5; }
-    .detail-side-card li:last-child { border-bottom: 0; }
-    .detail-side-card li strong { display: block; margin-bottom: 3px; color: var(--text); font-size: 12px; }
-    .detail-side-actions { display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 14px; }
-
-    @media (max-width: 760px) {
-        body { padding: 78px 14px 24px; }
-        .detail-topbar { padding: 10px 14px; }
-        .detail-brand { gap: 8px; font-size: 16px; }
-        .detail-brand img { width: 46px; height: 46px; }
-        .detail-actions { gap: 6px; }
-        .detail-button { min-height: 38px; padding: 0 10px; font-size: 12px; }
-        .detail-page { margin-top: 20px; }
-        .detail-grid { grid-template-columns: 1fr; }
-        .detail-main { padding: 17px; }
-        .detail-side-actions { justify-content: flex-start; }
-    }
+@media (max-width: 900px) {
+    .detail-body { grid-template-columns: 1fr; }
+    .detail-aside { position: static; }
+}
 </style>
+@endverbatim
 @endsection
 
 @section('content')
-<header class="detail-topbar">
-    <a class="detail-brand" href="{{ route('home') }}" aria-label="St. Mary Magdalene School home">
-        <img src="{{ asset('image/SMMS Logo.png') }}" alt="">
-        <span>St. Mary Magdalene School</span>
-    </a>
-    <nav class="detail-actions" aria-label="Account">
-        @auth
-            <a class="detail-button" href="{{ route('dashboard') }}">Dashboard</a>
-        @else
-            <a class="detail-button" href="{{ route('home', ['login' => 1]) }}">Log In</a>
-            <a class="detail-button" href="{{ route('home', ['signup' => 1]) }}">Sign Up</a>
-        @endauth
-    </nav>
-</header>
+@php
+    $requirementLines = collect(preg_split('/\r\n|\r|\n/', (string) $jobOpening->requirements))
+        ->map(fn ($line) => trim(ltrim(trim($line), "-*•\t ")))
+        ->filter()
+        ->values();
 
-<main class="detail-page">
-    <div class="detail-side-actions">
-        <a class="detail-button detail-button--secondary" href="{{ route('public.job-openings') }}">Back to Job Openings</a>
-        @if ($jobOpening->is_open)
-            @auth
-                @if (auth()->user()->hasRole('Applicant'))
-                <a class="detail-button" href="{{ route('applications.index', ['position' => $jobOpening->title]) }}">Quick Apply</a>
-                @endif
-            @else
-                <a class="detail-button" href="{{ route('home', ['signup' => 1]) }}">Quick Apply</a>
-            @endauth
-        @endif
+    // The school's hiring banner for this position, when there is one.
+    $positionBanner = match (true) {
+        str_contains(strtolower($jobOpening->title), 'senior high') => 'image/announce-senior-high.jpg',
+        str_contains(strtolower($jobOpening->title), 'high school') => 'image/announce-high-school.jpg',
+        str_contains(strtolower($jobOpening->title), 'elementary') => 'image/announce-elementary.jpg',
+        $jobOpening->filterType() === 'non-teaching' => 'image/announce-team.jpg',
+        default => 'image/announce-faculty.jpg',
+    };
+
+    $applyUrl = auth()->check()
+        ? (auth()->user()->hasRole('Applicant') ? route('applications.index', ['position' => $jobOpening->title]) : null)
+        : route('home', ['signup' => 1]);
+@endphp
+
+@include('partials.mg-header')
+
+<main class="mg-main">
+    <section class="mg-pagehead">
+        <div class="mg-wrap mg-pagehead-inner">
+            <a class="mg-crumb" href="{{ route('public.job-openings') }}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+                All job openings
+            </a>
+            <h1>{{ $jobOpening->title }}</h1>
+            <div class="detail-tags">
+                <span class="mg-pill">{{ $jobType }}</span>
+                <span class="detail-status {{ $jobOpening->is_open ? '' : 'is-closed' }}">
+                    {{ $jobOpening->is_open ? 'Accepting applications' : 'Not accepting applications' }}
+                </span>
+            </div>
+            @if ($jobOpening->is_open && $applyUrl)
+                <div class="detail-cta">
+                    <a class="mg-btn mg-btn-gold" href="{{ $applyUrl }}">Apply for this position</a>
+                </div>
+            @endif
+        </div>
+    </section>
+
+    <div class="mg-wrap">
+        <figure class="detail-banner" data-reveal>
+            <img src="{{ asset($positionBanner) }}" alt="Hiring announcement for {{ $jobOpening->title }}" width="1704" height="624">
+        </figure>
     </div>
 
-    <div class="detail-grid">
-        <article class="detail-card detail-main">
-            <h1>{{ $jobOpening->title }}</h1>
-            <div class="detail-meta">
-                <span>{{ $jobType }}</span>
-                <span>St. Mary Magdalene School</span>
-            </div>
-            <span class="detail-status" style="{{ $jobOpening->is_open ? '' : 'color:#991b1b;background:#fef2f2;' }}">
-                {{ $jobOpening->is_open ? 'Accepting applications' : 'Not accepting applications' }}
-            </span>
-
-            <section class="detail-section">
-                <h2>Job Description</h2>
+    <div class="mg-wrap detail-body">
+        <article>
+            <section class="detail-section" data-reveal>
+                <h2 class="mg-h2">Job description</h2>
                 <p>{{ $jobOpening->description ?: 'A detailed description for this position has not been published yet. Please contact St. Mary Magdalene School for role-specific responsibilities and qualifications.' }}</p>
             </section>
+
+            @if ($requirementLines->isNotEmpty())
+                <section class="detail-section" data-reveal>
+                    <h2 class="mg-h2">Requirements</h2>
+                    <ul class="detail-list">
+                        @foreach ($requirementLines as $line)
+                            <li>{{ $line }}</li>
+                        @endforeach
+                    </ul>
+                </section>
+            @endif
         </article>
 
-        <aside class="detail-side" aria-label="Position information">
-            <section class="detail-card detail-side-card">
-                <h2>Position Information</h2>
-                <ul>
-                    <li><strong>Position</strong>{{ $jobOpening->title }}</li>
-                    <li><strong>Job Type</strong>{{ $jobType }}</li>
-                    <li><strong>Application Status</strong>{{ $jobOpening->is_open ? 'Open' : 'Closed' }}</li>
-                </ul>
+        <aside class="detail-aside" aria-label="Position information">
+            <section class="detail-panel" data-reveal>
+                <h2>Position information</h2>
+                <dl>
+                    <div><dt>Position</dt><dd>{{ $jobOpening->title }}</dd></div>
+                    <div><dt>Job type</dt><dd>{{ $jobType }}</dd></div>
+                    <div><dt>Applications</dt><dd>{{ $jobOpening->is_open ? 'Open' : 'Closed' }}</dd></div>
+                </dl>
             </section>
 
-            <section class="detail-card detail-side-card">
-                <h2>Required Documents</h2>
+            <section class="detail-panel" data-reveal style="--i: 1">
+                <h2>Documents to prepare</h2>
                 <ul>
                     @foreach (\App\Models\Application::REQUIRED_SUBMISSIONS as $submission)
-                        <li>{{ $submission }} (PDF, max 5 MB)</li>
+                        <li>{{ $submission }}<small>PDF, up to 5 MB</small></li>
                     @endforeach
                 </ul>
             </section>
+
+            @if ($jobOpening->is_open && $applyUrl)
+                <section class="detail-panel detail-panel--apply" data-reveal style="--i: 2">
+                    <h2>Ready to apply?</h2>
+                    <p>
+                        @auth
+                            Your application takes a few minutes.
+                        @else
+                            Create an account first, then send your application online.
+                        @endauth
+                    </p>
+                    <a class="mg-btn mg-btn-gold" href="{{ $applyUrl }}">Apply for this position</a>
+                </section>
+            @endif
         </aside>
     </div>
 </main>
+
+@include('partials.mg-footer')
 @endsection
