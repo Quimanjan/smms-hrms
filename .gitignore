@@ -30,3 +30,5 @@ Thumbs.db
 !/public/timecorreection/.gitkeep
 /public/banner/*
 *.sql
+.env.vince-original
+!/database/schema/*.sql
