@@ -2043,11 +2043,383 @@ body {
 }
 </style>
 @endverbatim
+@verbatim
+<style>
+/* =====================================================================
+   Landing page: motion and interactive features.
+   Everything here is progressive: without JavaScript, or with reduced
+   motion turned on, the page shows the same content, simply still.
+   ===================================================================== */
+
+/* Scroll progress */
+.mg-progress {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 60;
+    height: 3px;
+    transform: scaleX(var(--mg-scroll, 0));
+    transform-origin: 0 50%;
+    background: linear-gradient(90deg, var(--mg-crimson), var(--mg-gold));
+    pointer-events: none;
+}
+
+/* Hero: drifting light, pointer glow, slow zoom */
+.mg-hero-motes {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.mg-hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(520px circle at var(--mg-px, 70%) var(--mg-py, 30%), rgba(230, 207, 154, 0.16), transparent 60%);
+    opacity: var(--mg-glow, 0);
+    transition: opacity 0.5s ease;
+}
+
+.mg-hero-grid { position: relative; z-index: 1; }
+
+.mg-arch { will-change: transform; }
+.mg-arch-photo {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 999px 999px 0 0;
+}
+.mg-arch-photo img { border-radius: 0; }
+
+@media (prefers-reduced-motion: no-preference) {
+    .mg-arch-photo img { animation: mg-zoom 26s ease-in-out infinite alternate; }
+}
+
+@keyframes mg-zoom {
+    from { transform: scale(1); }
+    to { transform: scale(1.12); }
+}
+
+/* Now-hiring ticker */
+.mg-ticker {
+    position: relative;
+    overflow: hidden;
+    background: var(--mg-gold);
+    color: var(--mg-oxblood-deep);
+    font-weight: 600;
+    font-size: 0.98rem;
+}
+
+.mg-ticker-track {
+    display: flex;
+    width: max-content;
+    gap: 0;
+    padding-block: 13px;
+}
+
+.mg-ticker-group {
+    display: flex;
+    flex: none;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.mg-ticker-group li {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-inline: 22px;
+    white-space: nowrap;
+}
+
+.mg-ticker-group li::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    transform: rotate(45deg);
+    background: var(--mg-crimson);
+}
+
+.mg-ticker a { color: inherit; text-decoration: none; }
+.mg-ticker a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+@media (prefers-reduced-motion: no-preference) {
+    .mg-ticker-track { animation: mg-ticker 38s linear infinite; }
+    .mg-ticker:hover .mg-ticker-track,
+    .mg-ticker:focus-within .mg-ticker-track { animation-play-state: paused; }
+}
+
+@keyframes mg-ticker {
+    to { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mg-ticker-track { width: auto; flex-wrap: wrap; justify-content: center; }
+    .mg-ticker-group[aria-hidden='true'] { display: none; }
+    .mg-ticker-group { flex-wrap: wrap; justify-content: center; }
+}
+
+/* Figures */
+.mg-figures {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-bottom: 1px solid var(--mg-line);
+}
+
+.mg-figure {
+    padding: clamp(28px, 4vw, 48px) clamp(16px, 3vw, 40px);
+    border-left: 1px solid var(--mg-line);
+}
+
+.mg-figure:first-child { border-left: 0; padding-left: 0; }
+
+.mg-figure-num {
+    display: block;
+    font-family: var(--mg-display);
+    font-size: clamp(2.6rem, 5.4vw, 4.4rem);
+    line-height: 1;
+    color: var(--mg-crimson);
+    font-variant-numeric: tabular-nums;
+}
+
+.mg-figure-label {
+    display: block;
+    max-width: 24ch;
+    margin-top: 10px;
+    color: var(--mg-stone);
+}
+
+/* Open positions */
+.mg-jobs-head {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px 32px;
+    margin-bottom: 32px;
+}
+
+.mg-link {
+    color: var(--mg-crimson);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: rgba(165, 18, 30, 0.35);
+    text-underline-offset: 5px;
+}
+
+.mg-link:hover { text-decoration-color: currentColor; }
+
+.mg-jobs {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 18px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.mg-job {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 190px;
+    padding: 26px 26px 24px;
+    border-radius: 18px;
+    color: #fff;
+    text-decoration: none;
+    overflow: hidden;
+    isolation: isolate;
+    background: linear-gradient(160deg, var(--mg-oxblood) 0%, var(--mg-oxblood-deep) 100%);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* A light that follows the pointer across each card. */
+.mg-job::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(340px circle at var(--mx, 50%) var(--my, 0%), rgba(201, 162, 75, 0.42), transparent 62%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.mg-job:hover::before,
+.mg-job:focus-visible::before { opacity: 1; }
+
+.mg-job:hover { transform: translateY(-4px); box-shadow: 0 26px 44px -26px rgba(74, 10, 18, 0.7); }
+
+.mg-job-type {
+    align-self: flex-start;
+    padding: 5px 12px;
+    border: 1px solid rgba(230, 207, 154, 0.55);
+    border-radius: 999px;
+    color: var(--mg-gold-soft);
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+.mg-job-title {
+    margin-top: 18px;
+    font-family: var(--mg-display);
+    font-weight: 400;
+    font-size: 1.55rem;
+    line-height: 1.15;
+}
+
+.mg-job-go {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: 22px;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.mg-job-go svg { width: 22px; height: 22px; color: var(--mg-gold); transition: transform 0.25s ease; }
+.mg-job:hover .mg-job-go svg { transform: translateX(5px); }
+
+.mg-empty {
+    padding: 36px;
+    border: 1px dashed var(--mg-line);
+    border-radius: 18px;
+    color: var(--mg-stone);
+}
+
+/* How to apply */
+.mg-steps {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 28px;
+    margin: 44px 0 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: mg-step;
+}
+
+.mg-steps::before,
+.mg-steps::after {
+    content: '';
+    position: absolute;
+    top: 21px;
+    left: 22px;
+    /* Stop at the centre of the fourth step's circle. */
+    right: calc((100% - 84px) / 4 - 22px);
+    height: 2px;
+    background: var(--mg-line);
+}
+
+.mg-steps::after {
+    background: linear-gradient(90deg, var(--mg-crimson), var(--mg-gold));
+    transform: scaleX(var(--mg-steps, 1));
+    transform-origin: 0 50%;
+    transition: transform 1.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.mg-step { position: relative; counter-increment: mg-step; }
+
+.mg-step::before {
+    content: counter(mg-step);
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 2px solid var(--mg-crimson);
+    border-radius: 50%;
+    background: #fff;
+    color: var(--mg-crimson);
+    font-family: var(--mg-display);
+    font-size: 1.2rem;
+}
+
+.mg-step h3 {
+    margin-top: 18px;
+    font-family: var(--mg-display);
+    font-weight: 400;
+    font-size: 1.3rem;
+    color: var(--mg-oxblood);
+}
+
+.mg-step p { margin-top: 8px; color: var(--mg-stone); font-size: 0.98rem; }
+
+/* History: the gold line draws itself as the reader scrolls. */
+.mg-js .mg-timeline { border-left-color: var(--mg-line); position: relative; }
+
+.mg-js .mg-timeline::after {
+    content: '';
+    position: absolute;
+    left: -1px;
+    top: 0;
+    width: 1px;
+    height: 100%;
+    background: var(--mg-gold);
+    transform: scaleY(var(--mg-draw, 0));
+    transform-origin: 50% 0;
+}
+
+.mg-js .mg-timeline li::before { background: #d9cdca; transition: background-color 0.4s ease, transform 0.4s ease; z-index: 1; }
+.mg-js .mg-timeline li.is-on::before { background: var(--mg-gold); transform: scale(1.35); }
+.mg-js .mg-timeline time { transition: color 0.4s ease; color: #b9a9a6; }
+.mg-js .mg-timeline li.is-on time { color: var(--mg-crimson); }
+
+/* Campus: photos tilt toward the pointer. */
+.mg-campus-grid { perspective: 1400px; }
+.mg-campus-item { transform-style: preserve-3d; transition: transform 0.35s ease, box-shadow 0.35s ease; will-change: transform; }
+.mg-campus-item.is-tilting { transition: box-shadow 0.35s ease; box-shadow: 0 34px 50px -30px rgba(33, 23, 26, 0.55); }
+
+/* Reveal on scroll */
+@media (prefers-reduced-motion: no-preference) {
+    .mg-js [data-reveal] {
+        opacity: 0;
+        transform: translateY(26px);
+        transition: opacity 0.8s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+        transition-delay: calc(var(--i, 0) * 90ms);
+    }
+    .mg-js [data-reveal].is-in { opacity: 1; transform: none; }
+    .mg-js .mg-steps:not(.is-in) { --mg-steps: 0; }
+}
+
+@media (max-width: 900px) {
+    .mg-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 36px; }
+    .mg-steps::before, .mg-steps::after { display: none; }
+}
+
+@media (max-width: 768px) {
+    .mg-figures { grid-template-columns: 1fr; }
+    .mg-figure { display: flex; align-items: baseline; gap: 18px; padding: 20px 0; border-left: 0; border-top: 1px solid var(--mg-line); }
+    .mg-figure:first-child { border-top: 0; }
+    .mg-figure-num { min-width: 2.4ch; font-size: 2.6rem; }
+    .mg-figure-label { margin-top: 0; }
+    .mg-job { min-height: 168px; }
+}
+
+@media (max-width: 520px) {
+    .mg-steps { grid-template-columns: 1fr; row-gap: 26px; }
+    .mg-step { display: grid; grid-template-columns: 44px 1fr; column-gap: 16px; }
+    .mg-step::before { grid-row: 1 / span 2; }
+    .mg-step h3 { margin-top: 6px; }
+}
+</style>
+@endverbatim
 @endsection
 
 
 
 @section('content')
+
+    <script>document.documentElement.classList.add('mg-js');</script>
+    <div class="mg-progress" aria-hidden="true"></div>
 
     <header class="mg-bar">
         <div class="mg-wrap mg-bar-inner">
@@ -2062,9 +2434,9 @@ body {
             </button>
             <nav class="mg-nav" id="top-nav" aria-label="Main">
                 <a class="mg-nav-link" href="#announcements">Announcements</a>
+                <a class="mg-nav-link" href="#positions">Open positions</a>
                 <a class="mg-nav-link" href="#history">History</a>
                 <a class="mg-nav-link" href="#campus">Campus</a>
-                <a class="mg-nav-link" href="{{ route('public.job-openings') }}">Job openings</a>
                 @auth
                     <a href="{{ route('dashboard') }}" class="mg-btn mg-btn-crimson">Dashboard</a>
                 @else
@@ -2088,6 +2460,7 @@ body {
         <div id="signup-state" hidden data-open="{{ request()->boolean('signup') ? 'true' : 'false' }}"></div>
 
         <section class="mg-hero">
+            <canvas class="mg-hero-motes" aria-hidden="true"></canvas>
             <div class="mg-wrap mg-hero-grid">
                 <div class="mg-hero-copy">
                     <p class="mg-hero-place">Poblacion, Kawit, Cavite</p>
@@ -2106,11 +2479,49 @@ body {
                     </div>
                 </div>
                 <div class="mg-arch">
-                    <img src="{{ asset('image/campus-2.webp') }}" alt="The main building of St. Mary Magdalene School"
-                        width="1400" height="933" fetchpriority="high">
+                    <div class="mg-arch-photo">
+                        <img src="{{ asset('image/campus-2.webp') }}" alt="The main building of St. Mary Magdalene School"
+                            width="1400" height="933" fetchpriority="high">
+                    </div>
                 </div>
             </div>
         </section>
+
+        @if ($homeOpenings->isNotEmpty())
+            {{-- The list is printed twice so the strip can loop without a gap; the copy is hidden from screen readers. --}}
+            <div class="mg-ticker" role="region" aria-label="Positions open now">
+                <div class="mg-ticker-track">
+                    @foreach ([false, true] as $isCopy)
+                        <ul class="mg-ticker-group" @if ($isCopy) aria-hidden="true" @endif>
+                            @foreach ($homeOpenings->concat($homeOpenings)->concat($homeOpenings) as $opening)
+                                <li>
+                                    <a href="{{ route('public.job-openings.show', $opening) }}" @if ($isCopy) tabindex="-1" @endif>
+                                        Now hiring: {{ $opening->title }}
+                                    </a>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+
+        <div class="mg-wrap">
+            <dl class="mg-figures">
+                <div class="mg-figure" data-reveal style="--i: 0">
+                    <dd class="mg-figure-num" data-count="{{ $homeYearsOfService }}">{{ $homeYearsOfService }}</dd>
+                    <dt class="mg-figure-label">years of Catholic education in Kawit, since 1961</dt>
+                </div>
+                <div class="mg-figure" data-reveal style="--i: 1">
+                    <dd class="mg-figure-num" data-count="{{ $homeOpenings->count() }}">{{ $homeOpenings->count() }}</dd>
+                    <dt class="mg-figure-label">{{ $homeOpenings->count() === 1 ? 'position' : 'positions' }} open for application today</dt>
+                </div>
+                <div class="mg-figure" data-reveal style="--i: 2">
+                    <dd class="mg-figure-num" data-count="15">15</dd>
+                    <dt class="mg-figure-label">pupils in the first kindergarten class, held in the parish convent</dt>
+                </div>
+            </dl>
+        </div>
 
         <section class="mg-section" id="announcements" aria-labelledby="announcements-title">
             <div class="mg-wrap">
@@ -2121,7 +2532,7 @@ body {
                     </div>
                 </div>
 
-                <div class="mg-slider-frame">
+                <div class="mg-slider-frame" data-reveal>
                     <div class="mg-slider" id="slider">
                         @foreach ($homepageBannerSlides as $index => $slide)
                             <button type="button" class="slide {{ $index === 0 ? 'active' : '' }}"
@@ -2143,6 +2554,69 @@ body {
                         </svg>
                     </button>
                 </div>
+            </div>
+        </section>
+
+        <section class="mg-section mg-section-mist" id="positions" aria-labelledby="positions-title">
+            <div class="mg-wrap">
+                <div class="mg-jobs-head">
+                    <div>
+                        <h2 class="mg-h2" id="positions-title">Open positions</h2>
+                        <p class="mg-sub">Updated by the school's HR office. Select a position to read its details and apply.</p>
+                    </div>
+                    <a class="mg-link" href="{{ route('public.job-openings') }}">See all job openings</a>
+                </div>
+
+                @if ($homeOpenings->isEmpty())
+                    <p class="mg-empty">No positions are open right now. Check back soon, or follow the school's announcements.</p>
+                @else
+                    <ul class="mg-jobs">
+                        @foreach ($homeOpenings->take(6) as $opening)
+                            <li data-reveal style="--i: {{ $loop->index }}">
+                                <a class="mg-job" href="{{ route('public.job-openings.show', $opening) }}">
+                                    <span class="mg-job-type">
+                                        {{ match ($opening->filterType()) {
+                                            'teaching' => 'Teaching',
+                                            'teaching-related' => 'Teaching-related',
+                                            default => 'Non-teaching',
+                                        } }}
+                                    </span>
+                                    <span class="mg-job-title">{{ $opening->title }}</span>
+                                    <span class="mg-job-go">
+                                        View and apply
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                                    </span>
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                @endif
+            </div>
+        </section>
+
+        <section class="mg-section" aria-labelledby="apply-title">
+            <div class="mg-wrap">
+                <h2 class="mg-h2" id="apply-title">How to apply</h2>
+                <p class="mg-sub">The whole application is done here, online.</p>
+
+                <ol class="mg-steps">
+                    <li class="mg-step">
+                        <h3>Create your account</h3>
+                        <p>Sign up with your name and email address.</p>
+                    </li>
+                    <li class="mg-step">
+                        <h3>Verify your email</h3>
+                        <p>Enter the code the school sends to your inbox.</p>
+                    </li>
+                    <li class="mg-step">
+                        <h3>Send your application</h3>
+                        <p>Choose a position, fill in your details, and upload your resume.</p>
+                    </li>
+                    <li class="mg-step">
+                        <h3>Track your status</h3>
+                        <p>Log in any time to see where your application stands.</p>
+                    </li>
+                </ol>
             </div>
         </section>
 
@@ -2178,7 +2652,7 @@ body {
 
                 <div class="mg-campus-grid">
                     @foreach ([1 => 'Classroom buildings around the school court', 2 => 'The main school building', 3 => 'A classroom building seen through the trees'] as $n => $caption)
-                        <button class="mg-campus-item" type="button"
+                        <button class="mg-campus-item" type="button" data-reveal style="--i: {{ $loop->index }}"
                             onclick="openFacilitiesModal('{{ asset('image/facility'.$n.'.jpg') }}', @js($caption))"
                             aria-label="View larger: {{ $caption }}">
                             <img src="{{ asset('image/campus-'.$n.'.webp') }}" alt="{{ $caption }}" loading="lazy"
@@ -2190,7 +2664,7 @@ body {
         </section>
 
         <section class="mg-careers" aria-labelledby="careers-title">
-            <div class="mg-wrap mg-careers-inner">
+            <div class="mg-wrap mg-careers-inner" data-reveal>
                 <div>
                     <h2 id="careers-title">Be a Magdalenean</h2>
                     <p>See which teaching and non-teaching positions are open, then apply online.</p>
@@ -2866,4 +3340,173 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 @endverbatim
+
+{{-- Landing page motion: scroll progress, hero light, counters, reveals, timeline, card glow, photo tilt. --}}
+<script>
+(function () {
+    const root = document.documentElement;
+    const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+    /* ---- Reveal on scroll, counters, steps ---- */
+    const countUp = (el) => {
+        const target = Number(el.dataset.count || 0);
+        if (calm || target === 0) { el.textContent = target; return; }
+        const started = performance.now();
+        const duration = 1400;
+        const tick = (now) => {
+            const t = Math.min(1, (now - started) / duration);
+            el.textContent = Math.round(target * (1 - Math.pow(1 - t, 3)));
+            if (t < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+    };
+
+    const seen = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add('is-in');
+            entry.target.querySelectorAll('[data-count]').forEach(countUp);
+            if (entry.target.matches('[data-count]')) countUp(entry.target);
+            seen.unobserve(entry.target);
+        });
+    }, { threshold: 0.18, rootMargin: '0px 0px -6% 0px' });
+
+    document.querySelectorAll('[data-reveal], .mg-steps').forEach((el) => seen.observe(el));
+
+    /* ---- Scroll-linked: progress bar, history line, arch parallax ---- */
+    const timeline = document.querySelector('.mg-timeline');
+    const arch = document.querySelector('.mg-arch');
+    let queued = false;
+
+    const onScroll = () => {
+        queued = false;
+        const max = root.scrollHeight - window.innerHeight;
+        root.style.setProperty('--mg-scroll', max > 0 ? (window.scrollY / max).toFixed(4) : 0);
+
+        if (timeline) {
+            const box = timeline.getBoundingClientRect();
+            const mark = window.innerHeight * 0.62;
+            const drawn = Math.max(0, Math.min(1, (mark - box.top) / box.height));
+            timeline.style.setProperty('--mg-draw', drawn.toFixed(4));
+            timeline.querySelectorAll('li').forEach((li) => {
+                li.classList.toggle('is-on', li.getBoundingClientRect().top + 18 < mark);
+            });
+        }
+
+        if (arch && !calm && window.innerWidth > 900) {
+            arch.style.transform = 'translateY(' + Math.min(60, window.scrollY * 0.08).toFixed(1) + 'px)';
+        }
+    };
+
+    const requestScroll = () => {
+        if (queued) return;
+        queued = true;
+        requestAnimationFrame(onScroll);
+    };
+
+    window.addEventListener('scroll', requestScroll, { passive: true });
+    window.addEventListener('resize', requestScroll);
+    onScroll();
+
+    /* ---- Hero: a soft light follows the pointer ---- */
+    const hero = document.querySelector('.mg-hero');
+    if (hero && finePointer && !calm) {
+        hero.addEventListener('pointermove', (e) => {
+            const box = hero.getBoundingClientRect();
+            hero.style.setProperty('--mg-px', (e.clientX - box.left) + 'px');
+            hero.style.setProperty('--mg-py', (e.clientY - box.top) + 'px');
+            hero.style.setProperty('--mg-glow', 1);
+        });
+        hero.addEventListener('pointerleave', () => hero.style.setProperty('--mg-glow', 0));
+    }
+
+    /* ---- Hero: slow drifting points of light (like dust in sunlit air) ---- */
+    const canvas = document.querySelector('.mg-hero-motes');
+    if (canvas && hero && !calm) {
+        const ctx = canvas.getContext('2d');
+        let motes = [];
+        let w = 0, h = 0, running = false, frame = 0;
+
+        const size = () => {
+            const ratio = Math.min(window.devicePixelRatio || 1, 2);
+            w = hero.clientWidth;
+            h = hero.clientHeight;
+            canvas.width = w * ratio;
+            canvas.height = h * ratio;
+            ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+            const count = Math.round(Math.min(70, Math.max(22, w / 22)));
+            motes = Array.from({ length: count }, () => ({
+                x: Math.random() * w,
+                y: Math.random() * h,
+                r: 0.6 + Math.random() * 1.8,
+                vy: 0.08 + Math.random() * 0.28,
+                sway: Math.random() * Math.PI * 2,
+                swaySpeed: 0.004 + Math.random() * 0.01,
+                glow: 0.25 + Math.random() * 0.55,
+            }));
+        };
+
+        const draw = () => {
+            if (!running) return;
+            ctx.clearRect(0, 0, w, h);
+            motes.forEach((m) => {
+                m.y -= m.vy;
+                m.sway += m.swaySpeed;
+                m.x += Math.sin(m.sway) * 0.25;
+                if (m.y < -6) { m.y = h + 6; m.x = Math.random() * w; }
+                const twinkle = m.glow * (0.65 + 0.35 * Math.sin(m.sway * 2.3));
+                ctx.beginPath();
+                ctx.arc(m.x, m.y, m.r, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(230, 207, 154, ' + twinkle.toFixed(3) + ')';
+                ctx.fill();
+            });
+            frame = requestAnimationFrame(draw);
+        };
+
+        size();
+        window.addEventListener('resize', size);
+
+        /* Only animate while the hero is on screen and the tab is visible. */
+        new IntersectionObserver(([entry]) => {
+            const shouldRun = entry.isIntersecting && !document.hidden;
+            if (shouldRun && !running) { running = true; draw(); }
+            if (!shouldRun) { running = false; cancelAnimationFrame(frame); }
+        }).observe(hero);
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) { running = false; cancelAnimationFrame(frame); }
+            else if (hero.getBoundingClientRect().bottom > 0 && !running) { running = true; draw(); }
+        });
+    }
+
+    /* ---- Position cards: light follows the pointer ---- */
+    if (finePointer) {
+        document.querySelectorAll('.mg-job').forEach((card) => {
+            card.addEventListener('pointermove', (e) => {
+                const box = card.getBoundingClientRect();
+                card.style.setProperty('--mx', (e.clientX - box.left) + 'px');
+                card.style.setProperty('--my', (e.clientY - box.top) + 'px');
+            });
+        });
+    }
+
+    /* ---- Campus photos tilt toward the pointer ---- */
+    if (finePointer && !calm) {
+        document.querySelectorAll('.mg-campus-item').forEach((item) => {
+            item.addEventListener('pointermove', (e) => {
+                const box = item.getBoundingClientRect();
+                const x = (e.clientX - box.left) / box.width - 0.5;
+                const y = (e.clientY - box.top) / box.height - 0.5;
+                item.classList.add('is-tilting');
+                item.style.transform = 'rotateY(' + (x * 7).toFixed(2) + 'deg) rotateX(' + (-y * 7).toFixed(2) + 'deg) translateZ(8px)';
+            });
+            item.addEventListener('pointerleave', () => {
+                item.classList.remove('is-tilting');
+                item.style.transform = '';
+            });
+        });
+    }
+})();
+</script>
 @endsection
