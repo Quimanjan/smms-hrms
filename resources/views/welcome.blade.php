@@ -2103,67 +2103,6 @@ body {
     to { transform: scale(1.12); }
 }
 
-/* Now-hiring ticker */
-.mg-ticker {
-    position: relative;
-    overflow: hidden;
-    background: var(--mg-gold);
-    color: var(--mg-oxblood-deep);
-    font-weight: 600;
-    font-size: 0.98rem;
-}
-
-.mg-ticker-track {
-    display: flex;
-    width: max-content;
-    gap: 0;
-    padding-block: 13px;
-}
-
-.mg-ticker-group {
-    display: flex;
-    flex: none;
-    align-items: center;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-
-.mg-ticker-group li {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding-inline: 22px;
-    white-space: nowrap;
-}
-
-.mg-ticker-group li::before {
-    content: '';
-    width: 7px;
-    height: 7px;
-    transform: rotate(45deg);
-    background: var(--mg-crimson);
-}
-
-.mg-ticker a { color: inherit; text-decoration: none; }
-.mg-ticker a:hover { text-decoration: underline; text-underline-offset: 3px; }
-
-@media (prefers-reduced-motion: no-preference) {
-    .mg-ticker-track { animation: mg-ticker 38s linear infinite; }
-    .mg-ticker:hover .mg-ticker-track,
-    .mg-ticker:focus-within .mg-ticker-track { animation-play-state: paused; }
-}
-
-@keyframes mg-ticker {
-    to { transform: translateX(-50%); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .mg-ticker-track { width: auto; flex-wrap: wrap; justify-content: center; }
-    .mg-ticker-group[aria-hidden='true'] { display: none; }
-    .mg-ticker-group { flex-wrap: wrap; justify-content: center; }
-}
-
 /* Figures */
 .mg-figures {
     display: grid;
@@ -2486,25 +2425,6 @@ body {
                 </div>
             </div>
         </section>
-
-        @if ($homeOpenings->isNotEmpty())
-            {{-- The list is printed twice so the strip can loop without a gap; the copy is hidden from screen readers. --}}
-            <div class="mg-ticker" role="region" aria-label="Positions open now">
-                <div class="mg-ticker-track">
-                    @foreach ([false, true] as $isCopy)
-                        <ul class="mg-ticker-group" @if ($isCopy) aria-hidden="true" @endif>
-                            @foreach ($homeOpenings->concat($homeOpenings)->concat($homeOpenings) as $opening)
-                                <li>
-                                    <a href="{{ route('public.job-openings.show', $opening) }}" @if ($isCopy) tabindex="-1" @endif>
-                                        Now hiring: {{ $opening->title }}
-                                    </a>
-                                </li>
-                            @endforeach
-                        </ul>
-                    @endforeach
-                </div>
-            </div>
-        @endif
 
         <div class="mg-wrap">
             <dl class="mg-figures">
