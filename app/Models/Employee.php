@@ -109,6 +109,31 @@ class Employee extends Model
         ];
     }
 
+    /**
+     * Next system-generated Employee ID: the hiring year followed by a
+     * four-digit running number (for example 20260001). It is digits only so
+     * the same value can be enrolled as the user ID on the fingerprint device.
+     */
+    public static function generateEmployeeId(?int $year = null): string
+    {
+        $year ??= (int) now()->year;
+        $prefix = (string) $year;
+
+        $taken = static::query()
+            ->where(function ($q) use ($prefix) {
+                $q->where('employee_id', 'like', $prefix.'%')
+                    ->orWhere('zkteco_user_id', 'like', $prefix.'%');
+            })
+            ->get(['employee_id', 'zkteco_user_id'])
+            ->flatMap(fn (self $e) => [$e->employee_id, $e->zkteco_user_id])
+            ->filter(fn ($id) => is_string($id) && preg_match('/^'.$prefix.'\d{4}$/', $id))
+            ->map(fn ($id) => (int) substr($id, 4));
+
+        $next = ($taken->max() ?? 0) + 1;
+
+        return $prefix.str_pad((string) $next, 4, '0', STR_PAD_LEFT);
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
