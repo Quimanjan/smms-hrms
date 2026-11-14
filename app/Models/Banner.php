@@ -44,6 +44,32 @@ class Banner extends Model
             : Storage::url($this->path);
     }
 
+    /**
+     * Some built-in banners ship as two extra files so the people in them can
+     * be animated separately from the background:
+     *   image/name-bg.jpg       the banner with the people painted out
+     *   image/name-people.webp  only the people, on a transparent background
+     * Returns their URLs, or null when the banner is a single flat image.
+     */
+    public function layers(): ?array
+    {
+        if (! $this->is_default) {
+            return null;
+        }
+
+        $path = self::DEFAULTS[$this->placement][$this->sort_order - 1]['path'] ?? $this->path;
+        $base = preg_replace('/\.[a-z0-9]+$/i', '', $path);
+
+        if (! File::exists(public_path($base.'-bg.jpg')) || ! File::exists(public_path($base.'-people.webp'))) {
+            return null;
+        }
+
+        return [
+            'background' => asset($base.'-bg.jpg'),
+            'people' => asset($base.'-people.webp'),
+        ];
+    }
+
     public function deleteImage(): void
     {
         if ($this->is_default) {
@@ -84,6 +110,7 @@ class Banner extends Model
                 'id'  => $banner->id,
                 'url' => $banner->url,
                 'alt' => $banner->alt ?: 'Banner',
+                'layers' => $banner->layers(),
             ])
             ->values()
             ->all();

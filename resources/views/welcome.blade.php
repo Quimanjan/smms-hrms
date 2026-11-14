@@ -1735,6 +1735,10 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    /* Undo the older slider's dimming and grey backing. */
+    filter: none;
+    background: transparent;
+    transition: none;
 }
 
 .mg-slider-controls {
@@ -2317,6 +2321,70 @@ body {
 .mg-campus-item { transform-style: preserve-3d; transition: transform 0.35s ease, box-shadow 0.35s ease; will-change: transform; }
 .mg-campus-item.is-tilting { transition: box-shadow 0.35s ease; box-shadow: 0 34px 50px -30px rgba(33, 23, 26, 0.55); }
 
+/* Announcement banners: the people stand out from the background and move. */
+.mg-slider .slide { overflow: hidden; }
+
+.mg-slider .slide img.mg-slide-people {
+    position: absolute;
+    inset: 0;
+    transform-origin: 50% 100%;
+    filter: drop-shadow(0 14px 16px rgba(33, 23, 26, 0.38));
+    pointer-events: none;
+}
+
+.mg-slider .slide::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.38) 50%, transparent 60%);
+    transform: translateX(-100%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    /* Pointer parallax: background and people shift in opposite directions. */
+    .mg-slider .slide img.mg-slide-bg {
+        scale: 1.035;
+        translate: calc(var(--mg-tilt-x, 0) * -9px) calc(var(--mg-tilt-y, 0) * -6px);
+        transition: translate 0.35s ease-out;
+    }
+
+    .mg-slider .slide img.mg-slide-people {
+        translate: calc(var(--mg-tilt-x, 0) * 16px) calc(var(--mg-tilt-y, 0) * 9px);
+        transition: translate 0.35s ease-out;
+    }
+
+    /* Each time a banner comes up: the people step forward, then keep a slow drift. */
+    .mg-slider .slide.active img.mg-slide-people {
+        animation:
+            mg-people-in 1s cubic-bezier(0.2, 0.9, 0.3, 1.25) both,
+            mg-people-drift 6s ease-in-out 1s infinite alternate;
+    }
+
+    .mg-slider .slide.active img.mg-slide-flat { animation: mg-flat-zoom 9s ease-out both; }
+    .mg-slider .slide.active::after { animation: mg-shine 1.5s ease-out 0.35s both; }
+}
+
+@keyframes mg-people-in {
+    from { transform: translateY(5%) scale(0.955); }
+    to { transform: none; }
+}
+
+@keyframes mg-people-drift {
+    from { transform: none; }
+    to { transform: translateY(-1.6%) scale(1.018); }
+}
+
+@keyframes mg-flat-zoom {
+    from { transform: scale(1); }
+    to { transform: scale(1.05); }
+}
+
+@keyframes mg-shine {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(100%); }
+}
+
 /* Reveal on scroll */
 @media (prefers-reduced-motion: no-preference) {
     .mg-js [data-reveal] {
@@ -2458,8 +2526,16 @@ body {
                             <button type="button" class="slide {{ $index === 0 ? 'active' : '' }}"
                                 onclick="openFacilitiesModal(@js($slide['url']), @js($slide['alt']))"
                                 aria-label="View larger: {{ $slide['alt'] }}">
-                                <img src="{{ $slide['url'] }}" alt="{{ $slide['alt'] }}"
-                                    @if ($index > 0) loading="lazy" @endif>
+                                @if (! empty($slide['layers']))
+                                    {{-- Layered banner: the people sit on their own layer so they can move. --}}
+                                    <img class="mg-slide-bg" src="{{ $slide['layers']['background'] }}" alt="{{ $slide['alt'] }}"
+                                        @if ($index > 0) loading="lazy" @endif>
+                                    <img class="mg-slide-people" src="{{ $slide['layers']['people'] }}" alt=""
+                                        @if ($index > 0) loading="lazy" @endif>
+                                @else
+                                    <img class="mg-slide-flat" src="{{ $slide['url'] }}" alt="{{ $slide['alt'] }}"
+                                        @if ($index > 0) loading="lazy" @endif>
+                                @endif
                             </button>
                         @endforeach
                     </div>
@@ -3059,7 +3135,8 @@ document.addEventListener('DOMContentLoaded', function () {
     function restartTimer() {
         stopTimer();
         if (!manuallyPaused && slides.length > 1) {
-            timer = setInterval(next, 2000);
+            // Six seconds per banner: long enough to read a hiring notice.
+            timer = setInterval(next, 6000);
         }
     }
     function updatePauseButton() {
@@ -3397,6 +3474,20 @@ document.addEventListener('DOMContentLoaded', function () {
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) { running = false; cancelAnimationFrame(frame); }
             else if (hero.getBoundingClientRect().bottom > 0 && !running) { running = true; draw(); }
+        });
+    }
+
+    /* ---- Announcement banners: people and background shift with the pointer ---- */
+    const sliderFrame = document.querySelector('.mg-slider-frame');
+    if (sliderFrame && finePointer && !calm) {
+        sliderFrame.addEventListener('pointermove', (e) => {
+            const box = sliderFrame.getBoundingClientRect();
+            sliderFrame.style.setProperty('--mg-tilt-x', (((e.clientX - box.left) / box.width - 0.5) * 2).toFixed(3));
+            sliderFrame.style.setProperty('--mg-tilt-y', (((e.clientY - box.top) / box.height - 0.5) * 2).toFixed(3));
+        });
+        sliderFrame.addEventListener('pointerleave', () => {
+            sliderFrame.style.setProperty('--mg-tilt-x', 0);
+            sliderFrame.style.setProperty('--mg-tilt-y', 0);
         });
     }
 
