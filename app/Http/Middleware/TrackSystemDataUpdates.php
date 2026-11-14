@@ -6,7 +6,6 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
-use RuntimeException;
 use Symfony\Component\HttpFoundation\Response;
 
 class TrackSystemDataUpdates
@@ -18,7 +17,15 @@ class TrackSystemDataUpdates
             ->value('version');
 
         if ($version === null) {
-            throw new RuntimeException('The system data update version has not been initialized.');
+            // First request on a fresh database: create the counter row
+            // instead of failing every page with a server error.
+            DB::table('system_data_versions')->insertOrIgnore([
+                'id' => 1,
+                'version' => 0,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+            $version = 0;
         }
 
         View::share('systemDataVersion', (int) $version);

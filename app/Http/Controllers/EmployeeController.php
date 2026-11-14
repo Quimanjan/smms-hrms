@@ -31,6 +31,10 @@ class EmployeeController extends Controller
         'Support Staff',
     ];
 
+    private const MESSAGES = [
+        'birthday.before_or_equal' => 'The employee must be at least 18 years old.',
+    ];
+
     public const EMPLOYMENT = [
         'regular' => 'Regular',
         'non regular' => 'Probationary',
@@ -197,7 +201,7 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->validate($this->rules($request));
+        $data = $request->validate($this->rules($request), self::MESSAGES);
 
         DB::transaction(function () use ($data) {
 
@@ -237,7 +241,8 @@ class EmployeeController extends Controller
     public function update(Request $request, Employee $employee)
     {
         $data = $request->validate(
-            $this->rules($request, $employee)
+            $this->rules($request, $employee),
+            self::MESSAGES
         );
 
         $employee->update(
@@ -348,7 +353,8 @@ class EmployeeController extends Controller
             'birthday' => [
                 'required',
                 'date',
-                'before:today',
+                // Employees must be of legal working age.
+                'before_or_equal:'.now()->subYears(18)->toDateString(),
             ],
 
             'civil_status' => [

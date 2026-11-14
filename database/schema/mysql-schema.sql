@@ -204,7 +204,7 @@ CREATE TABLE `employees` (
   `education` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`education`)),
   `emergency_name` text NOT NULL,
   `emergency_contact` text NOT NULL,
-  `employment_status` varchar(255) NOT NULL,
+  `employment_status` varchar(255) NOT NULL DEFAULT 'regular',
   `step_no` smallint(5) unsigned NOT NULL DEFAULT 1,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
@@ -355,7 +355,9 @@ CREATE TABLE `loan_repayments` (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `loan_repayments_loan_request_id_paid_at_index` (`loan_request_id`,`paid_at`),
-  CONSTRAINT `loan_repayments_loan_request_id_foreign` FOREIGN KEY (`loan_request_id`) REFERENCES `loan_requests` (`id`) ON DELETE CASCADE
+  KEY `loan_repayments_payslip_id_foreign` (`payslip_id`),
+  CONSTRAINT `loan_repayments_loan_request_id_foreign` FOREIGN KEY (`loan_request_id`) REFERENCES `loan_requests` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `loan_repayments_payslip_id_foreign` FOREIGN KEY (`payslip_id`) REFERENCES `payslips` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `loan_requests`;
@@ -943,3 +945,5 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (62,'2026_11_14_000
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (63,'2026_11_10_045743_create_biometric_sync_logs_table',40);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (64,'2026_11_10_182951_create_personal_access_tokens_table',40);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (65,'2026_11_12_082342_add_archived_at_to_notifications_table',40);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (66,'2026_11_14_100000_clean_orphaned_rows_and_add_missing_keys',41);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (67,'2026_11_14_100100_default_employment_status_on_employees',42);
