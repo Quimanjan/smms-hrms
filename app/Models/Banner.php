@@ -20,8 +20,10 @@ class Banner extends Model
             ['path' => 'image/promote3.jpg', 'alt' => 'promote3'],
         ],
         'homepage' => [
-            ['path' => 'image/homepage1.jpg', 'alt' => 'homepage1'],
-            ['path' => 'image/homepage2.png', 'alt' => 'homepage2'],
+            ['path' => 'image/announce-team.jpg', 'alt' => 'Meet our dedicated team: nurse, instructor, office staff, groundskeeper, and administrator'],
+            ['path' => 'image/announce-elementary.jpg', 'alt' => 'Join our team: hiring elementary teachers for school year 2026 to 2027'],
+            ['path' => 'image/announce-high-school.jpg', 'alt' => 'Join our team: hiring high school teachers for school year 2026 to 2027'],
+            ['path' => 'image/announce-foundation.jpg', 'alt' => 'St. Mary Magdalene School 63rd Foundation Anniversary'],
         ],
     ];
 
