@@ -83,11 +83,14 @@ rsync -a \
     "$SRC/" "$LIVE/"
 
 step "5/6 Composer, migrations, caches"
+# Composer's own scripts are skipped because this hosting disables the PHP
+# function they need (proc_open); package discovery is run directly instead.
 if ! cmp -s "$SRC/composer.lock" "$BACKUP/public_html/composer.lock"; then
-    "$COMPOSER" install --no-interaction --prefer-dist --optimize-autoloader
+    "$COMPOSER" install --no-interaction --no-scripts --prefer-dist --optimize-autoloader
 else
-    "$COMPOSER" dump-autoload --optimize --no-interaction
+    "$COMPOSER" dump-autoload --optimize --no-scripts --no-interaction
 fi
+php artisan package:discover
 php artisan migrate --force
 php artisan optimize:clear
 php artisan config:cache
