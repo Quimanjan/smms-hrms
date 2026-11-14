@@ -45,7 +45,7 @@
         {{-- Logo and school name --}}
         <a href="{{ route('dashboard') }}" class="flex min-w-0 flex-1 items-center gap-2 sm:gap-4">
             <img
-                src="{{ asset('Image/SMMS Logo.png') }}"
+                src="{{ asset('image/SMMS Logo.png') }}"
                 alt="School Logo"
                 class="h-[45px] w-[45px] shrink-0 object-contain lg:h-[60px] lg:w-[60px]"
             >

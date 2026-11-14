@@ -1396,34 +1396,685 @@ button.modal-btn { font-family: inherit; font-size: inherit; cursor: pointer; }
 }
 </style>
 @endverbatim
+
+{{-- =====================================================================
+     Landing page design (2026 revision). The block above still styles the
+     login / sign-up / apply modals; everything below styles the page itself.
+     ===================================================================== --}}
+<link rel="preload" href="{{ asset('fonts/marcellus-400.woff2') }}" as="font" type="font/woff2" crossorigin>
+@verbatim
+<style>
+:root {
+    --mg-oxblood: #4a0a12;
+    --mg-oxblood-deep: #33060c;
+    --mg-crimson: #a5121e;
+    --mg-gold: #c9a24b;
+    --mg-gold-soft: #e6cf9a;
+    --mg-ink: #21171a;
+    --mg-stone: #6d6164;
+    --mg-mist: #f6f2f1;
+    --mg-line: #e6ddda;
+    --mg-display: 'Marcellus', 'Times New Roman', serif;
+    --mg-body: 'Instrument Sans', system-ui, 'Segoe UI', Roboto, Arial, sans-serif;
+    --mg-wrap: 1180px;
+    --mg-bar: 72px;
+}
+
+html { scroll-behavior: smooth; scroll-padding-top: var(--mg-bar); }
+
+html, body {
+    font-family: var(--mg-body);
+    color: var(--mg-ink);
+    background: #fff;
+}
+
+body {
+    max-width: none;
+    padding-top: var(--mg-bar);
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+.mg-wrap {
+    width: min(100% - 48px, var(--mg-wrap));
+    margin-inline: auto;
+}
+
+.mg-page :focus-visible,
+.mg-bar :focus-visible,
+.mg-foot :focus-visible {
+    outline: 2px solid var(--mg-gold);
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+
+/* ---------- Top bar ---------- */
+.mg-bar {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 50;
+    height: var(--mg-bar);
+    background: rgba(255, 255, 255, 0.94);
+    -webkit-backdrop-filter: saturate(160%) blur(10px);
+    backdrop-filter: saturate(160%) blur(10px);
+    border-bottom: 1px solid var(--mg-line);
+}
+
+.mg-bar-inner {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.mg-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--mg-ink);
+    text-decoration: none;
+    min-width: 0;
+}
+
+.mg-brand img { width: 44px; height: 44px; flex: none; }
+
+.mg-brand span {
+    font-family: var(--mg-display);
+    font-size: 1.22rem;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mg-nav {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.mg-nav a.mg-nav-link {
+    padding: 9px 14px;
+    color: var(--mg-ink);
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: 999px;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.mg-nav a.mg-nav-link:hover { background: var(--mg-mist); color: var(--mg-crimson); }
+
+.mg-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    padding: 0 24px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    font: 600 0.98rem/1 var(--mg-body);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.mg-btn-crimson { background: var(--mg-crimson); color: #fff; }
+.mg-btn-crimson:hover { background: var(--mg-oxblood); }
+
+.mg-btn-gold { background: var(--mg-gold); color: var(--mg-oxblood-deep); }
+.mg-btn-gold:hover { background: var(--mg-gold-soft); }
+
+.mg-btn-ghost { border-color: rgba(255, 255, 255, 0.45); color: #fff; background: transparent; }
+.mg-btn-ghost:hover { border-color: #fff; background: rgba(255, 255, 255, 0.08); }
+
+.mg-nav .mg-btn { min-height: 40px; padding: 0 20px; margin-left: 8px; }
+
+.mg-bar .menu-toggle {
+    display: none;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid var(--mg-line);
+    border-radius: 12px;
+    background: #fff;
+    cursor: pointer;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.mg-bar .menu-toggle span {
+    display: block;
+    width: 20px;
+    height: 2px;
+    margin: 0;
+    background: var(--mg-ink);
+    border-radius: 2px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.mg-bar .menu-toggle.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.mg-bar .menu-toggle.active span:nth-child(2) { opacity: 0; }
+.mg-bar .menu-toggle.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ---------- Hero ---------- */
+.mg-hero {
+    position: relative;
+    overflow: hidden;
+    color: #fff;
+    background:
+        radial-gradient(900px 520px at 78% 30%, rgba(165, 18, 30, 0.55), transparent 70%),
+        linear-gradient(180deg, var(--mg-oxblood) 0%, var(--mg-oxblood-deep) 100%);
+}
+
+.mg-hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+    align-items: end;
+    gap: clamp(32px, 6vw, 88px);
+    padding-top: clamp(56px, 8vw, 104px);
+}
+
+.mg-hero-copy { padding-bottom: clamp(56px, 8vw, 104px); }
+
+.mg-hero-place {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 26px;
+    color: var(--mg-gold-soft);
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.mg-hero-place::before {
+    content: '';
+    width: 28px;
+    height: 1px;
+    background: var(--mg-gold);
+}
+
+.mg-hero h1 {
+    max-width: 15ch;
+    font-family: var(--mg-display);
+    font-weight: 400;
+    font-size: clamp(2.5rem, 5.2vw, 4.4rem);
+    line-height: 1.06;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+}
+
+.mg-hero-lede {
+    max-width: 46ch;
+    margin-top: 24px;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 1.1rem;
+}
+
+.mg-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 36px;
+}
+
+/* The arch: the one decorative gesture on the page, echoing the parish shrine. */
+.mg-arch {
+    position: relative;
+    width: min(100%, 440px);
+    margin-inline: auto 0;
+    aspect-ratio: 4 / 4.9;
+}
+
+.mg-arch::before {
+    content: '';
+    position: absolute;
+    inset: -18px 18px 0 -18px;
+    border: 1px solid var(--mg-gold);
+    border-bottom: 0;
+    border-radius: 999px 999px 0 0;
+    opacity: 0.75;
+}
+
+.mg-arch img {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 38% 60%;
+    border-radius: 999px 999px 0 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .mg-hero-copy > * { animation: mg-rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+    .mg-hero-copy > :nth-child(2) { animation-delay: 0.08s; }
+    .mg-hero-copy > :nth-child(3) { animation-delay: 0.16s; }
+    .mg-hero-copy > :nth-child(4) { animation-delay: 0.24s; }
+    .mg-arch { animation: mg-arch-in 0.9s 0.1s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+}
+
+@keyframes mg-rise {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: none; }
+}
+
+@keyframes mg-arch-in {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: none; }
+}
+
+/* ---------- Sections ---------- */
+.mg-section { padding-block: clamp(64px, 8vw, 112px); }
+.mg-section-mist { background: var(--mg-mist); }
+
+.mg-h2 {
+    font-family: var(--mg-display);
+    font-weight: 400;
+    font-size: clamp(1.9rem, 3.2vw, 2.7rem);
+    line-height: 1.12;
+    color: var(--mg-oxblood);
+    text-wrap: balance;
+}
+
+.mg-sub {
+    max-width: 56ch;
+    margin-top: 12px;
+    color: var(--mg-stone);
+}
+
+/* ---------- Announcements (banner slider) ---------- */
+.mg-news-head {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 28px;
+}
+
+.mg-slider-frame {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    background: var(--mg-oxblood-deep);
+    box-shadow: 0 30px 60px -30px rgba(74, 10, 18, 0.45);
+}
+
+.mg-slider {
+    position: relative;
+    aspect-ratio: 1700 / 620;
+}
+
+.mg-slider .slide {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: zoom-in;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.6s ease, visibility 0s linear 0.6s;
+}
+
+.mg-slider .slide.active {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.6s ease;
+}
+
+.mg-slider .slide img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.mg-slider-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 18px;
+    min-height: 44px;
+}
+
+.mg-dots { display: flex; gap: 4px; }
+
+.mg-dots button {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
+.mg-dots button::after {
+    content: '';
+    position: absolute;
+    inset: 50% 6px auto 6px;
+    height: 3px;
+    transform: translateY(-50%);
+    border-radius: 3px;
+    background: #d9cdca;
+    transition: background-color 0.2s ease;
+}
+
+.mg-dots button.active::after { background: var(--mg-crimson); }
+
+.mg-pause {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--mg-line);
+    border-radius: 50%;
+    background: #fff;
+    color: var(--mg-ink);
+    cursor: pointer;
+}
+
+.mg-pause[hidden] { display: none; }
+.mg-pause svg { width: 16px; height: 16px; }
+.mg-pause:hover { border-color: var(--mg-crimson); color: var(--mg-crimson); }
+
+/* ---------- History ---------- */
+.mg-history-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: clamp(40px, 7vw, 104px);
+    align-items: start;
+}
+
+.mg-prose p {
+    max-width: 62ch;
+    margin-top: 20px;
+    color: #3b2f32;
+}
+
+.mg-timeline {
+    list-style: none;
+    margin: 6px 0 0;
+    padding: 0;
+    border-left: 1px solid var(--mg-gold);
+}
+
+.mg-timeline li {
+    position: relative;
+    padding: 0 0 34px 30px;
+}
+
+.mg-timeline li:last-child { padding-bottom: 0; }
+
+.mg-timeline li::before {
+    content: '';
+    position: absolute;
+    left: -5px;
+    top: 14px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--mg-gold);
+    box-shadow: 0 0 0 5px var(--mg-mist);
+}
+
+.mg-timeline time {
+    display: block;
+    font-family: var(--mg-display);
+    font-size: 2.1rem;
+    line-height: 1.1;
+    color: var(--mg-crimson);
+}
+
+.mg-timeline p { margin-top: 6px; color: #3b2f32; }
+
+/* ---------- Campus ---------- */
+.mg-campus-grid {
+    display: grid;
+    grid-template-columns: 1.55fr 1fr;
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 36px;
+    aspect-ratio: 16 / 8.2;
+}
+
+.mg-campus-item {
+    position: relative;
+    display: block;
+    padding: 0;
+    border: 0;
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--mg-mist);
+    cursor: zoom-in;
+}
+
+.mg-campus-item:first-child { grid-row: 1 / span 2; }
+
+.mg-campus-item img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.mg-campus-item:hover img { transform: scale(1.03); }
+
+/* ---------- Careers band ---------- */
+.mg-careers {
+    color: #fff;
+    background: linear-gradient(180deg, var(--mg-oxblood) 0%, var(--mg-oxblood-deep) 100%);
+}
+
+.mg-careers-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 28px 48px;
+    padding-block: clamp(56px, 7vw, 88px);
+}
+
+.mg-careers h2 {
+    font-family: var(--mg-display);
+    font-weight: 400;
+    font-size: clamp(2.1rem, 4vw, 3.2rem);
+    line-height: 1.08;
+    color: var(--mg-gold-soft);
+}
+
+.mg-careers p {
+    max-width: 48ch;
+    margin-top: 12px;
+    color: rgba(255, 255, 255, 0.82);
+}
+
+/* ---------- Footer ---------- */
+.mg-foot {
+    background: var(--mg-oxblood-deep);
+    color: rgba(255, 255, 255, 0.78);
+    border-top: 1px solid rgba(201, 162, 75, 0.35);
+    font-size: 0.97rem;
+}
+
+.mg-foot-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 40px 64px;
+    padding-block: 56px 40px;
+}
+
+.mg-foot-brand { display: flex; gap: 16px; align-items: flex-start; }
+
+.mg-foot-brand img {
+    width: 60px;
+    height: 60px;
+    flex: none;
+    padding: 4px;
+    border-radius: 14px;
+    background: #fff;
+}
+
+.mg-foot-brand strong {
+    display: block;
+    font-family: var(--mg-display);
+    font-weight: 400;
+    font-size: 1.3rem;
+    color: #fff;
+}
+
+.mg-foot-brand span { display: block; margin-top: 4px; }
+
+.mg-contact {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, max-content);
+    gap: 6px 48px;
+}
+
+.mg-contact a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+    color: inherit;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+}
+
+.mg-contact a:hover { color: #fff; }
+.mg-contact svg { width: 20px; height: 20px; flex: none; color: var(--mg-gold); }
+
+.mg-foot-legal {
+    padding-block: 20px 28px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.88rem;
+}
+
+/* ---------- Modals: bring type and color in line with the page ---------- */
+.modal-card,
+.login-modal-content,
+.login-modal-content input,
+.login-modal-content button,
+.modal-card input,
+.modal-card button { font-family: var(--mg-body); }
+
+.login-modal-content { border-radius: 18px; }
+.login-header h2,
+.modal-card h2 { font-family: var(--mg-display); font-weight: 400; color: var(--mg-oxblood); }
+.login-submit { background: var(--mg-crimson); border-radius: 999px; }
+.login-submit:hover { background: var(--mg-oxblood); box-shadow: none; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+    .mg-hero-grid { grid-template-columns: 1fr; padding-top: 48px; }
+    .mg-hero-copy { padding-bottom: 8px; }
+    .mg-hero h1 { max-width: 18ch; }
+    .mg-arch { width: min(78%, 360px); margin-inline: auto; }
+    .mg-history-grid { grid-template-columns: 1fr; }
+    .mg-foot-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+    :root { --mg-bar: 64px; }
+    body { font-size: 16px; }
+    .mg-wrap { width: min(100% - 36px, var(--mg-wrap)); }
+    .mg-brand img { width: 38px; height: 38px; }
+    .mg-brand span { font-size: 1.02rem; }
+
+    .mg-bar .menu-toggle { display: flex; }
+
+    .mg-nav {
+        position: absolute;
+        inset: var(--mg-bar) 0 auto 0;
+        display: none;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 4px;
+        padding: 12px 18px 20px;
+        background: #fff;
+        border-bottom: 1px solid var(--mg-line);
+        box-shadow: 0 24px 40px -24px rgba(33, 23, 26, 0.35);
+    }
+
+    .mg-nav.open { display: flex; }
+    .mg-nav a.mg-nav-link { padding: 13px 12px; border-radius: 10px; }
+    .mg-nav .mg-btn { min-height: 48px; margin: 8px 0 0; }
+
+    .mg-news-head { flex-direction: column; align-items: start; gap: 8px; }
+    .mg-slider-frame { border-radius: 12px; }
+
+    .mg-campus-grid {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto;
+        aspect-ratio: auto;
+        gap: 10px;
+    }
+
+    .mg-campus-item { aspect-ratio: 4 / 3; border-radius: 12px; }
+    .mg-campus-item:first-child { grid-column: 1 / -1; grid-row: auto; aspect-ratio: 16 / 10; }
+
+    .mg-contact { grid-template-columns: 1fr; }
+    .mg-careers-inner .mg-btn { width: 100%; }
+}
+
+@media (max-width: 420px) {
+    .mg-hero-actions .mg-btn { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .mg-slider .slide,
+    .mg-campus-item img { transition: none; }
+}
+</style>
+@endverbatim
 @endsection
 
 
 
 @section('content')
 
-    <header class="topbar">
-        <a class="brand-link" href="{{ route('home') }}" aria-label="Go to home page">
-            <img class="brand-logo" src="{{ asset('Image/SMMS Logo.png') }}" alt="SMMS Logo">
-            <span class="brand">St. Mary Magdalene School</span>
-        </a>
-        <button class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="top-nav">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-        <nav class="top-actions" id="top-nav">
-            @auth
-                {{-- FIX: no <button> nested inside <a> --}}
-                <a href="{{ route('dashboard') }}" class="top-btn primary" aria-label="Dashboard">Dashboard</a>
-            @else
-                <button id="login-btn" class="top-btn primary" type="button" aria-label="Log in">Log In</button>
-            @endauth
-            <a href="{{ route('public.job-openings') }}" class="top-btn primary">Job Openings</a>
-        </nav>
+    <header class="mg-bar">
+        <div class="mg-wrap mg-bar-inner">
+            <a class="mg-brand" href="{{ route('home') }}" aria-label="St. Mary Magdalene School home">
+                <img src="{{ asset('image/SMMS Logo.png') }}" alt="" width="44" height="44">
+                <span>St. Mary Magdalene School</span>
+            </a>
+            <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="top-nav">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <nav class="mg-nav" id="top-nav" aria-label="Main">
+                <a class="mg-nav-link" href="#announcements">Announcements</a>
+                <a class="mg-nav-link" href="#history">History</a>
+                <a class="mg-nav-link" href="#campus">Campus</a>
+                <a class="mg-nav-link" href="{{ route('public.job-openings') }}">Job openings</a>
+                @auth
+                    <a href="{{ route('dashboard') }}" class="mg-btn mg-btn-crimson">Dashboard</a>
+                @else
+                    <button id="login-btn" class="mg-btn mg-btn-crimson" type="button">Log in</button>
+                @endauth
+            </nav>
+        </div>
     </header>
 
-    <main>
+    <main class="mg-page">
         {{-- State flag read by the script: reopen login modal after a failed login or on /login --}}
         @if (session('status'))
             <div id="login-status-message" hidden data-type="{{ session('status_type', 'error') }}">{{ session('status') }}</div>
@@ -1436,48 +2087,115 @@ button.modal-btn { font-family: inherit; font-size: inherit; cursor: pointer; }
              data-open="{{ (old('form_origin') === 'login' || request()->boolean('login') || ($openLogin ?? false) || session('status')) ? 'true' : 'false' }}"></div>
         <div id="signup-state" hidden data-open="{{ request()->boolean('signup') ? 'true' : 'false' }}"></div>
 
-        <section class="banner">
-            <div class="container banner-container">
-                <div class="slider" id="slider">
-                    @foreach ($homepageBannerSlides as $index => $slide)
-                        <div class="slide {{ $index === 0 ? 'active slide--right' : 'slide--top' }}">
-                            <img src="{{ $slide['url'] }}" alt="{{ $slide['alt'] }}">
-                        </div>
-                    @endforeach
+        <section class="mg-hero">
+            <div class="mg-wrap mg-hero-grid">
+                <div class="mg-hero-copy">
+                    <p class="mg-hero-place">Poblacion, Kawit, Cavite</p>
+                    <h1>Teach, serve, and grow at St. Mary Magdalene School</h1>
+                    <p class="mg-hero-lede">
+                        This is the school's human resource portal. Apply for an open position, or log in to
+                        see your attendance, leave, and payslips.
+                    </p>
+                    <div class="mg-hero-actions">
+                        <a class="mg-btn mg-btn-gold" href="{{ route('public.job-openings') }}">View job openings</a>
+                        @auth
+                            <a class="mg-btn mg-btn-ghost" href="{{ route('dashboard') }}">Go to your dashboard</a>
+                        @else
+                            <button class="mg-btn mg-btn-ghost" type="button" onclick="openLoginModal()">Log in</button>
+                        @endauth
+                    </div>
                 </div>
-
-                <div class="banner-overlay">
-                    <div class="banner-content"></div>
+                <div class="mg-arch">
+                    <img src="{{ asset('image/campus-2.webp') }}" alt="The main building of St. Mary Magdalene School"
+                        width="1400" height="933" fetchpriority="high">
                 </div>
-
-                <div class="dots" id="dots"></div>
-                <button id="homepageBannerPause" class="banner-pause" type="button" hidden
-                    aria-label="Pause banner rotation" aria-pressed="false" title="Pause banner rotation">
-                    <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor">
-                        <path data-toggle-icon d="M6 4h4v16H6z M14 4h4v16h-4z"></path>
-                    </svg>
-                </button>
             </div>
         </section>
 
-        <section class="history">
-            <div class="container">
-                <h1>History</h1>
-                <div class="history-content">
+        <section class="mg-section" id="announcements" aria-labelledby="announcements-title">
+            <div class="mg-wrap">
+                <div class="mg-news-head">
+                    <div>
+                        <h2 class="mg-h2" id="announcements-title">Announcements</h2>
+                        <p class="mg-sub">News and hiring notices posted by the school. Select one to view it larger.</p>
+                    </div>
+                </div>
+
+                <div class="mg-slider-frame">
+                    <div class="mg-slider" id="slider">
+                        @foreach ($homepageBannerSlides as $index => $slide)
+                            <button type="button" class="slide {{ $index === 0 ? 'active' : '' }}"
+                                onclick="openFacilitiesModal(@js($slide['url']), @js($slide['alt']))"
+                                aria-label="View larger: {{ $slide['alt'] }}">
+                                <img src="{{ $slide['url'] }}" alt="{{ $slide['alt'] }}"
+                                    @if ($index > 0) loading="lazy" @endif>
+                            </button>
+                        @endforeach
+                    </div>
+                </div>
+
+                <div class="mg-slider-controls">
+                    <div class="mg-dots" id="dots"></div>
+                    <button id="homepageBannerPause" class="mg-pause" type="button" hidden
+                        aria-label="Pause banner rotation" aria-pressed="false" title="Pause banner rotation">
+                        <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor">
+                            <path data-toggle-icon d="M6 4h4v16H6z M14 4h4v16h-4z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section class="mg-section mg-section-mist" id="history" aria-labelledby="history-title">
+            <div class="mg-wrap mg-history-grid">
+                <div class="mg-prose">
+                    <h2 class="mg-h2" id="history-title">Our history</h2>
                     <p>St. Mary Magdalene School (Parochial), Inc. was established in 1961 when Msgr. Eulogio San Juan, the Kawit Parish Priest, envisioned setting up a kindergarten class, which at that time was not being offered by any school in the town. With the help of Mr. Angel S. Colet, the convent became the first classroom, and Mrs. Angelita Quiamson Samaniego served as the pioneer teacher for fifteen enrolled pupils. In 1963, the Department of Education granted the Kindergarten class a permit to operate.</p>
                     <p>The name St. Mary Magdalene School was adopted in honor of the town’s patroness. March 11, 1966 was designated as the school’s Foundation Day, coinciding with the celebration of Msgr. Eulogio San Juan’s birthday. However, history goes beyond its chronological dates. To have a sense of history, it is very important to know where we have come from. Hence, on this day, we are reminded of how the school was formed 62 years ago. Today, we reflect on the school’s early days and how far we have come as a school community.</p>
                 </div>
+
+                <ol class="mg-timeline" aria-label="Key dates">
+                    <li>
+                        <time datetime="1961">1961</time>
+                        <p>A kindergarten class opens in the parish convent with fifteen pupils.</p>
+                    </li>
+                    <li>
+                        <time datetime="1963">1963</time>
+                        <p>The Department of Education grants the class its permit to operate.</p>
+                    </li>
+                    <li>
+                        <time datetime="1966-03-11">1966</time>
+                        <p>March 11 is designated as the school’s Foundation Day.</p>
+                    </li>
+                </ol>
             </div>
         </section>
 
-        <section class="facilities">
-            <div class="container">
-                <h1>School Facilities</h1>
-                <div class="fac-grid">
-                    <div class="fac-item" onclick="openFacilitiesModal('{{ asset("Image/facility1.jpg") }}', 'Facility 1')"><img src="{{ asset('Image/facility1.jpg') }}" alt="Facility 1"></div>
-                    <div class="fac-item" onclick="openFacilitiesModal('{{ asset("Image/facility2.jpg") }}', 'Facility 2')"><img src="{{ asset('Image/facility2.jpg') }}" alt="Facility 2"></div>
-                    <div class="fac-item" onclick="openFacilitiesModal('{{ asset("Image/facility3.jpg") }}', 'Facility 3')"><img src="{{ asset('Image/facility3.jpg') }}" alt="Facility 3"></div>
+        <section class="mg-section" id="campus" aria-labelledby="campus-title">
+            <div class="mg-wrap">
+                <h2 class="mg-h2" id="campus-title">The campus</h2>
+                <p class="mg-sub">Select a photo to view it larger.</p>
+
+                <div class="mg-campus-grid">
+                    @foreach ([1 => 'Classroom buildings around the school court', 2 => 'The main school building', 3 => 'A classroom building seen through the trees'] as $n => $caption)
+                        <button class="mg-campus-item" type="button"
+                            onclick="openFacilitiesModal('{{ asset('image/facility'.$n.'.jpg') }}', @js($caption))"
+                            aria-label="View larger: {{ $caption }}">
+                            <img src="{{ asset('image/campus-'.$n.'.webp') }}" alt="{{ $caption }}" loading="lazy"
+                                width="1400" height="933">
+                        </button>
+                    @endforeach
                 </div>
+            </div>
+        </section>
+
+        <section class="mg-careers" aria-labelledby="careers-title">
+            <div class="mg-wrap mg-careers-inner">
+                <div>
+                    <h2 id="careers-title">Be a Magdalenean</h2>
+                    <p>See which teaching and non-teaching positions are open, then apply online.</p>
+                </div>
+                <a class="mg-btn mg-btn-gold" href="{{ route('public.job-openings') }}">View job openings</a>
             </div>
         </section>
 
@@ -1519,39 +2237,46 @@ button.modal-btn { font-family: inherit; font-size: inherit; cursor: pointer; }
 
     </main>
 
-    <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-content">
-                <div class="contact-info">
-                    <a href="tel:+639672399400" class="contact-link" aria-label="Phone: (+63) 967-239-9400">
-                        <svg class="contact-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                            <path d="M19 9h8l4 12-6 4c3 7 7 11 14 14l4-6 12 4v8c0 3-2 5-5 5C29 48 16 35 14 14c0-3 2-5 5-5z"
-                                fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        <span>Phone: (+63) 967-239-9400</span>
-                    </a>
-                    <a href="https://mail.google.com/mail/?view=cm&fs=1&to=communications@smms.ph.education" class="contact-link" target="_blank" rel="noopener noreferrer" aria-label="Gmail">
-                        <svg class="contact-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="8" y="12" width="48" height="36" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
-                            <path d="M8 12L32 28L56 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        <span>Email: communications@smms.ph.education</span>
-                    </a>
-                    <a href="https://www.google.com/maps/place/Diocesan+Shrine+and+Parish+of+St.+Mary+Magdalene+-+Poblacion,+Kawit,+Cavite/@14.4448796,120.9043053,3a,75y,261.45h,86.37t/data=!3m7!1e1!3m5!1sDOP874WxLwA2pwV_zHwB_w!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D3.6339895959135333%26panoid%3DDOP874WxLwA2pwV_zHwB_w%26yaw%3D261.4517119875302!7i16384!8i8192!4m14!1m7!3m6!1s0x3397d2b1b864c587:0x6480789328248ca2!2sDiocesan+Shrine+and+Parish+of+St.+Mary+Magdalene+-+Poblacion,+Kawit,+Cavite!8m2!3d14.4450062!4d120.9034507!16s%2Fm%2F0j63dhg!3m5!1s0x3397d2b1b864c587:0x6480789328248ca2!8m2!3d14.4450062!4d120.9034507!16s%2Fm%2F0j63dhg?entry=ttu&g_ep=EgoyMDI2MDYyOS4wIKXMDSoASAFQAw%3D%3D" class="contact-link" target="_blank" rel="noopener noreferrer" aria-label="Google Maps">
-                        <svg class="contact-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M32 8C22.06 8 14 16.06 14 26c0 12 18 32 18 32s18-20 18-32c0-9.94-8.06-18-18-18z" fill="none" stroke="currentColor" stroke-width="2"/>
-                            <circle cx="32" cy="26" r="6" fill="none" stroke="currentColor" stroke-width="2"/>
-                        </svg>
-                        <span>Address: Poblacion, Kawit, Cavite</span>
-                    </a>
-                    <a href="https://www.facebook.com/SMMSchool1963" class="contact-link" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-                        <svg class="contact-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M32 8C19.3 8 9 18.3 9 31c0 12.7 10.3 23 23 23s23-10.3 23-23-10.3-23-23-23zm10 24h-6v18h-7V32h-4v-7h4v-5c0-6 2-8 7-8h6v6h-4c-2 0-2.5 1-2.5 3v4h6.5l-2 7z" fill="currentColor"/>
-                        </svg>
-                        <span>Facebook: St. Mary Magdalene School</span>
-                    </a>
+    <footer class="mg-foot">
+        <div class="mg-wrap mg-foot-grid">
+            <div class="mg-foot-brand">
+                <img src="{{ asset('image/SMMS Logo.png') }}" alt="" width="60" height="60">
+                <div>
+                    <strong>St. Mary Magdalene School</strong>
+                    <span>(Parochial), Inc.</span>
+                    <span>Poblacion, Kawit, Cavite</span>
                 </div>
             </div>
+
+            <ul class="mg-contact">
+                <li>
+                    <a href="tel:+639672399400">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h3l1.5 4.5-2.2 1.5a11 11 0 0 0 5.7 5.7l1.5-2.2L21 14v3a2 2 0 0 1-2 2C10.7 19 5 13.3 5 5a2 2 0 0 1 2-2z"/></svg>
+                        <span>(+63) 967-239-9400</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="mailto:communications@smms.ph.education">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+                        <span>communications@smms.ph.education</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.google.com/maps/search/?api=1&query=Diocesan+Shrine+and+Parish+of+St.+Mary+Magdalene+Kawit+Cavite" target="_blank" rel="noopener noreferrer">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-12a7 7 0 1 0-14 0c0 5.800 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>
+                        <span>Find us on Google Maps</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.facebook.com/SMMSchool1963" target="_blank" rel="noopener noreferrer">
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.500 21v-7h2.400l.400-3h-2.800V9.200c0-.900.300-1.500 1.500-1.500h1.400V5.100A18 18 0 0 0 14.300 5c-2.100 0-3.500 1.300-3.500 3.600V11H8.400v3h2.400v7z"/></svg>
+                        <span>St. Mary Magdalene School on Facebook</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="mg-wrap mg-foot-legal">
+            &copy; {{ now()->year }} St. Mary Magdalene School (Parochial), Inc.
         </div>
     </footer>
 @endsection
@@ -1919,6 +2644,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     slides.forEach((s, i) => {
         const b = document.createElement('button');
+        b.type = 'button';
+        b.setAttribute('aria-label', 'Show announcement ' + (i + 1));
         b.addEventListener('click', () => { show(i); restartTimer(); });
         if (i === 0) b.classList.add('active');
         dotsContainer.appendChild(b);

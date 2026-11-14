@@ -110,7 +110,7 @@
 @section('content')
 <header class="detail-topbar">
     <a class="detail-brand" href="{{ route('home') }}" aria-label="St. Mary Magdalene School home">
-        <img src="{{ asset('Image/SMMS Logo.png') }}" alt="">
+        <img src="{{ asset('image/SMMS Logo.png') }}" alt="">
         <span>St. Mary Magdalene School</span>
     </a>
     <nav class="detail-actions" aria-label="Account">

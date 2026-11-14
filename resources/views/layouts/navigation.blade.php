@@ -381,7 +381,7 @@
     <div class="flex flex-col items-center px-4 py-6">
         <a href="{{ $homeUrl }}" class="rounded-md" aria-label="Go to home dashboard">
             <img
-                src="{{ asset('Image/SMMS%20Logo.png') }}"
+                src="{{ asset('image/SMMS%20Logo.png') }}"
                 alt="St. Mary Magdalene School Logo"
                 class="h-20 w-auto object-contain"
             >
