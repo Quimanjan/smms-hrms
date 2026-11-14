@@ -2068,7 +2068,7 @@ body {
 }
 
 /* Hero: drifting light, pointer glow, slow zoom */
-.mg-hero-motes {
+.mg-motes {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -2385,6 +2385,136 @@ body {
     to { transform: translateX(100%); }
 }
 
+/* ---------- More motion across the page ---------- */
+
+/* Top bar: lifts off the page once scrolling starts; current section is marked. */
+.mg-bar { transition: box-shadow 0.3s ease, background-color 0.3s ease; }
+.mg-bar.is-scrolled { background: rgba(255, 255, 255, 0.98); box-shadow: 0 10px 30px -18px rgba(33, 23, 26, 0.45); }
+
+.mg-nav a.mg-nav-link { position: relative; }
+.mg-nav a.mg-nav-link::after {
+    content: '';
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    bottom: 4px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--mg-crimson);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    transition: transform 0.3s ease;
+}
+.mg-nav a.mg-nav-link.is-current { color: var(--mg-crimson); }
+.mg-nav a.mg-nav-link.is-current::after { transform: scaleX(1); }
+
+/* Buttons: a band of light crosses on hover. */
+.mg-btn { position: relative; overflow: hidden; }
+.mg-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.5) 50%, transparent 65%);
+    transform: translateX(-120%);
+    pointer-events: none;
+}
+
+/* Section headings: a short gold rule draws in under each one. */
+.mg-h2::after {
+    content: '';
+    display: block;
+    width: 64px;
+    height: 2px;
+    margin-top: 16px;
+    background: var(--mg-gold);
+    transform-origin: 0 50%;
+}
+
+/* Careers band */
+.mg-careers { position: relative; overflow: hidden; }
+.mg-careers-inner { position: relative; z-index: 1; }
+.mg-careers h2 {
+    background: linear-gradient(100deg, var(--mg-gold-soft) 0%, var(--mg-gold-soft) 40%, #fffaf0 50%, var(--mg-gold-soft) 60%, var(--mg-gold-soft) 100%);
+    background-size: 250% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: var(--mg-gold-soft);
+}
+
+/* Footer links */
+.mg-contact svg { transition: transform 0.25s ease; }
+.mg-contact a:hover svg { transform: translateY(-3px) scale(1.12); }
+
+@media (prefers-reduced-motion: no-preference) {
+    .mg-btn:hover::after { transform: translateX(120%); transition: transform 0.7s ease; }
+
+    .mg-js .mg-h2::after { transform: scaleX(0); transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) 0.3s; }
+    .mg-js .mg-h2.is-in::after { transform: scaleX(1); }
+
+    /* Hero: the gold arch outline breathes. */
+    .mg-arch::before { animation: mg-arch-glow 5s ease-in-out infinite alternate; }
+
+    /* Figures: a gold rule grows under each number. */
+    .mg-js .mg-figure-num { position: relative; display: inline-block; padding-bottom: 12px; }
+    .mg-js .mg-figure-num::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 2px;
+        background: var(--mg-gold);
+        transform: scaleX(0);
+        transform-origin: 0 50%;
+        transition: transform 1.2s cubic-bezier(0.2, 0.7, 0.2, 1) calc(var(--i, 0) * 90ms + 0.2s);
+    }
+    .mg-js .mg-figure.is-in .mg-figure-num::after { transform: scaleX(1); }
+
+    /* How to apply: each circle pops in and fills as the line reaches it. */
+    .mg-js .mg-step::before {
+        transform: scale(0);
+        transition:
+            transform 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.5) calc(var(--i, 0) * 0.42s + 0.1s),
+            background-color 0.4s ease calc(var(--i, 0) * 0.42s + 0.5s),
+            color 0.4s ease calc(var(--i, 0) * 0.42s + 0.5s);
+    }
+    .mg-js .mg-step.is-in::before { transform: scale(1); background: var(--mg-crimson); color: #fff; }
+    .mg-js .mg-step[data-reveal] { transition-delay: calc(var(--i, 0) * 0.42s); }
+
+    /* Campus: each photo settles from a slight zoom as it appears. */
+    .mg-js .mg-campus-item[data-reveal] img { transform: scale(1.18); transition: transform 1.6s cubic-bezier(0.2, 0.7, 0.2, 1); }
+    .mg-js .mg-campus-item[data-reveal].is-in img { transform: none; }
+    .mg-js .mg-campus-item[data-reveal].is-in:hover img { transform: scale(1.03); transition-duration: 0.5s; }
+
+    /* Position cards rise a little more each, like a hand of cards. */
+    .mg-js .mg-jobs li[data-reveal] { transform: translateY(40px) rotate(-1.2deg); }
+    .mg-js .mg-jobs li[data-reveal].is-in { transform: none; }
+
+    /* Careers band: light passes over the headline; the button draws the eye. */
+    .mg-careers h2 { animation: mg-headline-shine 7s ease-in-out infinite; }
+    .mg-careers .mg-btn-gold { animation: mg-pulse 2.8s ease-out infinite; }
+
+    /* Footer: the school seal turns to face you on hover. */
+    .mg-foot-brand img { transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1); }
+    .mg-foot-brand:hover img { transform: rotateY(360deg); }
+}
+
+@keyframes mg-arch-glow {
+    from { opacity: 0.45; filter: drop-shadow(0 0 0 rgba(201, 162, 75, 0)); }
+    to { opacity: 1; filter: drop-shadow(0 0 10px rgba(201, 162, 75, 0.7)); }
+}
+
+@keyframes mg-headline-shine {
+    0%, 55% { background-position: 100% 0; }
+    100% { background-position: 0 0; }
+}
+
+@keyframes mg-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(201, 162, 75, 0.55); }
+    70%, 100% { box-shadow: 0 0 0 18px rgba(201, 162, 75, 0); }
+}
+
 /* Reveal on scroll */
 @media (prefers-reduced-motion: no-preference) {
     .mg-js [data-reveal] {
@@ -2467,7 +2597,7 @@ body {
         <div id="signup-state" hidden data-open="{{ request()->boolean('signup') ? 'true' : 'false' }}"></div>
 
         <section class="mg-hero">
-            <canvas class="mg-hero-motes" aria-hidden="true"></canvas>
+            <canvas class="mg-motes" aria-hidden="true"></canvas>
             <div class="mg-wrap mg-hero-grid">
                 <div class="mg-hero-copy">
                     <p class="mg-hero-place">Poblacion, Kawit, Cavite</p>
@@ -2660,6 +2790,7 @@ body {
         </section>
 
         <section class="mg-careers" aria-labelledby="careers-title">
+            <canvas class="mg-motes" aria-hidden="true"></canvas>
             <div class="mg-wrap mg-careers-inner" data-reveal>
                 <div>
                     <h2 id="careers-title">Be a Magdalenean</h2>
@@ -3369,7 +3500,37 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }, { threshold: 0.18, rootMargin: '0px 0px -6% 0px' });
 
+    /* Headings, paragraphs, steps and footer items also ease in. They are
+       tagged here, in script, so the page reads normally without JavaScript. */
+    document.querySelectorAll('.mg-h2, .mg-sub, .mg-prose p, .mg-jobs-head .mg-link, .mg-foot-brand').forEach((el) => {
+        if (!el.closest('[data-reveal]')) el.setAttribute('data-reveal', '');
+    });
+    document.querySelectorAll('.mg-steps, .mg-contact, .mg-timeline').forEach((list) => {
+        Array.from(list.children).forEach((item, index) => {
+            item.style.setProperty('--i', index);
+            if (!list.classList.contains('mg-timeline')) item.setAttribute('data-reveal', '');
+        });
+    });
+
     document.querySelectorAll('[data-reveal], .mg-steps').forEach((el) => seen.observe(el));
+
+    /* ---- Top bar: highlight the section being read ---- */
+    const navLinks = Array.from(document.querySelectorAll('.mg-nav-link[href^="#"]'));
+    const spy = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            navLinks.forEach((link) => {
+                const current = link.getAttribute('href') === '#' + entry.target.id;
+                link.classList.toggle('is-current', current);
+                if (current) link.setAttribute('aria-current', 'true'); else link.removeAttribute('aria-current');
+            });
+        });
+    }, { rootMargin: '-45% 0px -50% 0px' });
+    navLinks.forEach((link) => {
+        const section = document.querySelector(link.getAttribute('href'));
+        if (section) spy.observe(section);
+    });
+    const bar = document.querySelector('.mg-bar');
 
     /* ---- Scroll-linked: progress bar, history line, arch parallax ---- */
     const timeline = document.querySelector('.mg-timeline');
@@ -3380,6 +3541,7 @@ document.addEventListener('DOMContentLoaded', function () {
         queued = false;
         const max = root.scrollHeight - window.innerHeight;
         root.style.setProperty('--mg-scroll', max > 0 ? (window.scrollY / max).toFixed(4) : 0);
+        if (bar) bar.classList.toggle('is-scrolled', window.scrollY > 24);
 
         if (timeline) {
             const box = timeline.getBoundingClientRect();
@@ -3418,21 +3580,22 @@ document.addEventListener('DOMContentLoaded', function () {
         hero.addEventListener('pointerleave', () => hero.style.setProperty('--mg-glow', 0));
     }
 
-    /* ---- Hero: slow drifting points of light (like dust in sunlit air) ---- */
-    const canvas = document.querySelector('.mg-hero-motes');
-    if (canvas && hero && !calm) {
+    /* ---- Drifting points of light (hero and the careers band) ---- */
+    const startMotes = (host) => {
+        const canvas = host.querySelector('.mg-motes');
+        if (!canvas || calm) return;
         const ctx = canvas.getContext('2d');
         let motes = [];
         let w = 0, h = 0, running = false, frame = 0;
 
         const size = () => {
             const ratio = Math.min(window.devicePixelRatio || 1, 2);
-            w = hero.clientWidth;
-            h = hero.clientHeight;
+            w = host.clientWidth;
+            h = host.clientHeight;
             canvas.width = w * ratio;
             canvas.height = h * ratio;
             ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-            const count = Math.round(Math.min(70, Math.max(22, w / 22)));
+            const count = Math.round(Math.min(70, Math.max(18, (w * h) / 16000)));
             motes = Array.from({ length: count }, () => ({
                 x: Math.random() * w,
                 y: Math.random() * h,
@@ -3461,21 +3624,25 @@ document.addEventListener('DOMContentLoaded', function () {
             frame = requestAnimationFrame(draw);
         };
 
+        const stop = () => { running = false; cancelAnimationFrame(frame); };
+        const start = () => { if (!running) { running = true; draw(); } };
+
         size();
         window.addEventListener('resize', size);
 
-        /* Only animate while the hero is on screen and the tab is visible. */
+        /* Only animate while this block is on screen and the tab is visible. */
+        let onScreen = false;
         new IntersectionObserver(([entry]) => {
-            const shouldRun = entry.isIntersecting && !document.hidden;
-            if (shouldRun && !running) { running = true; draw(); }
-            if (!shouldRun) { running = false; cancelAnimationFrame(frame); }
-        }).observe(hero);
+            onScreen = entry.isIntersecting;
+            if (onScreen && !document.hidden) start(); else stop();
+        }).observe(host);
 
         document.addEventListener('visibilitychange', () => {
-            if (document.hidden) { running = false; cancelAnimationFrame(frame); }
-            else if (hero.getBoundingClientRect().bottom > 0 && !running) { running = true; draw(); }
+            if (document.hidden || !onScreen) stop(); else start();
         });
-    }
+    };
+
+    document.querySelectorAll('.mg-hero, .mg-careers').forEach(startMotes);
 
     /* ---- Announcement banners: people and background shift with the pointer ---- */
     const sliderFrame = document.querySelector('.mg-slider-frame');
