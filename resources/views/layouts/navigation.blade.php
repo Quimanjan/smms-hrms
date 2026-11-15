@@ -159,6 +159,13 @@
             'match' => 'loans-accounting.*',
         ],
 
+        'homepage' => [
+            'label' => 'Homepage',
+            'icon'  => 'fa-house-laptop',
+            'route' => 'site-content.edit',
+            'match' => 'site-content.*',
+        ],
+
         'remittances' => [
             'label' => 'Remittances',
             'icon'  => 'fa-building-columns',
@@ -269,6 +276,7 @@
             'loans',
             'offboarding',
             'remittances',
+            'homepage',
             'reports',
         ],
 
@@ -283,6 +291,7 @@
             'loans',
             'documents',
             'offboarding',
+            'homepage',
             'reports',
         ],
 

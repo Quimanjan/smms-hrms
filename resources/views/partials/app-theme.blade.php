@@ -871,6 +871,24 @@ button.cx-day:focus-visible { outline: 2px solid var(--mg-gold); outline-offset:
 .fp-note { margin: 10px 0 0; font-size: 0.76rem; color: var(--mg-stone); }
 @media (max-width: 560px) { .fp-facts { grid-template-columns: 1fr; } }
 
+/* ---------- Homepage CMS ---------- */
+.cms { display: grid; gap: 18px; }
+.cms-intro { padding: 18px 20px; border: 1px solid var(--mg-line); border-left: 5px solid var(--mg-gold); border-radius: 18px; background: #fff; }
+.cms-intro p { margin: 0; color: var(--mg-ink); }
+.cms-links { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 10px; }
+.cms-links a { color: var(--mg-crimson); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.cms-group { display: grid; gap: 14px; margin: 0; padding: 18px 20px 20px; border: 1px solid var(--mg-line); border-radius: 18px; background: #fff; }
+.cms-group legend { padding: 0 6px; font-family: var(--mg-display); font-size: 1.25rem; color: var(--mg-oxblood); }
+.cms-field { display: grid; gap: 6px; }
+.cms-field span { font-weight: 600; font-size: 0.88rem; color: var(--mg-stone); }
+.cms-field input, .cms-field textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--mg-line); border-radius: 10px; background: #fbf8f7; font: 0.95rem/1.5 var(--mg-body); color: var(--mg-ink); }
+.cms-field textarea { resize: vertical; }
+.cms-field input:focus, .cms-field textarea:focus { outline: 2px solid var(--mg-gold); outline-offset: 1px; border-color: transparent; box-shadow: none; background: #fff; }
+.cms-error { color: #8f1420; font-weight: 600; }
+.cms-actions { position: sticky; bottom: 12px; display: flex; justify-content: flex-end; }
+.cms-actions button { height: 48px; padding: 0 24px; border: 0; border-radius: 12px; background: var(--mg-crimson); color: #fff; font: 700 1rem var(--mg-body); cursor: pointer; box-shadow: 0 14px 28px -16px rgba(74, 10, 18, 0.7); }
+.cms-actions button:hover { background: var(--mg-oxblood); }
+
 /* ---------- Proctoring days (HR) ---------- */
 .proc-form { display: grid; grid-template-columns: 1fr; gap: 14px; }
 @media (min-width: 640px) { .proc-form { grid-template-columns: 1fr 1.4fr auto; align-items: end; } .proc-form [role="alert"] { grid-column: 1 / -1; } }

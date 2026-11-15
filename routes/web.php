@@ -180,6 +180,10 @@ Route::middleware(['auth', 'verified', TrackSystemDataUpdates::class])->group(fu
         Route::get('/offboarding', [OffboardingController::class, 'index'])
             ->name('offboarding.index');
 
+        // Homepage text (CMS)
+        Route::get('/homepage-content', [\App\Http\Controllers\SiteContentController::class, 'edit'])->name('site-content.edit');
+        Route::put('/homepage-content', [\App\Http\Controllers\SiteContentController::class, 'update'])->name('site-content.update');
+
         // Cause of separation (decides separation pay in the final pay breakdown)
         Route::patch('/offboarding/{offboardingCase}/cause', [OffboardingController::class, 'cause'])
             ->name('offboarding.cause');

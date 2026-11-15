@@ -2600,12 +2600,9 @@ body {
             <canvas class="mg-motes" aria-hidden="true"></canvas>
             <div class="mg-wrap mg-hero-grid">
                 <div class="mg-hero-copy">
-                    <p class="mg-hero-place">Poblacion, Kawit, Cavite</p>
-                    <h1>Teach, serve, and grow at St. Mary Magdalene School</h1>
-                    <p class="mg-hero-lede">
-                        This is the school's human resource portal. Apply for an open position, or log in to
-                        see your attendance, leave, and payslips.
-                    </p>
+                    <p class="mg-hero-place">{{ $cms['hero_place'] }}</p>
+                    <h1>{{ $cms['hero_title'] }}</h1>
+                    <p class="mg-hero-lede">{{ $cms['hero_lede'] }}</p>
                     <div class="mg-hero-actions">
                         <a class="mg-btn mg-btn-gold" href="{{ route('public.job-openings') }}">View job openings</a>
                         @auth
@@ -2750,23 +2747,17 @@ body {
             <div class="mg-wrap mg-history-grid">
                 <div class="mg-prose">
                     <h2 class="mg-h2" id="history-title">Our history</h2>
-                    <p>St. Mary Magdalene School (Parochial), Inc. was established in 1961 when Msgr. Eulogio San Juan, the Kawit Parish Priest, envisioned setting up a kindergarten class, which at that time was not being offered by any school in the town. With the help of Mr. Angel S. Colet, the convent became the first classroom, and Mrs. Angelita Quiamson Samaniego served as the pioneer teacher for fifteen enrolled pupils. In 1963, the Department of Education granted the Kindergarten class a permit to operate.</p>
-                    <p>The name St. Mary Magdalene School was adopted in honor of the town’s patroness. March 11, 1966 was designated as the school’s Foundation Day, coinciding with the celebration of Msgr. Eulogio San Juan’s birthday. However, history goes beyond its chronological dates. To have a sense of history, it is very important to know where we have come from. Hence, on this day, we are reminded of how the school was formed 62 years ago. Today, we reflect on the school’s early days and how far we have come as a school community.</p>
+                    <p>{{ $cms['history_p1'] }}</p>
+                    <p>{{ $cms['history_p2'] }}</p>
                 </div>
 
                 <ol class="mg-timeline" aria-label="Key dates">
-                    <li>
-                        <time datetime="1961">1961</time>
-                        <p>A kindergarten class opens in the parish convent with fifteen pupils.</p>
-                    </li>
-                    <li>
-                        <time datetime="1963">1963</time>
-                        <p>The Department of Education grants the class its permit to operate.</p>
-                    </li>
-                    <li>
-                        <time datetime="1966-03-11">1966</time>
-                        <p>March 11 is designated as the school’s Foundation Day.</p>
-                    </li>
+                    @foreach (\App\Support\SiteContent::timeline() as [$year, $text])
+                        <li>
+                            <time datetime="{{ preg_replace('/\D/', '', $year) }}">{{ $year }}</time>
+                            <p>{{ $text }}</p>
+                        </li>
+                    @endforeach
                 </ol>
             </div>
         </section>
@@ -2793,8 +2784,8 @@ body {
             <canvas class="mg-motes" aria-hidden="true"></canvas>
             <div class="mg-wrap mg-careers-inner" data-reveal>
                 <div>
-                    <h2 id="careers-title">Be a Magdalenean</h2>
-                    <p>See which teaching and non-teaching positions are open, then apply online.</p>
+                    <h2 id="careers-title">{{ $cms['careers_title'] }}</h2>
+                    <p>{{ $cms['careers_text'] }}</p>
                 </div>
                 <a class="mg-btn mg-btn-gold" href="{{ route('public.job-openings') }}">View job openings</a>
             </div>

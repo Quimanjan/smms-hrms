@@ -34,6 +34,8 @@ class AppServiceProvider extends ServiceProvider
             $view->with([
                 'homeOpenings' => $openings,
                 'homeYearsOfService' => max(0, (int) now()->year - 1961),
+                // Homepage text edited by HR and Admin (Homepage page).
+                'cms' => \App\Support\SiteContent::all(),
             ]);
         });
     }
