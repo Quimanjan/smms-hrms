@@ -889,6 +889,17 @@ button.cx-day:focus-visible { outline: 2px solid var(--mg-gold); outline-offset:
 .cms-actions button { height: 48px; padding: 0 24px; border: 0; border-radius: 12px; background: var(--mg-crimson); color: #fff; font: 700 1rem var(--mg-body); cursor: pointer; box-shadow: 0 14px 28px -16px rgba(74, 10, 18, 0.7); }
 .cms-actions button:hover { background: var(--mg-oxblood); }
 
+.al-dl { display: inline-flex; align-items: center; margin-left: 0; text-decoration: none; background: #fff; color: var(--mg-crimson); border: 1px solid var(--mg-line); }
+.al-dl:hover { background: #fbf3f2; }
+.al-table td, .al-table th { text-align: left; white-space: normal; vertical-align: top; }
+.al-table td small { display: block; color: var(--mg-stone); }
+.al-changes { max-width: 520px; color: var(--mg-stone); font-size: 0.82rem; overflow-wrap: anywhere; }
+.al-action { padding: 3px 10px; border-radius: 999px; font-size: 0.76rem; font-weight: 700; background: #f1ecea; color: var(--mg-stone); white-space: nowrap; }
+.al-action--created { background: #e3f5ea; color: #1f6b41; }
+.al-action--updated { background: #fdf0d8; color: #8a5a00; }
+.al-action--deleted { background: #fde4e6; color: #8f1420; }
+.al-pages { padding: 14px 22px; }
+
 /* ---------- Proctoring days (HR) ---------- */
 .proc-form { display: grid; grid-template-columns: 1fr; gap: 14px; }
 @media (min-width: 640px) { .proc-form { grid-template-columns: 1fr 1.4fr auto; align-items: end; } .proc-form [role="alert"] { grid-column: 1 / -1; } }

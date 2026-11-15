@@ -159,6 +159,13 @@
             'match' => 'loans-accounting.*',
         ],
 
+        'audit-trail' => [
+            'label' => 'Audit Trail',
+            'icon'  => 'fa-clipboard-list',
+            'route' => 'activity-log.index',
+            'match' => 'activity-log.*',
+        ],
+
         'homepage' => [
             'label' => 'Homepage',
             'icon'  => 'fa-house-laptop',
@@ -277,6 +284,7 @@
             'offboarding',
             'remittances',
             'homepage',
+            'audit-trail',
             'reports',
         ],
 

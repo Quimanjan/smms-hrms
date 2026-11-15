@@ -26,6 +26,9 @@ class AppServiceProvider extends ServiceProvider
     {
         Event::listen(AttendanceSynced::class, SyncZKTecoAttendanceRecords::class);
 
+        // Audit trail of user activity (panel revision).
+        \App\Support\AuditTrail::register();
+
         // The landing page is rendered from three places (home, login, and
         // sign-up). This gives all of them the live list of open positions.
         View::composer('welcome', function ($view) {
