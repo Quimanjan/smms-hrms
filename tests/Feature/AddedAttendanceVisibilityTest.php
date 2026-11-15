@@ -49,7 +49,9 @@ it('shows attendance added for the selected employee in their linked employee vi
         ->get(route('attendance.attendance-employee.index'))
         ->assertOk()
         ->assertSee('Nov 13, 2026')
-        ->assertSee('Working Day')
+        // The DTR follows the client's sample, which calls a working day "Regular".
+        ->assertSee('Regular')
+        ->assertSee('07:00 AM')
         ->assertSee('8.00');
 
     expect(DB::table('employees')->where('id', $employeeId)->value('user_id'))

@@ -4,166 +4,204 @@ namespace App\Http\Controllers;
 
 use App\Models\Attendance;
 use App\Models\AttendanceRecord;
+use App\Models\NonWorkingDay;
 use App\Models\SchoolEmployee;
 use App\Support\AttendanceSchedule;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Validation\Rule;
 
 class EmployeeAttendanceController extends Controller
 {
+    /** Longest range one timesheet may cover. */
+    private const MAX_DAYS = 93;
+
     /**
-     * Display the logged-in employee's attendance for a selected month.
+     * The logged-in employee's Daily Time Record (DTR) for a date range.
+     * Every day in the range is listed, including rest days and holidays.
      */
     public function index(Request $request)
     {
-        // Ensure the user is authenticated.
         $user = $request->user();
 
         abort_unless($user, 401, 'Please log in to continue.');
 
-        // Validate month and status filters.
         $filters = $request->validate([
-            'month'  => ['nullable', 'date_format:Y-m'],
-            'status' => ['nullable', Rule::in(AttendanceRecord::STATUSES)],
+            'from' => ['nullable', 'date_format:Y-m-d'],
+            'to'   => ['nullable', 'date_format:Y-m-d', 'after_or_equal:from'],
         ]);
 
-        // Get the selected month.
-        $month = Carbon::createFromFormat(
-            '!Y-m',
-            $filters['month'] ?? now()->format('Y-m')
-        )->startOfMonth();
+        $today = now()->startOfDay();
+        $from = isset($filters['from']) ? Carbon::parse($filters['from'])->startOfDay() : $today->copy()->startOfMonth();
+        $to = isset($filters['to']) ? Carbon::parse($filters['to'])->startOfDay() : $today->copy();
 
-        // Find the employee linked to the logged-in user.
-        $employee = SchoolEmployee::query()
-            ->where('user_id', $user->id)
-            ->first();
+        if ($from->diffInDays($to) >= self::MAX_DAYS) {
+            $to = $from->copy()->addDays(self::MAX_DAYS - 1);
+        }
+
+        $employee = $this->employeeFor($user);
+
+        $data = [
+            'employee' => $employee,
+            'from'     => $from,
+            'to'       => $to,
+            'maxDays'  => self::MAX_DAYS,
+            'rows'     => [],
+            'summary'  => ['present' => 0, 'late' => 0, 'late_minutes' => 0, 'half_day' => 0, 'absent' => 0, 'hours' => 0.0],
+        ];
+
+        if (! $employee) {
+            return view('attendance', $data);
+        }
+
+        $records = AttendanceRecord::query()
+            ->where('employee_id', $employee->id)
+            ->where('archived', false)
+            ->whereBetween('date', [$from->toDateString(), $to->toDateString()])
+            ->get()
+            ->keyBy(fn ($r) => Carbon::parse($r->date)->toDateString());
+
+        $nonWorking = NonWorkingDay::query()
+            ->whereBetween('date', [$from->toDateString(), $to->toDateString()])
+            ->get()
+            ->keyBy(fn ($d) => Carbon::parse($d->date)->toDateString());
+
+        $role = AttendanceSchedule::isMaintenanceEmployee($employee->role_type, $employee->position)
+            ? 'maintenance'
+            : $employee->role_type;
+
+        $rows = [];
+        $summary = $data['summary'];
+
+        for ($date = $from->copy(); $date->lte($to); $date->addDay()) {
+            $key = $date->toDateString();
+            $record = $records->get($key);
+            $holiday = $nonWorking->get($key);
+            $schedule = AttendanceSchedule::forEmployee($employee->role_type, $employee->position, $date);
+            $status = $record?->status;
+
+            // What kind of day this is, for the Shift Type column and the row color.
+            if (in_array($status, [Attendance::PAID_LEAVE, Attendance::UNPAID_LEAVE], true)) {
+                [$type, $shiftType] = ['leave', $status];
+            } elseif ($holiday) {
+                $type = $holiday->category === 'National Holiday' ? 'holiday' : 'special';
+                $shiftType = $holiday->name;
+            } elseif (! AttendanceSchedule::isWorkingDay($role, $date)) {
+                [$type, $shiftType] = ['rest', 'Rest Day'];
+            } else {
+                [$type, $shiftType] = ['regular', 'Regular'];
+            }
+
+            $scheduled = in_array($type, ['regular', 'leave'], true);
+            $timeIn = $record ? AttendanceSchedule::toCarbon($date, $record->time_in) : null;
+            $timeOut = $record ? AttendanceSchedule::toCarbon($date, $record->time_out) : null;
+
+            $required = match (true) {
+                $scheduled => $schedule->requiredHours($date),
+                in_array($type, ['holiday', 'special'], true) && $holiday?->isPaid() => (float) $holiday->paid_hours,
+                default => 0.0,
+            };
+
+            $late = $type === 'regular' && $timeIn ? (int) $schedule->lateMinutes($timeIn) : 0;
+            $under = $type === 'regular' && $timeOut ? (int) $schedule->undertimeMinutes($timeOut) : 0;
+            $hours = $record ? $this->hoursForRecord($record, $schedule) : 0.0;
+
+            if (! $status) {
+                $status = match (true) {
+                    $date->gt($today) => 'Upcoming',
+                    $type === 'regular' => $date->eq($today) ? 'No punch yet' : 'No record',
+                    default => '',
+                };
+            }
+
+            $rows[] = [
+                'date'        => $key,
+                'date_label'  => $date->format('M d, Y'),
+                'day'         => $date->format('l'),
+                'type'        => $type,
+                'shift_type'  => $shiftType,
+                'shift_in'    => $scheduled ? $this->clock($schedule->start) : '',
+                'shift_out'   => $scheduled ? $this->clock($schedule->end) : '',
+                'time_in'     => $timeIn ? $timeIn->format('h:i A') : '',
+                'time_out'    => $timeOut ? $timeOut->format('h:i A') : '',
+                'required'    => number_format($required, 2),
+                'tardiness'   => $this->duration($late),
+                'undertime'   => $this->duration($under),
+                // Shown when the row is expanded.
+                'hours'       => number_format($hours, 2),
+                'status'      => $status,
+                'lunch'       => $scheduled ? $this->clock($schedule->lunchStart).' to '.$this->clock($schedule->lunchEnd) : '',
+                'grace'       => $scheduled && $schedule->graceMinutes ? $schedule->graceMinutes.' mins' : '',
+                'holiday_pay' => $holiday ? ($holiday->isPaid() ? 'Paid ('.rtrim(rtrim((string) $holiday->paid_hours, '0'), '.').' hrs)' : 'Unpaid') : '',
+                'category'    => $holiday?->category ?? '',
+            ];
+
+            // Summary cards for the range.
+            if ($record) {
+                $summary['present'] += match ($record->status) {
+                    Attendance::PRESENT, Attendance::LATE, Attendance::UNDERTIME => 1,
+                    Attendance::HALF_DAY => 0.5,
+                    default => 0,
+                };
+                $summary['late'] += $record->status === Attendance::LATE ? 1 : 0;
+                $summary['half_day'] += $record->status === Attendance::HALF_DAY ? 1 : 0;
+                $summary['absent'] += $record->status === Attendance::ABSENT ? 1 : 0;
+                $summary['late_minutes'] += $late;
+                $summary['hours'] += $hours;
+            }
+        }
+
+        $data['rows'] = $rows;
+        $data['summary'] = $summary;
+
+        return view('attendance', $data);
+    }
+
+    /** Find the employee record linked to this user, linking by email once if needed. */
+    private function employeeFor($user): ?SchoolEmployee
+    {
+        $employee = SchoolEmployee::query()->where('user_id', $user->id)->first();
 
         if (! $employee && filled($user->email)) {
-            $matchingEmployees = SchoolEmployee::query()
+            $matches = SchoolEmployee::query()
                 ->whereNull('user_id')
                 ->whereRaw('LOWER(email) = ?', [mb_strtolower(trim($user->email))])
                 ->limit(2)
                 ->get();
 
-            if ($matchingEmployees->count() === 1) {
-                $employee = $matchingEmployees->first();
+            if ($matches->count() === 1) {
+                $employee = $matches->first();
                 $employee->user()->associate($user);
                 $employee->save();
             }
         }
 
-        // Default data passed to the Blade view.
-        $data = [
-            'employee'  => $employee,
-            'month'     => $month,
-            'prevMonth' => $month->copy()->subMonth()->format('Y-m'),
-            'nextMonth' => $month->copy()->addMonth()->format('Y-m'),
-            'isCurrent' => $month->isSameMonth(now()),
-            'status'    => $filters['status'] ?? '',
-            'schedule'  => null,
-            'records'   => collect(),
-            'summary'   => [
-                'present'      => 0,
-                'late'         => 0,
-                'late_minutes' => 0,
-                'half_day'     => 0,
-                'absent'       => 0,
-                'hours'        => 0.0,
-            ],
-        ];
+        return $employee;
+    }
 
-        // Show the page even if no employee record is linked.
-        if (! $employee) {
-            return view('employees', $data);
+    private function clock(string $time): string
+    {
+        return Carbon::createFromFormat('H:i', substr($time, 0, 5))->format('h:i A');
+    }
+
+    /** 141 => "2 hrs 21 mins", 25 => "25 mins", 0 => "". */
+    private function duration(int $minutes): string
+    {
+        if ($minutes <= 0) {
+            return '';
         }
 
-        // Schedule for the selected month (auto-adjusted in May).
-        $data['schedule'] = AttendanceSchedule::forEmployee($employee->role_type, $employee->position, $month);
+        $h = intdiv($minutes, 60);
+        $m = $minutes % 60;
+        $parts = [];
+        if ($h) {
+            $parts[] = $h.' '.($h === 1 ? 'hr' : 'hrs');
+        }
+        if ($m) {
+            $parts[] = $m.' '.($m === 1 ? 'min' : 'mins');
+        }
 
-        // Retrieve attendance records for the selected month.
-        $base = AttendanceRecord::query()
-            ->where('employee_id', $employee->id)
-            ->where('archived', false)
-            ->with('nonWorkingDay')
-            ->whereBetween('date', [
-                $month->toDateString(),
-                $month->copy()->endOfMonth()->toDateString(),
-            ]);
-
-        // Count attendance statuses for the month.
-        $counts = (clone $base)
-            ->selectRaw('status, COUNT(*) as total')
-            ->groupBy('status')
-            ->pluck('total', 'status');
-
-        // Monthly summary.
-        $data['summary'] = [
-            'present'      => (int) ($counts['Present'] ?? 0),
-            'late'         => (int) ($counts['Late'] ?? 0),
-            'late_minutes' => (int) (clone $base)->get(['date', 'time_in'])->sum(
-                function ($record) use ($employee) {
-                    $date = Carbon::parse($record->date)->startOfDay();
-                    $schedule = AttendanceSchedule::forEmployee($employee->role_type, $employee->position, $date);
-                    $timeIn = AttendanceSchedule::toCarbon($date, $record->time_in);
-
-                    return $schedule->lateMinutes($timeIn);
-                }
-            ),
-            'half_day'     => (int) ($counts['Half Day'] ?? 0),
-            'absent'       => (int) ($counts['Absent'] ?? 0),
-            'hours'        => (float) (clone $base)->get(['date', 'time_in', 'time_out', 'hours_worked', 'status'])
-                ->sum(function ($record) use ($employee) {
-                    $date = Carbon::parse($record->date)->startOfDay();
-                    $schedule = AttendanceSchedule::forEmployee($employee->role_type, $employee->position, $date);
-
-                    return $this->hoursForRecord($record, $schedule);
-                }),
-        ];
-
-        // Apply the optional status filter, paginate, and shape each row for the table.
-        $data['records'] = (clone $base)
-            ->when(
-                ! empty($filters['status']),
-                fn ($query) => $query->where('status', $filters['status'])
-            )
-            ->orderByDesc('date')
-            ->paginate(15)
-            ->withQueryString()
-            ->through(function ($record) use ($employee) {
-                $date     = Carbon::parse($record->date)->startOfDay();
-                $schedule = AttendanceSchedule::forEmployee($employee->role_type, $employee->position, $date);
-
-                $in  = AttendanceSchedule::toCarbon($date, $record->time_in);
-                $out = $record->time_out
-                    ? Carbon::parse($date->toDateString().' '.$record->time_out)
-                    : null;
-
-                $hours = $this->hoursForRecord($record, $schedule);
-                $requiredHours = $record->status === Attendance::PAID_HOLIDAY
-                    && ! $record->time_in
-                    && ! $record->time_out
-                    && $record->nonWorkingDay?->isPaid()
-                    ? (float) $record->nonWorkingDay->paid_hours
-                    : $schedule->requiredHours($date);
-
-                return [
-                    'id'                 => $record->id,
-                    'date'               => $date->format('Y-m-d'),
-                    'day'                => $date->format('l'),
-                    'shift_type'         => Attendance::shiftTypeForStatus($record->status),
-                    'time_in'            => $record->time_in ? substr($record->time_in, 0, 5) : '',
-                    'time_out'           => $record->time_out ? substr($record->time_out, 0, 5) : '',
-                    'required_hours'     => number_format($requiredHours, 2),
-                    'hours'              => number_format($hours, 2),
-                    'tardiness_minutes'  => (int) $schedule->lateMinutes($in),
-                    'undertime_minutes'  => (int) $schedule->undertimeMinutes($out),
-                    'status'             => $record->status,
-                ];
-            });
-
-        return view('attendance', $data);
+        return implode(' ', $parts);
     }
 
     private function hoursForRecord(AttendanceRecord $record, AttendanceSchedule $schedule): float
