@@ -186,107 +186,42 @@
     </section>
 
     {{-- EMPLOYEE DETAILS MODAL --}}
-    <div
-        x-show="detail"
-        x-cloak
-        x-transition.opacity
-        @click.self="detailId = null"
-        class="fixed inset-0 z-[60] grid place-items-center bg-[rgba(3,7,18,0.5)] p-4"
-    >
-
-        <div
-            x-show="detail"
-            x-transition
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="employeeModalName"
-            class="relative max-h-[90vh] w-full max-w-[500px] overflow-y-auto rounded-[14px] bg-white px-7 pb-7 pt-9 text-center shadow-[0_20px_50px_rgba(15,23,42,0.14)]"
-        >
-
-            {{-- CLOSE BUTTON --}}
-            <button
-                type="button"
-                @click="detailId = null"
-                aria-label="Close"
-                class="absolute right-3 top-2 cursor-pointer text-3xl leading-none text-gray-500 hover:text-gray-800"
-            >
-                &times;
-            </button>
-
+    <div x-show="detail" x-cloak x-transition.opacity
+        @click.self="detailId = null" @keydown.escape.window="detailId = null"
+        class="ed-overlay">
+        <div role="dialog" aria-modal="true" aria-labelledby="employeeModalName" class="ed">
             <template x-if="detail">
-
                 <div>
-
-                    {{-- INITIALS --}}
-                    <div class="av-host av-host--lg av-size-120 mx-auto" x-html="detail.avatar"></div>
-
-                    {{-- NAME --}}
-                    <h3
-                        id="employeeModalName"
-                        class="mt-4 text-lg font-bold text-gray-900"
-                        x-text="detail.name"
-                    ></h3>
-
-                    {{-- EMPLOYEE INFORMATION --}}
-                    <div class="mt-5 space-y-3 text-left text-sm text-gray-700">
-
-                        <div class="flex justify-between gap-4 border-b border-gray-100 pb-2">
-                            <strong>ID:</strong>
-                            <span x-text="detail.employee_id"></span>
+                    <header class="ed-head">
+                        <button type="button" class="ed-close" @click="detailId = null" aria-label="Close">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+                        </button>
+                        <div class="av-host av-host--lg ed-face" x-html="detail.avatar"></div>
+                        <div class="ed-who">
+                            <h3 id="employeeModalName" class="ed-name" x-text="detail.name"></h3>
+                            <p class="ed-role" x-text="detail.position"></p>
+                            <div class="ed-chips">
+                                <span class="ed-chip ed-chip--gold" x-text="detail.role_label" x-show="detail.role_label"></span>
+                                <span class="ed-chip" x-text="'ID ' + detail.employee_id" x-show="detail.employee_id"></span>
+                            </div>
                         </div>
+                    </header>
 
-                        <div class="flex justify-between gap-4 border-b border-gray-100 pb-2">
-                            <strong>Position:</strong>
-                            <span x-text="detail.position"></span>
-                        </div>
-
-                        <div class="flex justify-between gap-4 border-b border-gray-100 pb-2">
-                            <strong>Department:</strong>
-                            <span x-text="detail.department_label"></span>
-                        </div>
-
-                        <div class="flex justify-between gap-4 border-b border-gray-100 pb-2">
-                            <strong>Role Type:</strong>
-                            <span x-text="detail.role_label"></span>
-                        </div>
-
-                        <div class="flex justify-between gap-4 border-b border-gray-100 pb-2">
-                            <strong>Step:</strong>
-                            <span x-text="detail.step_label || '—'"></span>
-                        </div>
-
-                        <div class="flex justify-between gap-4 border-b border-gray-100 pb-2">
-                            <strong>Email:</strong>
-                            <span x-text="detail.email"></span>
-                        </div>
-
-                        <div class="flex justify-between gap-4 border-b border-gray-100 pb-2">
-                            <strong>Birthday:</strong>
-                            <span x-text="detail.birthday_label"></span>
-                        </div>
-
-                        <div class="flex justify-between gap-4 border-b border-gray-100 pb-2">
-                            <strong>Emergency Contact:</strong>
-                            <span x-text="detail.emergency_contact"></span>
-                        </div>
-
+                    <div class="ed-body">
+                        <dl class="ed-grid">
+                            <div><dt>Position</dt><dd x-text="detail.position || '—'"></dd></div>
+                            <div><dt>Department</dt><dd x-text="detail.department_label || '—'"></dd></div>
+                            <div><dt>Role type</dt><dd x-text="detail.role_label || '—'"></dd></div>
+                            <div><dt>Salary step</dt><dd x-text="detail.step_label || '—'"></dd></div>
+                            <div><dt>Email</dt><dd x-text="detail.email || '—'"></dd></div>
+                            <div><dt>Birthday</dt><dd x-text="detail.birthday_label || '—'"></dd></div>
+                            <div class="ed-wide"><dt>Emergency contact</dt><dd x-text="detail.emergency_contact || '—'"></dd></div>
+                        </dl>
                     </div>
-
-                    {{-- CLOSE --}}
-                    <button
-                        type="button"
-                        @click="detailId = null"
-                        class="mt-6 w-full rounded-xl bg-[#b22222] px-5 py-3 font-bold text-white transition hover:bg-red-800"
-                    >
-                        Close
-                    </button>
-
+                    <div class="ed-foot"></div>
                 </div>
-
             </template>
-
         </div>
-
     </div>
 
 </div>

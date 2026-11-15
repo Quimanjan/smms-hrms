@@ -208,82 +208,92 @@
 
         {{-- ============ Details modal ============ --}}
         <div x-show="detail" x-cloak x-transition.opacity
-            @click.self="detailId = null"
-            class="fixed inset-0 z-[60] grid place-items-center bg-[rgba(3,7,18,0.5)] p-4">
-            <div role="dialog" aria-modal="true" class="relative max-h-[90vh] w-full max-w-[500px] overflow-y-auto [scrollbar-width:none] rounded-[14px] bg-white px-7 pb-7 pt-9 text-center shadow-[0_20px_50px_rgba(15,23,42,0.14)]">
-                <button type="button" @click="detailId = null" aria-label="Close"
-                    class="absolute right-3 top-2 cursor-pointer text-3xl leading-none text-gray-500 hover:text-gray-800">&times;</button>
-
+            @click.self="detailId = null" @keydown.escape.window="detailId = null"
+            class="ed-overlay">
+            <div role="dialog" aria-modal="true" aria-labelledby="ed-name" class="ed">
                 <template x-if="detail">
-                    <div>
-                        <div class="av-host av-host--lg av-size-120 mx-auto" x-html="detail.avatar"></div>
+                    <div x-data="{ tab: 'personal' }">
+                        <header class="ed-head">
+                            <button type="button" class="ed-close" @click="detailId = null" aria-label="Close">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+                            </button>
+                            <div class="av-host av-host--lg ed-face" x-html="detail.avatar"></div>
+                            <div class="ed-who">
+                                <h3 id="ed-name" class="ed-name" x-text="fullName(detail)"></h3>
+                                <p class="ed-role" x-text="detail.position"></p>
+                                <div class="ed-chips">
+                                    <span class="ed-chip ed-chip--gold" x-text="statusLabel(detail.employment_status)"></span>
+                                    <span class="ed-chip" x-show="detail.step_label" x-text="detail.step_label"></span>
+                                    <span class="ed-chip" x-text="'ID ' + (detail.zkteco_user_id || detail.employee_id)"></span>
+                                </div>
+                            </div>
+                        </header>
 
-                        <h3 class="mt-4 text-lg font-bold" x-text="fullName(detail)"></h3>
-
-                        <div class="mt-2 inline-flex items-center gap-2 rounded-full bg-red-50 px-3 py-1 text-xs font-bold">
-                            <span class="text-[#b22222]"
-                                x-text="statusLabel(detail.employment_status)"></span>
-                            <span x-show="detail.step_label" aria-hidden="true" class="text-red-200">|</span>
-                            <span x-show="detail.step_label" class="text-[#b22222]" x-text="detail.step_label"></span>
+                        <div class="ed-tabs" role="tablist" aria-label="Employee details">
+                            <button type="button" role="tab" :aria-selected="(tab === 'personal').toString()" @click="tab = 'personal'">Personal information</button>
+                            <button type="button" role="tab" :aria-selected="(tab === 'work').toString()" @click="tab = 'work'">Work</button>
+                            <button type="button" role="tab" :aria-selected="(tab === 'emergency').toString()" @click="tab = 'emergency'">Emergency contact</button>
+                            <button type="button" role="tab" :aria-selected="(tab === 'ids').toString()" @click="tab = 'ids'">Government IDs</button>
                         </div>
 
-                        <div class="mt-3 space-y-1.5 text-gray-700">
-                            <p><strong>ID:</strong> <span x-text="detail.zkteco_user_id || detail.employee_id"></span></p>
-                            <p><strong>Full Name:</strong> <span x-text="fullName(detail) || '—'"></span></p>
-                            <p><strong>Position:</strong> <span x-text="detail.position"></span></p>
-                            <p><strong>Department:</strong> <span x-text="detail.department_label || detail.department"></span></p>
-                            <p><strong>Role Type:</strong> <span x-text="detail.role_type"></span></p>
-                            <p><strong>Email:</strong> <span x-text="detail.email"></span></p>
-                            <p><strong>Birthday:</strong> <span x-text="detail.birthday_label"></span></p>
-                            <p><strong>Civil Status:</strong> <span x-text="detail.civil_status || '—'"></span></p>
-                            <p><strong>Gender:</strong> <span x-text="detail.gender || '—'"></span></p>
-                            <p><strong>Address:</strong> <span x-text="detail.address || '—'"></span></p>
-                            <p><strong>Emergency Contact:</strong> <span x-text="[detail.emergency_name, detail.emergency_contact].filter(Boolean).join(' - ') || '—'"></span></p>
-                        </div>
+                        <div class="ed-body">
+                            <dl class="ed-grid" x-show="tab === 'personal'" role="tabpanel">
+                                <div><dt>Full name</dt><dd x-text="fullName(detail) || '—'"></dd></div>
+                                <div><dt>Birthday</dt><dd x-text="detail.birthday_label || '—'"></dd></div>
+                                <div><dt>Gender</dt><dd x-text="detail.gender || '—'"></dd></div>
+                                <div><dt>Civil status</dt><dd x-text="detail.civil_status || '—'"></dd></div>
+                                <div><dt>Email</dt><dd x-text="detail.email || '—'"></dd></div>
+                                <div class="ed-wide"><dt>Address</dt><dd x-text="detail.address || '—'"></dd></div>
+                            </dl>
 
-                        {{-- Government IDs: hidden until the eye is clicked --}}
-                        <div class="gov-ids mt-5 text-left">
-                            <h4 class="gov-ids__title">Government IDs</h4>
-                            <ul>
-                                <template x-for="gid in (detail.gov_ids || [])" :key="gid.label">
-                                    <li x-data="{ shown: false }">
-                                        <span class="gov-ids__label" x-text="gid.label"></span>
-                                        <template x-if="!gid.value"><span class="italic text-gray-400">Not provided</span></template>
-                                        <template x-if="gid.value">
-                                            <span class="secret-value">
-                                                <span class="secret-value__text"
-                                                    x-text="shown ? gid.value : '•••• •••• ' + gid.value.replace(/\D+/g, '').slice(-4)"></span>
-                                                <button type="button" class="secret-value__eye" @click="shown = !shown"
-                                                    :aria-label="(shown ? 'Hide ' : 'Show ') + gid.label" :aria-pressed="shown.toString()"
-                                                    :title="shown ? 'Hide' : 'Show'">
-                                                    <svg x-show="!shown" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
-                                                    <svg x-show="shown" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 5.1A10.4 10.4 0 0 1 12 5c6.4 0 10 7 10 7a17.6 17.6 0 0 1-3.2 4.1M6.6 6.6C3.9 8.4 2 12 2 12s3.6 7 10 7a9.7 9.7 0 0 0 5.4-1.6"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>
-                                                </button>
-                                            </span>
-                                        </template>
-                                    </li>
-                                </template>
-                            </ul>
+                            <dl class="ed-grid" x-show="tab === 'work'" x-cloak role="tabpanel">
+                                <div><dt>Position</dt><dd x-text="detail.position || '—'"></dd></div>
+                                <div><dt>Department</dt><dd x-text="detail.department_label || detail.department || '—'"></dd></div>
+                                <div><dt>Role type</dt><dd x-text="detail.role_type || '—'"></dd></div>
+                                <div><dt>Employment status</dt><dd x-text="statusLabel(detail.employment_status)"></dd></div>
+                                <div><dt>Salary step</dt><dd x-text="detail.step_label || '—'"></dd></div>
+                                <div><dt>Biometric ID</dt><dd x-text="detail.zkteco_user_id || detail.employee_id || '—'"></dd></div>
+                            </dl>
+
+                            <dl class="ed-grid" x-show="tab === 'emergency'" x-cloak role="tabpanel">
+                                <div><dt>Contact person</dt><dd x-text="detail.emergency_name || '—'"></dd></div>
+                                <div><dt>Contact number</dt><dd x-text="detail.emergency_contact || '—'"></dd></div>
+                            </dl>
+
+                            <div x-show="tab === 'ids'" x-cloak role="tabpanel">
+                                <p class="ed-note">Numbers stay hidden until you click the eye.</p>
+                                <ul class="ed-ids">
+                                    <template x-for="gid in (detail.gov_ids || [])" :key="gid.label">
+                                        <li x-data="{ shown: false }">
+                                            <span class="ed-ids-label" x-text="gid.label"></span>
+                                            <template x-if="!gid.value"><span class="ed-muted">Not provided</span></template>
+                                            <template x-if="gid.value">
+                                                <span class="secret-value">
+                                                    <span class="secret-value__text" x-text="shown ? gid.value : '•••• •••• ' + gid.value.replace(/\D+/g, '').slice(-4)"></span>
+                                                    <button type="button" class="secret-value__eye" @click="shown = !shown"
+                                                        :aria-label="(shown ? 'Hide ' : 'Show ') + gid.label" :aria-pressed="shown.toString()" :title="shown ? 'Hide' : 'Show'">
+                                                        <svg x-show="!shown" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+                                                        <svg x-show="shown" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 5.1A10.4 10.4 0 0 1 12 5c6.4 0 10 7 10 7a17.6 17.6 0 0 1-3.2 4.1M6.6 6.6C3.9 8.4 2 12 2 12s3.6 7 10 7a9.7 9.7 0 0 0 5.4-1.6"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>
+                                                    </button>
+                                                </span>
+                                            </template>
+                                        </li>
+                                    </template>
+                                </ul>
+                            </div>
                         </div>
 
                         @if ($canManage)
-                            <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
-                                <button type="button" @click="openEdit()"
-                                    class="cursor-pointer rounded-lg bg-[#b22222] px-6 py-2.5 font-bold text-white transition hover:bg-[#8b1a1a]">
-                                    <i class="fa-solid fa-pen-to-square mr-1"></i> Edit
-                                </button>
-
+                            <footer class="ed-foot">
                                 <form method="POST" :action="deleteAction()"
                                     data-confirm="Delete this employee? This cannot be undone."
                                     data-confirm-button="Delete">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit"
-                                        class="w-full cursor-pointer rounded-lg border border-[#b22222] bg-white px-6 py-2.5 font-bold text-[#b22222] transition hover:bg-red-50">
-                                        <i class="fa-solid fa-trash mr-1"></i> Delete
-                                    </button>
+                                    <button type="submit" class="ed-btn ed-btn--ghost">Delete</button>
                                 </form>
-                            </div>
+                                <button type="button" @click="openEdit()" class="ed-btn ed-btn--primary">Edit employee</button>
+                            </footer>
                         @endif
                     </div>
                 </template>
