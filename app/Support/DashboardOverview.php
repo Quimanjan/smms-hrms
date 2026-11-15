@@ -103,6 +103,41 @@ class DashboardOverview
         ];
     }
 
+    /** People and workforce mix for the dashboard panels. */
+    public static function team(): array
+    {
+        try {
+            $people = DB::table('employees')
+                ->select('id', 'name', 'gender', 'position', 'role_type', 'department')
+                ->orderBy('name')
+                ->get();
+        } catch (Throwable) {
+            return ['people' => collect(), 'groups' => [], 'genders' => [], 'total' => 0];
+        }
+
+        $total = $people->count();
+
+        $groups = $people
+            ->groupBy(fn ($p) => trim((string) $p->role_type) ?: 'Not set')
+            ->map(fn ($rows, $label) => ['label' => $label, 'count' => $rows->count()])
+            ->sortByDesc('count')
+            ->values()
+            ->all();
+
+        $genders = $people
+            ->groupBy(fn ($p) => Avatar::gender($p->gender))
+            ->map(fn ($rows, $g) => [
+                'label' => ['female' => 'Women', 'male' => 'Men', 'neutral' => 'Not set'][$g],
+                'key' => $g,
+                'count' => $rows->count(),
+            ])
+            ->sortBy(fn ($row) => ['female' => 0, 'male' => 1, 'neutral' => 2][$row['key']])
+            ->values()
+            ->all();
+
+        return ['people' => $people, 'groups' => $groups, 'genders' => $genders, 'total' => $total];
+    }
+
     private static function card(string $label, string $icon, string $route, callable $count, string $note): ?array
     {
         try {

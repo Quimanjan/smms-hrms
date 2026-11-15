@@ -106,27 +106,9 @@
                 </div>
             </div>
 
-            {{-- Calendar --}}
-            <div class="dashboard-content grid grid-cols-1 items-start gap-4 sm:gap-6">
-                <section class="calendar-panel min-w-0 bg-white p-2 sm:p-4 lg:p-7">
-                    <div class="calendar-header mb-3 flex items-center justify-between gap-4">
-                        <h2 id="calendarHeading" class="m-0 text-xl font-extrabold text-gray-900 sm:text-2xl lg:text-[1.8rem]">August 3, 2026</h2>
-                    </div>
-
-                    <div class="calendar-widget grid w-full gap-2 rounded-2xl border border-[#f0eef0] bg-white p-2 sm:gap-3.5 sm:rounded-[28px] sm:p-4 lg:p-5">
-                        <div class="calendar-weekdays grid grid-cols-[repeat(7,minmax(0,1fr))] gap-1 sm:gap-2 lg:gap-3">
-                            @foreach (['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as $d)
-                                <span class="grid min-h-[28px] items-center justify-center text-[0.65rem] font-bold uppercase tracking-[0.06em] text-gray-400 sm:min-h-[42px] sm:text-[0.72rem] sm:tracking-[0.12em]">
-                                    <span class="sm:hidden" aria-hidden="true">{{ substr($d, 0, 1) }}</span>
-                                    <span class="hidden sm:inline">{{ $d }}</span>
-                                    <span class="sr-only">{{ $d }}</span>
-                                </span>
-                            @endforeach
-                        </div>
-                        <div class="calendar-grid grid auto-rows-[minmax(44px,1fr)] grid-cols-[repeat(7,minmax(0,1fr))] gap-1 sm:auto-rows-[minmax(72px,1fr)] sm:gap-2 lg:auto-rows-[minmax(110px,1fr)] lg:gap-3.5" id="calendarGrid"></div>
-                    </div>
-                </section>
-            </div>
+            {{-- Team, workforce, and calendar --}}
+            @include('partials.dashboard-panels')
+            @include('partials.smart-calendar', ['storageKey' => 'adminDashboardTasks'])
         </main>
     </div>
 </div>
@@ -550,6 +532,8 @@
     function saveTasks() { localStorage.setItem(taskStorageKey, JSON.stringify(tasks)); }
 
     function renderCalendar() {
+        // The calendar is now partials/smart-calendar; the old one is gone.
+        if (!calendarGrid) return;
         const month = currentDate.getMonth();
         const year = currentDate.getFullYear();
         const firstDay = new Date(year, month, 1).getDay();

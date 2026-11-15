@@ -13,6 +13,9 @@
             ->take(2)
             ->implode('')
         : '';
+
+    // Illustrated avatar for staff who have an employee record.
+    $topAvatar = $user?->employee ? $user->employee->avatarSvg() : null;
 @endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
@@ -36,6 +39,9 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+        {{-- Apply the remembered sidebar state before the page paints. --}}
+        <script>try { if (localStorage.getItem('smms.sidebar') === 'collapsed') document.documentElement.classList.add('sb-collapsed'); } catch (e) {}</script>
 
         {{-- School colors and type for the signed-in pages --}}
         @include('partials.app-theme')
@@ -83,7 +89,7 @@
             @endauth
 
             {{-- lg:pl-80 leaves room for the fixed sidebar (only for roles that have the sidebar) --}}
-            <div @auth @hasanyrole('Admin|HR|Accounting|Employee') class="min-w-0 lg:pl-80" @endhasanyrole @endauth>
+            <div @auth @hasanyrole('Admin|HR|Accounting|Employee') class="app-main-col min-w-0 lg:pl-80" @endhasanyrole @endauth>
 
                 @auth
                 @hasanyrole('Admin|HR|Accounting|Employee')
@@ -120,9 +126,13 @@
                                 <button type="button"
                                         class="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white py-1.5 pl-1.5 pr-3 text-base shadow-sm transition hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-700 sm:gap-3 sm:py-2 sm:pl-2 sm:pr-4 sm:text-lg lg:mr-[70px]"
                                         aria-label="Account Menu">
-                                    <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-red-700 text-xs font-bold text-white sm:h-9 sm:w-9 sm:text-sm">
-                                        {{ $initials }}
-                                    </span>
+                                    @if ($topAvatar)
+                                        <span class="av-host av-host--ring h-9 w-9 shrink-0 sm:h-11 sm:w-11">{!! $topAvatar !!}</span>
+                                    @else
+                                        <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-red-700 text-xs font-bold text-white sm:h-9 sm:w-9 sm:text-sm">
+                                            {{ $initials }}
+                                        </span>
+                                    @endif
 
                                     <span class="hidden min-w-0 text-left leading-tight md:block">
                                         <span class="block max-w-[160px] truncate font-semibold text-gray-900 lg:max-w-[220px]">{{ $user->name }}</span>

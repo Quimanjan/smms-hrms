@@ -95,6 +95,7 @@ class EmployeeController extends Controller
 
                     // Uses the dynamic name accessor in Employee model.
                     'initials' => $e->initials,
+                    'avatar' => $e->avatarSvg(),
                     'name' => $e->name,
 
                     'first_name' => $e->first_name,

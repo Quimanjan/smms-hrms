@@ -149,6 +149,12 @@ class Employee extends Model
     }
 
     /** "Maria Santos" -> "MS" */
+    /** Animated illustrated avatar matched to this employee's gender and job. */
+    public function avatarSvg(): string
+    {
+        return \App\Support\Avatar::for($this, $this->name ?? '');
+    }
+
     protected function initials(): Attribute
     {
         return Attribute::get(fn () => collect(preg_split('/\s+/', trim($this->name)))

@@ -42,22 +42,9 @@
                 </button>
             </section>
 
-            {{-- Calendar --}}
-            <div class="dashboard-content grid grid-cols-1 gap-6 items-start">
-                <section class="calendar-panel p-7 bg-white max-[720px]:p-3.5">
-                    <div class="calendar-header flex justify-between items-center gap-4 mb-3">
-                        <h2 id="calendarHeading" class="m-0 text-gray-900 text-[1.8rem] font-extrabold"></h2>
-                    </div>
-                    <div class="calendar-widget grid gap-3.5 p-5 w-full bg-white rounded-[28px] border border-[#f0eef0] max-[720px]:p-2.5">
-                        <div class="calendar-weekdays grid grid-cols-[repeat(7,minmax(0,1fr))] gap-3 max-[720px]:gap-[5px]">
-                            @foreach (['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as $d)
-                                <span class="grid items-center justify-center min-h-[42px] text-gray-400 font-bold uppercase tracking-[0.12em] text-[0.72rem]">{{ $d }}</span>
-                            @endforeach
-                        </div>
-                        <div class="calendar-grid grid grid-cols-[repeat(7,minmax(0,1fr))] auto-rows-[minmax(110px,1fr)] gap-3.5 max-[720px]:gap-[5px] max-[720px]:auto-rows-[minmax(64px,1fr)]" id="calendarGrid"></div>
-                    </div>
-                </section>
-            </div>
+            {{-- Team, workforce, and calendar --}}
+            @include('partials.dashboard-panels')
+            @include('partials.smart-calendar', ['storageKey' => $taskKey])
         </main>
     </div>
 </div>
@@ -191,6 +178,8 @@
     const saveTasks = () => localStorage.setItem(taskStorageKey, JSON.stringify(tasks));
 
     function renderCalendar() {
+        // The calendar is now partials/smart-calendar; the old one is gone.
+        if (!calendarGrid) return;
         const month = currentDate.getMonth();
         const year = currentDate.getFullYear();
         const firstDay = new Date(year, month, 1).getDay();

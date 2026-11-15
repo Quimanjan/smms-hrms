@@ -56,6 +56,7 @@ class SchoolEmployeeController extends Controller
                 $e->id => [
                     'id'                => $e->id,
                     'initials'          => $e->initials,
+                    'avatar'            => \App\Support\Avatar::for($e, $e->name ?? ''),
                     'name'              => $e->name,
                     'employee_id'       => $e->employee_id,
                     'position'          => $e->position,

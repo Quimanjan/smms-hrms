@@ -105,6 +105,7 @@ class EmployeeDashboardController extends Controller
                 'name'       => $b['employee']->name,
                 'role'       => $b['employee']->position,
                 'initials'   => $b['employee']->initials,
+                'avatar'     => $b['employee']->avatarSvg(),
                 'iso'        => $b['date']->toDateString(),
                 'date_label' => $b['date']->format('M j'),
             ])

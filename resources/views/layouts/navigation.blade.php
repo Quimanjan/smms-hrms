@@ -408,4 +408,27 @@
             </div>
         @endforelse
     </nav>
+
+    {{-- Collapse to an icon rail (desktop only). The choice is remembered in this browser. --}}
+    <button type="button" class="sb-toggle" aria-controls="sidebar" aria-expanded="true"
+        onclick="(function (btn) {
+            const collapsed = document.documentElement.classList.toggle('sb-collapsed');
+            try { localStorage.setItem('smms.sidebar', collapsed ? 'collapsed' : 'expanded'); } catch (e) {}
+            btn.setAttribute('aria-expanded', String(!collapsed));
+            btn.setAttribute('aria-label', collapsed ? 'Expand menu' : 'Collapse menu');
+            btn.title = collapsed ? 'Expand menu' : 'Collapse menu';
+            setTimeout(function () { window.dispatchEvent(new Event('resize')); }, 260);
+        })(this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+        <span>Collapse menu</span>
+    </button>
+    <script>
+        (function () {
+            const btn = document.currentScript.previousElementSibling;
+            const collapsed = document.documentElement.classList.contains('sb-collapsed');
+            btn.setAttribute('aria-expanded', String(!collapsed));
+            btn.setAttribute('aria-label', collapsed ? 'Expand menu' : 'Collapse menu');
+            btn.title = collapsed ? 'Expand menu' : 'Collapse menu';
+        })();
+    </script>
 </aside>

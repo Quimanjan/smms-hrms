@@ -62,42 +62,53 @@
         <div class="grid items-stretch gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(320px,400px)]">
 
             {{-- ============ Calendar with personal tasks ============ --}}
-            <section class="flex flex-col rounded-[22px] bg-white p-[18px] shadow-[0_10px_30px_rgba(15,23,42,0.05)]" aria-label="Calendar">
-                <div class="mb-3 flex items-center justify-between gap-4">
-                    <h2 id="calendarHeading" class="text-[1.8rem] font-extrabold text-gray-900" x-text="selectedLabel"></h2>
-                </div>
+            <section class="cx cx--solo" aria-label="Calendar">
+                <div class="cx-main">
+                    <header class="cx-head">
+                        <h2 id="calendarHeading" class="cx-month" x-text="monthLabel" aria-live="polite"></h2>
+                        <div class="cx-nav">
+                            <button type="button" class="cx-today" @click="goToday()">Today</button>
+                            <button type="button" class="cx-arrow" @click="shiftMonth(-1)" aria-label="Previous month">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+                            </button>
+                            <button type="button" class="cx-arrow" @click="shiftMonth(1)" aria-label="Next month">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+                            </button>
+                        </div>
+                    </header>
 
-                <div class="grid w-full flex-1 gap-2 rounded-[28px] border border-[#f0eef0] bg-white p-3">
-                    <div class="grid grid-cols-7 gap-[7px]">
-                        <template x-for="d in weekdays" :key="d">
-                            <span class="grid min-h-[32px] place-items-center text-[0.72rem] font-bold uppercase tracking-[0.12em] text-gray-400" x-text="d"></span>
-                        </template>
+                    <div class="cx-week" aria-hidden="true">
+                        <template x-for="d in weekdays" :key="d"><span x-text="d"></span></template>
                     </div>
 
-                    <div class="grid auto-rows-[68px] grid-cols-7 gap-[7px]">
-                        <template x-for="(c, i) in cells" :key="i">
-                            <div>
-                                <template x-if="c === null"><div class="h-full"></div></template>
-
+                    <div class="cx-grid" :class="slide" role="grid">
+                        <template x-for="(c, i) in cells" :key="monthLabel + i">
+                            <div class="contents">
+                                <template x-if="c === null"><span class="cx-day cx-day--empty" aria-hidden="true"></span></template>
                                 <template x-if="c !== null">
-                                    <button type="button" @click="openTasks(c.iso)"
-                                        class="grid h-full w-full cursor-pointer grid-rows-[auto_1fr] items-start overflow-hidden rounded-[14px] border p-[7px] text-left text-gray-900 transition duration-200 hover:-translate-y-px hover:shadow-[0_12px_24px_rgba(15,23,42,0.08)]"
-                                        :class="c.iso === selected
-                                            ? 'border-[#fca5a5] bg-[#f7f2f2]'
-                                            : (c.iso === today ? 'border-[#fbcaca] bg-[#fff7f7]' : 'border-[#ececec] bg-white')">
-                                        <div class="grid w-full gap-px">
-                                            <span class="text-base font-extrabold leading-none"
-                                                :class="c.iso === selected ? 'text-[#991b1b]' : (c.iso === today ? 'text-[#b22222]' : 'text-gray-900')"
-                                                x-text="c.day"></span>
-                                            <span x-show="taskCount(c.iso) > 0"
-                                                class="overflow-hidden text-ellipsis whitespace-nowrap text-[0.78rem] leading-[1.1] text-gray-500"
-                                                x-text="taskCount(c.iso) + (taskCount(c.iso) === 1 ? ' task' : ' tasks')"></span>
-                                        </div>
+                                    <button type="button" @click="openTasks(c.iso)" :style="'--d:' + c.day"
+                                        :class="dayClasses(c)"
+                                        :aria-label="dayLabel(c)">
+                                        <span class="cx-num" x-text="c.day"></span>
+                                        <template x-if="holiday(c.iso)"><span class="cx-tag" x-text="holiday(c.iso).name"></span></template>
+                                        <template x-if="taskCount(c.iso) > 0">
+                                            <span class="cx-count" aria-hidden="true">
+                                                <template x-for="n in Math.min(taskCount(c.iso), 3)" :key="n"><i></i></template>
+                                                <template x-if="taskCount(c.iso) > 3"><b x-text="'+' + (taskCount(c.iso) - 3)"></b></template>
+                                            </span>
+                                        </template>
                                     </button>
                                 </template>
                             </div>
                         </template>
                     </div>
+
+                    <ul class="cx-legend" aria-label="Legend">
+                        <li><span class="cx-dot cx-dot--regular"></span>Regular holiday</li>
+                        <li><span class="cx-dot cx-dot--special"></span>Special non-working day</li>
+                        <li><span class="cx-dot cx-dot--school"></span>School day</li>
+                        <li><span class="cx-dot cx-dot--task"></span>Your tasks</li>
+                    </ul>
                 </div>
             </section>
 
@@ -105,8 +116,8 @@
             <aside aria-labelledby="birthdaysHeading" class="rounded-[22px] bg-white p-[22px] shadow-[0_10px_30px_rgba(15,23,42,0.05)]">
                 <div class="mb-5 flex items-start justify-between gap-3">
                     <div>
-                        <p class="mb-1.5 text-[0.7rem] font-extrabold uppercase tracking-[0.12em] text-[#b22222]">Upcoming</p>
-                        <h2 id="birthdaysHeading" class="text-[1.35rem] font-extrabold text-gray-900">Employee Birthdays</h2>
+                        
+                        <h2 id="birthdaysHeading" class="dp-title">Upcoming birthdays</h2>
                     </div>
                     <i class="fa-solid fa-cake-candles flex h-14 w-14 shrink-0 items-center justify-center text-[40px] leading-none text-[#b22222]" aria-hidden="true"></i>
                 </div>
@@ -125,7 +136,7 @@
                                 '-mx-2.5 rounded-xl bg-[#fff7f7] px-2.5 py-3' => $i === 0,
                                 'border-b border-[#f1f1f1] py-3 last:border-b-0' => $i !== 0,
                             ])>
-                                <div class="grid h-[38px] w-[38px] place-items-center rounded-full bg-[#fce2e2] text-[0.75rem] font-extrabold text-[#991b1b]" aria-hidden="true">{{ $b['initials'] }}</div>
+                                <div class="av-host h-[44px] w-[44px]" aria-hidden="true">{!! $b['avatar'] ?? '' !!}</div>
                                 <div class="min-w-0">
                                     <h3 class="truncate text-[0.9rem] font-extrabold text-gray-900">{{ $b['name'] }}</h3>
                                     <p class="mt-[3px] truncate text-[0.75rem] text-gray-400">{{ $b['role'] }}</p>
@@ -178,6 +189,8 @@
             </div>
         </div>
     </div>
+
+    @include('partials.ph-holidays')
 
     <script>
         function employeeDashboard(cfg) {
@@ -270,6 +283,48 @@
                 },
 
                 taskCount(iso) { return (this.tasks[iso] || []).length; },
+
+                slide: '',
+
+                get monthLabel() {
+                    return new Date(this.year, this.month, 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+                },
+
+                holiday(iso) { return window.smmsHolidayOn ? window.smmsHolidayOn(new Date(iso + 'T00:00:00')) : null; },
+
+                dayClasses(c) {
+                    const d = new Date(c.iso + 'T00:00:00');
+                    const h = this.holiday(c.iso);
+                    return {
+                        'cx-day': true,
+                        'cx-day--weekend': d.getDay() === 0 || d.getDay() === 6,
+                        'cx-day--today': c.iso === this.today,
+                        'cx-day--selected': c.iso === this.selected,
+                        'cx-day--past': c.iso < this.today,
+                        ['cx-day--' + (h ? h.type : 'plain')]: true,
+                    };
+                },
+
+                dayLabel(c) {
+                    const h = this.holiday(c.iso), n = this.taskCount(c.iso);
+                    return new Date(c.iso + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
+                        + (h ? ', ' + h.name : '') + (n ? ', ' + n + (n === 1 ? ' task' : ' tasks') : '');
+                },
+
+                shiftMonth(step) {
+                    const d = new Date(this.year, this.month + step, 1);
+                    this.year = d.getFullYear();
+                    this.month = d.getMonth();
+                    this.slide = '';
+                    this.$nextTick(() => { this.slide = step > 0 ? 'cx-grid--next' : 'cx-grid--prev'; });
+                    this.loadTasks();
+                },
+
+                goToday() {
+                    const [y, m] = this.today.split('-').map(Number);
+                    this.selected = this.today;
+                    if (y !== this.year || m - 1 !== this.month) { this.year = y; this.month = m - 1; this.loadTasks(); }
+                },
 
                 async loadTasks() {
                     const month = `${this.year}-${pad(this.month + 1)}`;

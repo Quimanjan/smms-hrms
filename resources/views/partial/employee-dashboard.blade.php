@@ -190,8 +190,8 @@
                             @click="openDetail({{ $employee->id }})"
                             class="flex cursor-pointer flex-col items-center gap-3 rounded-2xl border border-[#f3e0e0] bg-gradient-to-b from-white to-[#fff7f7] px-[18px] py-[22px] text-center shadow-[0_8px_24px_rgba(15,23,42,0.06)] transition duration-200 hover:-translate-y-1.5 hover:shadow-[0_18px_36px_rgba(15,23,42,0.1)]"
                         >
-                            <div class="grid h-[88px] w-[88px] shrink-0 place-items-center rounded-full bg-gradient-to-br from-[#b22222] to-[#dc2626] text-xl font-extrabold text-white">
-                                {{ $employee->initials }}
+                            <div class="av-host h-[96px] w-[96px] shrink-0">
+                                {!! $employee->avatarSvg() !!}
                             </div>
                             <div class="flex flex-col items-center gap-1.5">
                                 <h2 class="text-[1.05rem] font-bold text-gray-900">{{ $employee->name }}</h2>
@@ -216,7 +216,7 @@
 
                 <template x-if="detail">
                     <div>
-                        <div class="mx-auto grid h-[88px] w-[88px] place-items-center rounded-full bg-gradient-to-br from-[#b22222] to-[#dc2626] text-xl font-extrabold text-white" x-text="detail.initials"></div>
+                        <div class="av-host av-host--lg mx-auto h-[120px] w-[120px]" x-html="detail.avatar"></div>
 
                         <h3 class="mt-4 text-lg font-bold" x-text="fullName(detail)"></h3>
 
