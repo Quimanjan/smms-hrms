@@ -20,37 +20,44 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class EmployeeDocumentController extends Controller
 {
     /**
-     * GET /employee/documents
-     * Lists active submission boxes, each with THIS employee's uploads only.
+     * GET /document-employee
+     * The school's onboarding requirements with this employee's latest upload for each.
      */
     public function index(Request $request): View
     {
         $employee = $request->user()->employee;
 
-        $boxes = SubmissionBox::active()
-            ->where(function ($query) use ($employee) {
-                $query->whereNull('employee_id')->orWhere('employee_id', $employee->id);
-            })
-            ->with(['documents' => fn ($q) => $q
-                ->where('employee_id', $employee->id)
-                ->reorder()->latest('id')])
-            ->latest('created_at')
-            ->latest('id')
+        $requirements = SubmissionBox::requirements()
+            ->with(['documents' => fn ($q) => $q->where('employee_id', $employee?->id ?? 0)->reorder()->latest('id')])
             ->get()
             ->map(function (SubmissionBox $box) {
                 $latest = $box->documents->first();
+                $status = $latest ? strtolower((string) $latest->status) : 'missing';
 
-                // Mirrors the JS: hide the upload button once the latest upload is approved.
-                $box->can_upload = ! $box->isPastDeadline()
-                    && $latest?->status !== 'approved';
-                $box->has_submitted = $box->documents->isNotEmpty();
+                return [
+                    'id' => $box->id,
+                    'number' => $box->sort_order,
+                    'name' => $box->name,
+                    'optional' => $box->is_optional,
+                    'status' => $status,
+                    'file' => $latest?->name,
+                    'size' => $latest?->size_label,
+                    'uploaded' => $latest?->created_at?->timezone(config('app.timezone'))->format('M j, Y'),
+                    'url' => $latest ? route('employee.documents.file', $latest) : null,
+                    'can_upload' => $status !== 'approved',
+                ];
+            })->values();
 
-                return $box;
-            });
+        $required = $requirements->where('optional', false);
 
         return view('hr-document', [
             'employee' => $employee,
-            'boxes'    => $boxes,
+            'requirements' => $requirements,
+            'progress' => [
+                'approved' => $required->where('status', 'approved')->count(),
+                'waiting' => $requirements->where('status', 'pending')->count(),
+                'required' => $required->count(),
+            ],
         ]);
     }
 
@@ -93,35 +100,31 @@ class EmployeeDocumentController extends Controller
     public function store(StoreEmployeeDocumentRequest $request): RedirectResponse|JsonResponse
     {
         $employee = $request->user()->employee;
-        $box      = SubmissionBox::active()
-            ->where(function ($query) use ($employee) {
-                $query->whereNull('employee_id')->orWhere('employee_id', $employee->id);
-            })
-            ->find($request->integer('submission_box_id'));
+        $box      = SubmissionBox::requirements()->find($request->integer('submission_box_id'));
 
-        // Same "no longer available" guard as the JS.
         if (! $box) {
             throw ValidationException::withMessages([
-                'submission_box_id' => 'This submission box is no longer available. Please choose another one.',
+                'submission_box_id' => 'This requirement is no longer available.',
             ]);
         }
 
-        if ($box->isPastDeadline()) {
-            throw ValidationException::withMessages([
-                'submission_box_id' => 'The deadline for this submission box has passed.',
-            ]);
-        }
-
-        // Once approved, no more uploads (the JS hides the button; enforce it server-side too).
-        $alreadyApproved = EmployeeDocument::where('employee_id', $employee->id)
+        $previous = EmployeeDocument::where('employee_id', $employee->id)
             ->where('submission_box_id', $box->id)
-            ->where('status', 'approved')
-            ->exists();
+            ->get();
 
-        if ($alreadyApproved) {
+        // Once approved, no more uploads.
+        if ($previous->contains(fn ($d) => strtolower((string) $d->status) === 'approved')) {
             throw ValidationException::withMessages([
-                'submission_box_id' => 'Your document for this box has already been approved.',
+                'submission_box_id' => 'This requirement has already been approved.',
             ]);
+        }
+
+        // A new upload replaces one still waiting for review.
+        foreach ($previous as $old) {
+            if ($old->file_path) {
+                Storage::disk('local')->delete($old->file_path);
+            }
+            $old->delete();
         }
 
         $file = $request->file('file');
@@ -133,7 +136,7 @@ class EmployeeDocumentController extends Controller
             'submission_box_id' => $box->id,
             'employee_id'       => $employee->id,
             'name'              => $file->getClientOriginalName(),
-            'type'              => trim((string) $request->input('type')) ?: $box->type,
+            'type'              => $box->type,
             'file_path'         => $path,
             'mime_type'         => $file->getClientMimeType(),
             'size_bytes'        => $file->getSize(),
@@ -155,7 +158,7 @@ class EmployeeDocumentController extends Controller
 
         return redirect()
             ->route('documents.employee.index')
-            ->with('success', 'Document uploaded. It is now waiting for HR review.');
+            ->with('success', 'Uploaded "'.$box->name.'". It is now waiting for HR review.');
     }
 
     /**

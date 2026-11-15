@@ -221,8 +221,7 @@ Route::middleware(['auth', 'verified', TrackSystemDataUpdates::class])->group(fu
         Route::get('/document', [DocumentController::class, 'index'])
             ->name('documents.index');
 
-        Route::post('/documents/boxes', [DocumentController::class, 'storeBox'])
-            ->name('boxes.store');
+        // Submission boxes are now the school's fixed onboarding requirements (no HR-made boxes).
 
         Route::patch('/documents/decision', [DocumentController::class, 'decide'])
             ->name('hr.documents.decide');

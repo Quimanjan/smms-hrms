@@ -14,48 +14,77 @@ use Illuminate\Validation\Rule;
 
 class DocumentController extends Controller
 {
-    /** HR document management: stats, submission boxes and the files employees uploaded. */
+    /**
+     * HR document management: the school's fixed onboarding requirements, who
+     * submitted each one, and every employee's onboarding progress.
+     */
     public function index()
     {
-        $boxes = SubmissionBox::with(['documents.employee', 'recipient'])->latest()->get();
+        $requirements = SubmissionBox::requirements()
+            ->with(['documents' => fn ($q) => $q->with('employee')->reorder()->latest('id')])
+            ->get();
+
+        $employees = Employee::query()
+            ->whereNotNull('user_id')
+            ->orderBy('name')
+            ->get(['id', 'name', 'employee_id', 'position']);
+
+        $required = $requirements->where('is_optional', false);
+        $status = fn ($doc) => strtolower((string) $doc?->status);
+
+        $progress = $employees->map(function (Employee $e) use ($requirements, $required, $status) {
+            $mine = $requirements->map(fn ($r) => $r->documents->firstWhere('employee_id', $e->id))->filter();
+
+            return [
+                'id' => $e->id,
+                'name' => $e->name,
+                'number' => $e->employee_id,
+                'position' => $e->position,
+                'approved' => $required->filter(fn ($r) => $status($r->documents->firstWhere('employee_id', $e->id)) === 'approved')->count(),
+                'waiting' => $mine->filter(fn ($d) => $status($d) === 'pending')->count(),
+                'required' => $required->count(),
+            ];
+        })->values();
+
+        $cards = $requirements->map(function (SubmissionBox $r) use ($employees, $status) {
+            // Latest upload per employee.
+            $latest = $r->documents->unique('employee_id');
+
+            return [
+                'id' => $r->id,
+                'number' => $r->sort_order,
+                'name' => $r->name,
+                'optional' => $r->is_optional,
+                'waiting' => $latest->filter(fn ($d) => $status($d) === 'pending')->count(),
+                'approved' => $latest->filter(fn ($d) => $status($d) === 'approved')->count(),
+                'submissions' => $latest->map(fn ($d) => [
+                    'id' => $d->id,
+                    'employee' => $d->employee?->name ?? 'Employee',
+                    'number' => $d->employee?->employee_id,
+                    'file' => $d->name,
+                    'size' => $d->size_label,
+                    'date' => $d->created_at->timezone(config('app.timezone'))->toDateString(),
+                    'date_label' => $d->created_at->timezone(config('app.timezone'))->format('M j, Y g:i A'),
+                    'status' => ucfirst($status($d)),
+                    'url' => $d->file_path ? route('employee.documents.file', $d) : null,
+                ])->values(),
+                'missing' => $employees->reject(fn ($e) => $latest->contains('employee_id', $e->id))->pluck('name')->values(),
+            ];
+        })->values();
+
+        $all = $requirements->flatMap(fn ($r) => $r->documents->unique('employee_id'));
 
         return view('hr-document', [
-            'boxes'      => $boxes->map->toCard()->values(),
-            'employees'  => Employee::query()
-                ->whereNotNull('user_id')
-                ->orderBy('name')
-                ->get(['id', 'name', 'employee_id']),
-            'stats'      => [
-                'total'    => EmployeeDocument::count(),
-                'approved' => EmployeeDocument::where('status', EmployeeDocument::APPROVED)->count(),
-                'rejected' => EmployeeDocument::where('status', EmployeeDocument::REJECTED)->count(),
-                'pending'  => EmployeeDocument::where('status', EmployeeDocument::PENDING)->count(),
+            'requirements' => $cards,
+            'progress' => $progress,
+            'stats' => [
+                'waiting' => $all->filter(fn ($d) => $status($d) === 'pending')->count(),
+                'approved' => $all->filter(fn ($d) => $status($d) === 'approved')->count(),
+                'complete' => $progress->filter(fn ($p) => $p['required'] > 0 && $p['approved'] >= $p['required'])->count(),
+                'employees' => $progress->count(),
             ],
-            'reopenBox'  => session('reopen_box'),
+            'reopenBox' => session('reopen_box'),
         ]);
-    }
-
-    /** "Create submission box" form. */
-    public function storeBox(Request $request): RedirectResponse
-    {
-        $data = $request->validate([
-            'name'         => ['required', 'string', 'max:150'],
-            'type'         => ['required', 'string', 'max:100'],
-            'deadline'     => ['nullable', 'date', 'after_or_equal:today'],
-            'employee_id'  => ['nullable', 'integer', 'exists:employees,id'],
-            'instructions' => ['nullable', 'string', 'max:1000'],
-        ]);
-
-        $box = SubmissionBox::create($data + ['created_by' => Auth::id()]);
-        $recipients = $box->employee_id
-            ? collect([$box->employee_id])
-            : Employee::query()->whereNotNull('user_id')->pluck('id');
-
-        foreach ($recipients as $employeeId) {
-            HrmsNotifier::documentsRequested($box, (int) $employeeId);
-        }
-
-        return redirect()->route('documents.index')->with('success', 'Submission box created.');
     }
 
     /** Approve or reject an uploaded document. */
@@ -67,7 +96,9 @@ class DocumentController extends Controller
         ]);
 
         $document = EmployeeDocument::findOrFail($data['document_id']);
+        $boxId = $document->submission_box_id;
 
+        // Rejected files are deleted so the employee can upload a new one.
         if ($data['decision'] === EmployeeDocument::REJECTED) {
             HrmsNotifier::documentsReviewed($document, $data['decision']);
 
@@ -79,7 +110,7 @@ class DocumentController extends Controller
             $document->delete();
         } else {
             $document->update([
-                'status'      => $data['decision'],
+                'status'      => strtolower($data['decision']),
                 'reviewed_at' => now(),
                 'reviewed_by' => Auth::id(),
             ]);
@@ -87,7 +118,10 @@ class DocumentController extends Controller
         }
 
         return redirect()->route('documents.index')
-            ->with('success', 'Document ' . strtolower($data['decision']) . '.');
+            ->with('success', $data['decision'] === EmployeeDocument::REJECTED
+                ? 'Document rejected and removed. The employee can upload a new one.'
+                : 'Document approved.')
+            ->with('reopen_box', $boxId);
     }
 
     /** Delete an uploaded document (and its file), then reopen the box it belonged to. */

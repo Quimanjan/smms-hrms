@@ -31,28 +31,8 @@ function createDocumentNotificationEmployee(User $user): Employee
     ]);
 }
 
-test('creating a submission box notifies the assigned employee', function () {
-    $hr = User::factory()->create();
-    $hr->assignRole('HR');
-    $employeeUser = User::factory()->create();
-    $employeeUser->assignRole('Employee');
-    $employee = createDocumentNotificationEmployee($employeeUser);
-
-    $this->actingAs($hr)
-        ->post(route('boxes.store'), [
-            'name' => 'NBI Clearance',
-            'type' => 'NBI',
-            'employee_id' => $employee->id,
-        ])
-        ->assertRedirect(route('documents.index'));
-
-    $notification = $employeeUser->notifications()->first();
-
-    expect($employeeUser->notifications()->count())->toBe(1)
-        ->and($notification->data['title'])->toBe('Documents requested')
-        ->and($notification->data['message'])->toContain('NBI Clearance')
-        ->and($notification->data['url'])->toBe(route('documents.employee.index'));
-});
+// HR no longer creates submission boxes: the client asked for a fixed list of
+// onboarding requirements, so the old box-creation test was removed.
 
 test('document upload notifies HR with employee, file, and submission date', function () {
     Storage::fake('local');
@@ -61,15 +41,18 @@ test('document upload notifies HR with employee, file, and submission date', fun
     $employeeUser = User::factory()->create();
     $employeeUser->assignRole('Employee');
     $employee = createDocumentNotificationEmployee($employeeUser);
+    // Uploads now go to the school's fixed onboarding requirements.
     $box = SubmissionBox::create([
         'name' => 'NBI Clearance',
         'type' => 'NBI',
+        'is_requirement' => true,
+        'sort_order' => 99,
     ]);
 
     $this->actingAs($employeeUser)
         ->post(route('employee.documents.store'), [
             'submission_box_id' => $box->id,
-            'file' => UploadedFile::fake()->createWithContent('clearance.pdf', 'test document'),
+            'file' => UploadedFile::fake()->create('clearance.pdf', 12, 'application/pdf'),
         ])
         ->assertSessionHasNoErrors();
 

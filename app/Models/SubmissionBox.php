@@ -9,13 +9,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SubmissionBox extends Model
 {
-    protected $fillable = ['name', 'type', 'deadline', 'instructions', 'employee_id', 'is_active', 'created_by'];
+    protected $fillable = ['name', 'type', 'deadline', 'instructions', 'employee_id', 'is_active', 'created_by', 'is_requirement', 'is_optional', 'sort_order'];
 
     protected function casts(): array
     {
         return [
             'deadline'  => 'date',
             'is_active' => 'boolean',
+            'is_requirement' => 'boolean',
+            'is_optional' => 'boolean',
         ];
     }
 
@@ -38,6 +40,12 @@ class SubmissionBox extends Model
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true);
+    }
+
+    /** The school's fixed onboarding requirements, in the school's order. */
+    public function scopeRequirements(Builder $query): Builder
+    {
+        return $query->where('is_requirement', true)->where('is_active', true)->orderBy('sort_order');
     }
 
     /** True when a deadline is set and that day has ended (employee side: blocks new uploads). */
