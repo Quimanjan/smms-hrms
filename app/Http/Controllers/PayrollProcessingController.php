@@ -385,7 +385,11 @@ class PayrollProcessingController extends Controller
             array_fill_keys(array_merge(self::DED, self::AUTO), 0)
         );
 
-        $employees = Employee::excludeInternalStaff()->orderBy('name')->get();
+        // A separated employee stays on payroll through the pay period with their last working day.
+        $employees = Employee::excludeInternalStaff()
+            ->current($this->cutoffDateRange($period, $cutoff)[0])
+            ->orderBy('name')
+            ->get();
         $attendance = $this->attendanceRecordsFor($employees, $period, $cutoff);
         $cashAdvancePayroll = app(CashAdvancePayrollService::class);
         $cashAdvances = $cashAdvancePayroll->loansForPeriod($period, $employees->pluck('id'))

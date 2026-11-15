@@ -184,6 +184,7 @@
                     <p class="font-semibold">No employees found.</p>
                 </div>
             @else
+                <p class="emp-archived-note">Employees who resigned or separated are archived after their last working day. Find them in <a href="{{ route('offboarding.index', ['tab' => 'archive']) }}">Offboarding, Archive</a>.</p>
                 <div class="emp-grid">
                     @foreach ($employees as $employee)
                         <article

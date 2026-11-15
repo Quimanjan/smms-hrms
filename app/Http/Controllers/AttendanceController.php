@@ -70,7 +70,7 @@ class AttendanceController extends Controller
         }
 
         // Employee list for the "Add Attendance" modal, keyed by id.
-        $employees = SchoolEmployee::excludeInternalStaff()->orderBy('name')->get()->mapWithKeys(fn ($e) => [
+        $employees = SchoolEmployee::excludeInternalStaff()->current()->orderBy('name')->get()->mapWithKeys(fn ($e) => [
             $e->id => [
                 'id' => $e->id,
                 // ZKTeco user ID is the employee ID (falls back to the old employee_id)

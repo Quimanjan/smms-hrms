@@ -48,6 +48,7 @@ class EmployeeController extends Controller
         $search = trim((string) $request->query('search', ''));
 
         $employees = Employee::query()
+            ->current()
             ->when($search !== '', function ($q) use ($search) {
                 $q->where(function ($w) use ($search) {
 
@@ -187,6 +188,7 @@ class EmployeeController extends Controller
             });
 
         $departments = Employee::query()
+            ->current()
             ->distinct()
             ->orderBy('department')
             ->pluck('department', 'department');

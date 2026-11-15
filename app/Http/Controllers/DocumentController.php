@@ -25,6 +25,7 @@ class DocumentController extends Controller
             ->get();
 
         $employees = Employee::query()
+            ->current()
             ->whereNotNull('user_id')
             ->orderBy('name')
             ->get(['id', 'name', 'employee_id', 'position']);

@@ -48,7 +48,8 @@ class AttendanceAbsenceService
                 ->map(fn ($name) => mb_strtolower(trim((string) $name)))
                 ->flip();
 
-            foreach (SchoolEmployee::excludeInternalStaff()->get(['id', 'name', 'role_type', 'position']) as $employee) {
+            // Nobody is marked absent after their last working day.
+            foreach (SchoolEmployee::excludeInternalStaff()->current($date)->get(['id', 'name', 'role_type', 'position']) as $employee) {
                 $role = AttendanceSchedule::isMaintenanceEmployee($employee->role_type, $employee->position)
                     ? 'maintenance'
                     : $employee->role_type;

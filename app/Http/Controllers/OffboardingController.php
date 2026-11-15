@@ -221,10 +221,15 @@ class OffboardingController extends Controller
             'progress' => 100,
         ]);
 
+        // Archive the employee after their last working day: from then on they
+        // only appear in Offboarding (Archive). Payroll still covers that day.
+        \App\Models\Employee::where('id', $offboardingCase->employee_id)
+            ->update(['separated_on' => $offboardingCase->last_working_day]);
+
         HrmsNotifier::offboardingAdminDecided($offboardingCase, true);
 
         return redirect()->route('offboarding.index', ['tab' => 'archive'])
-            ->with('success', 'Final approval completed.')
+            ->with('success', 'Final approval completed. The employee will be archived after their last working day.')
             ->with('offboarding_detail_id', $offboardingCase->id);
     }
 

@@ -89,6 +89,7 @@ class EmployeeDashboardController extends Controller
         $today = now()->startOfDay();
 
         return Employee::query()
+            ->current()
             ->whereNotNull('birthday')
             ->get(['name', 'position', 'birthday'])
             ->map(function (Employee $e) use ($today) {

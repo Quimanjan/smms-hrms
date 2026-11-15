@@ -32,7 +32,7 @@ class DashboardOverview
         $cards = array_values(array_filter(match ($role) {
             'Admin' => [
                 self::card('Active employees', 'fa-users', 'employees.index',
-                    fn () => DB::table('employees')->count(),
+                    fn () => self::currentEmployees()->count(),
                     'On the school\'s roster'),
                 self::card('Leave requests', 'fa-calendar-days', 'leaves.index',
                     fn () => self::pending('leave_requests', 'admin_status', ['hr_status' => 'approved']),
@@ -46,7 +46,7 @@ class DashboardOverview
             ],
             'HR' => [
                 self::card('Active employees', 'fa-users', 'employees.index',
-                    fn () => DB::table('employees')->count(),
+                    fn () => self::currentEmployees()->count(),
                     'On the school\'s roster'),
                 self::card('Leave requests', 'fa-calendar-days', 'leaves.index',
                     fn () => self::pending('leave_requests', 'hr_status'),
@@ -60,7 +60,7 @@ class DashboardOverview
             ],
             'Accounting' => [
                 self::card('Employees on payroll', 'fa-users', 'payroll-accounting.index',
-                    fn () => DB::table('employees')->count(),
+                    fn () => self::currentEmployees()->count(),
                     'Paid each cutoff'),
                 self::card('Payslips in review', 'fa-file-invoice-dollar', 'salary-monitoring.index',
                     fn () => self::pending('payslips', 'admin_status'),
@@ -103,11 +103,19 @@ class DashboardOverview
         ];
     }
 
+    /** Employees still with the school (archived after their last working day). */
+    private static function currentEmployees()
+    {
+        return DB::table('employees')->where(fn ($q) => $q
+            ->whereNull('separated_on')
+            ->orWhere('separated_on', '>=', now()->toDateString()));
+    }
+
     /** People and workforce mix for the dashboard panels. */
     public static function team(): array
     {
         try {
-            $people = DB::table('employees')
+            $people = self::currentEmployees()
                 ->select('id', 'name', 'gender', 'position', 'role_type', 'department')
                 ->orderBy('name')
                 ->get();

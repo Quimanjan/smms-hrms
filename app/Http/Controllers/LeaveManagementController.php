@@ -77,6 +77,7 @@ class LeaveManagementController extends Controller
 
         $year = now()->year;
         $employees = Employee::query()
+            ->current()
             ->whereNotNull('user_id')
             ->orderBy('name')
             ->get()

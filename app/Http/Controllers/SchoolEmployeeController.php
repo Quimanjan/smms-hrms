@@ -18,6 +18,7 @@ class SchoolEmployeeController extends Controller
 
         $employees = SchoolEmployee::query()
             ->excludeInternalStaff()
+            ->current()
 
             // Hide the logged-in user's own employee record.
             ->where(function ($q) use ($authId) {

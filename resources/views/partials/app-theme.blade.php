@@ -424,6 +424,8 @@ body.app-body .calendar-day:not(.empty):hover { transform: translateY(-2px); bor
 }
 
 /* ---------- Employee cards (compact) ---------- */
+.emp-archived-note { margin: 0 0 12px; font-size: 0.85rem; color: var(--mg-stone); }
+.emp-archived-note a { color: var(--mg-crimson); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 .emp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
 .emp-card {
     display: flex; align-items: center; gap: 14px; min-width: 0; padding: 14px 16px;

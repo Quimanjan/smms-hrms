@@ -55,7 +55,7 @@ class NonWorkingDayController extends Controller
                 'paid_hours' => $isPaid ? ($data['paid_hours'] ?? 8) : 0,
             ]);
 
-            $employeeIds = SchoolEmployee::query()->pluck('id');
+            $employeeIds = SchoolEmployee::query()->current($nonWorkingDay->date)->pluck('id');
             $existing = Attendance::query()
                 ->whereDate('date', $nonWorkingDay->date)
                 ->get(['id', 'employee_id', 'time_in', 'time_out']);
