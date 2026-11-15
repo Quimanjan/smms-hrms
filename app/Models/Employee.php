@@ -74,7 +74,7 @@ class Employee extends Model
 
         // Nasa database pero wala dati sa fillable.
         // Ang employment_status ay NOT NULL at walang default sa database.
-        'nickname', 'employment_status',  'step_no',
+        'nickname', 'employment_status', 'date_hired', 'separated_on',  'step_no',
 
         // My Account (gender at civil_status ay nasa fillable na)
         'gender', 'civil_status', 'phone', 'education',

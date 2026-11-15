@@ -851,6 +851,26 @@ button.cx-day:focus-visible { outline: 2px solid var(--mg-gold); outline-offset:
     .rq-counts, .rq-mine-act { width: 100%; justify-content: flex-start; padding-left: 46px; }
 }
 
+/* ---------- Final pay (offboarding) ---------- */
+.fp { padding: 16px; border: 1px solid #f0dada; border-radius: 12px; background: #fff; text-align: left; }
+.fp-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+.fp-head h4 { margin: 0; font-family: var(--mg-display); font-weight: 400; font-size: 1.25rem; color: var(--mg-oxblood); }
+.fp-cause { display: grid; gap: 4px; }
+.fp-cause label { font-size: 0.75rem; font-weight: 700; color: var(--mg-stone); }
+.fp-cause select { height: 38px; padding: 0 30px 0 10px; border: 1px solid var(--mg-line); border-radius: 10px; font-size: 0.85rem; }
+.fp-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 18px; margin: 0 0 12px; }
+.fp-facts dt { font-size: 0.75rem; color: var(--mg-stone); }
+.fp-facts dd { margin: 2px 0 0; font-weight: 600; font-size: 0.88rem; }
+.fp-facts small { font-weight: 500; color: #8a5a00; }
+.fp-lines { display: grid; margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--mg-line); }
+.fp-lines li { display: flex; justify-content: space-between; gap: 14px; padding: 10px 0; border-bottom: 1px solid #f1e9e7; }
+.fp-lines li div { display: grid; gap: 2px; }
+.fp-lines small { color: var(--mg-stone); font-size: 0.76rem; }
+.fp-lines span { font-weight: 700; white-space: nowrap; }
+.fp-total strong, .fp-total span { font-size: 1rem; color: var(--mg-oxblood); }
+.fp-note { margin: 10px 0 0; font-size: 0.76rem; color: var(--mg-stone); }
+@media (max-width: 560px) { .fp-facts { grid-template-columns: 1fr; } }
+
 /* ---------- Proctoring days (HR) ---------- */
 .proc-form { display: grid; grid-template-columns: 1fr; gap: 14px; }
 @media (min-width: 640px) { .proc-form { grid-template-columns: 1fr 1.4fr auto; align-items: end; } .proc-form [role="alert"] { grid-column: 1 / -1; } }

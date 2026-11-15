@@ -127,6 +127,8 @@ class EmployeeController extends Controller
                     'email' => $e->email,
 
                     'birthday' => optional($e->birthday)->format('Y-m-d'),
+                    'date_hired' => $e->date_hired ? \Carbon\Carbon::parse($e->date_hired)->format('Y-m-d') : null,
+                    'date_hired_label' => $e->date_hired ? \Carbon\Carbon::parse($e->date_hired)->format('F j, Y') : null,
                     'birthday_label' => optional($e->birthday)->format('F j, Y'),
 
                     'civil_status' => $e->civil_status,
@@ -370,6 +372,9 @@ class EmployeeController extends Controller
                     ->ignore($employee?->id),
             ],
 
+            // Used for length of service (separation and retirement pay).
+            'date_hired' => ['nullable', 'date', 'before_or_equal:today'],
+
             'birthday' => [
                 'required',
                 'date',
@@ -475,6 +480,7 @@ class EmployeeController extends Controller
 
             'email' => $d['email'],
             'birthday' => $d['birthday'],
+            'date_hired' => $d['date_hired'] ?? null,
 
             'civil_status' => $d['civil_status'],
             'gender' => $d['gender'],

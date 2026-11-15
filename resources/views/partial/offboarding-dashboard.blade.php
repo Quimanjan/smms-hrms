@@ -259,6 +259,8 @@
                                 </div>
                             </section>
 
+                            @include('partials.final-pay')
+
                             <section class="rounded-xl border border-[#f0dada] bg-gray-50 p-4">
                                 <div class="mb-3">
                                     <h4 class="text-base font-extrabold text-gray-900">Required documents and clearances</h4>
@@ -367,6 +369,8 @@
                                     </div>
                                 </div>
                             </section>
+
+                            @include('partials.final-pay')
 
                             <section class="rounded-xl border border-[#f0dada] bg-gray-50 p-4">
                                 <div class="mb-3">
@@ -490,6 +494,10 @@
                 detailId: cfg.openId,
                 rejection: null,
                 rejectionReason: '',
+
+                peso(v) {
+                    return new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(Number(v) || 0);
+                },
 
                 get detail() {
                     return this.detailId ? this.items[this.detailId] : null;

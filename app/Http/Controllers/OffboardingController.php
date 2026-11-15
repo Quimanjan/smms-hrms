@@ -121,6 +121,8 @@ class OffboardingController extends Controller
                 'employee_name' => $c->employee?->name ?? 'Unknown employee',
                 'position' => $c->employee?->position ?? 'N/A',
                 'reason' => $c->reason,
+                'final_pay' => \App\Support\FinalPay::for($c),
+                'cause_url' => route('offboarding.cause', $c),
                 'last_working_day' => $c->last_working_day->format('M d, Y'),
                 'message' => $c->employee_message ?: 'No additional message from the employee.',
                 'approved' => $c->admin_final_approved,
@@ -202,6 +204,20 @@ class OffboardingController extends Controller
     /**
      * Final approval — only after HR approved every submitted document.
      */
+    /** HR or Admin sets the cause of separation, which decides the separation pay. */
+    public function cause(Request $request, OffboardingCase $offboardingCase): RedirectResponse
+    {
+        $data = $request->validate([
+            'separation_cause' => ['required', 'in:'.implode(',', array_keys(\App\Support\FinalPay::CAUSES))],
+        ]);
+
+        $offboardingCase->update($data);
+
+        return back()
+            ->with('success', 'Cause of separation saved. Final pay was recalculated.')
+            ->with('offboarding_detail_id', $offboardingCase->id);
+    }
+
     public function approve(Request $request, OffboardingCase $offboardingCase): RedirectResponse
     {
         abort_unless($request->user()->hasRole('Admin'), 403);

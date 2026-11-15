@@ -180,6 +180,10 @@ Route::middleware(['auth', 'verified', TrackSystemDataUpdates::class])->group(fu
         Route::get('/offboarding', [OffboardingController::class, 'index'])
             ->name('offboarding.index');
 
+        // Cause of separation (decides separation pay in the final pay breakdown)
+        Route::patch('/offboarding/{offboardingCase}/cause', [OffboardingController::class, 'cause'])
+            ->name('offboarding.cause');
+
         Route::patch('/offboarding/{offboardingCase}/requirements', [
             OffboardingController::class,
             'sendRequirements',

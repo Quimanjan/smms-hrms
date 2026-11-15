@@ -37,6 +37,7 @@ class OffboardingCase extends Model
     protected $fillable = [
         'employee_id',
         'reason',
+        'separation_cause',
         'last_working_day',
         'employee_message',
         'status',

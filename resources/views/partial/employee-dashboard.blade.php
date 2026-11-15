@@ -252,6 +252,7 @@
                                 <div><dt>Position</dt><dd x-text="detail.position || '—'"></dd></div>
                                 <div><dt>Department</dt><dd x-text="detail.department_label || detail.department || '—'"></dd></div>
                                 <div><dt>Role type</dt><dd x-text="detail.role_type || '—'"></dd></div>
+                                <div><dt>Date hired</dt><dd x-text="detail.date_hired_label || 'Not set'"></dd></div>
                                 <div><dt>Employment status</dt><dd x-text="statusLabel(detail.employment_status)"></dd></div>
                                 <div><dt>Salary step</dt><dd x-text="detail.step_label || '—'"></dd></div>
                                 <div><dt>Biometric ID</dt><dd x-text="detail.zkteco_user_id || detail.employee_id || '—'"></dd></div>
@@ -468,6 +469,13 @@
                         </div>
                     </div>
 
+                    {{-- Date hired: used for length of service in final pay --}}
+                    <div>
+                        <label for="f_date_hired" class="{{ $labelClass }}">Date hired</label>
+                        <input id="f_date_hired" type="date" name="date_hired" x-model="form.date_hired" max="{{ now()->toDateString() }}" class="{{ $inputClass }}">
+                        <p class="{{ $errClass }}">{{ $errors->first('date_hired') }}</p>
+                    </div>
+
                     {{-- Birthday / Civil Status / Gender (employees.birthday, employees.civil_status, employees.gender) --}}
                     <div class="grid gap-4 sm:grid-cols-3">
                         <div>
@@ -577,7 +585,7 @@
                 position: '', department: '', role_type: '',
                 employment_status: 'regular',
                 step_no: defaultStep,
-                email: '', birthday: '', civil_status: '', gender: '',
+                email: '', birthday: '', date_hired: '', civil_status: '', gender: '',
                 address_line: '', address_landmark: '', barangay: '', city_municipality: '', province: '', zip_code: '',
                 emergency_name: '', emergency_contact: '',
             });
@@ -696,6 +704,7 @@
                     Object.assign(this.form, this.splitName(''));
                     this.form.email = '';
                     this.form.birthday = '';
+                    this.form.date_hired = '';
                     this.form.civil_status = '';
                     this.form.gender = '';
                 },
@@ -739,7 +748,7 @@
                         // Use the employee's saved step (needs 'step_no' in the card data)
                         step_no: String(e.step_no ?? defaultStep),
                         email: e.email,
-                        birthday: e.birthday, civil_status: e.civil_status || '', gender: e.gender || '',
+                        birthday: e.birthday, date_hired: e.date_hired || '', civil_status: e.civil_status || '', gender: e.gender || '',
                         ...this.splitAddress(e.address),
                         emergency_name: e.emergency_name, emergency_contact: e.emergency_contact,
                     };
