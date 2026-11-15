@@ -54,6 +54,54 @@ class Avatar
     /** SVG for an employee-like object (anything with name, gender, position, role_type, department). */
     public static function for(object $person, string $label = ''): string
     {
+        // The panel asked for initials instead of illustrated avatars.
+        return self::initials((string) ($person->name ?? ''), $label);
+    }
+
+    /** First letters of the first and last name, e.g. "Juan Carlos Dela Cruz" => "JC". */
+    public static function initialsOf(string $name): string
+    {
+        $suffixes = ['jr', 'jr.', 'sr', 'sr.', 'ii', 'iii', 'iv'];
+        $words = array_values(array_filter(
+            preg_split('/\s+/', trim($name)) ?: [],
+            fn ($w) => $w !== '' && ! in_array(strtolower($w), $suffixes, true)
+        ));
+
+        if (! $words) {
+            return '?';
+        }
+
+        $first = mb_substr($words[0], 0, 1);
+        $last = count($words) > 1 ? mb_substr(end($words), 0, 1) : '';
+
+        return mb_strtoupper($first.$last);
+    }
+
+    /** A round badge with the person's initials in school colors. */
+    public static function initials(string $name, string $label = ''): string
+    {
+        $palettes = [
+            ['#4a0a12', '#7a1420', '#e6cf9a'],
+            ['#a5121e', '#6e0c15', '#fff4dc'],
+            ['#c9a24b', '#9c7a2c', '#33060c'],
+            ['#5b2a33', '#33060c', '#e6cf9a'],
+            ['#8a3b2b', '#5a1f17', '#fbe9d7'],
+        ];
+        $seed = crc32(strtolower(trim($name)) ?: 'smms');
+        [$from, $to, $ink] = $palettes[$seed % count($palettes)];
+        $id = 'ini'.substr(md5($name), 0, 8);
+        $text = e(self::initialsOf($name));
+        $title = e($label !== '' ? $label : $name);
+        $size = mb_strlen(self::initialsOf($name)) > 1 ? 44 : 52;
+
+        return <<<SVG
+<svg class="av av--initials" viewBox="0 0 120 120" role="img" aria-label="{$title}" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="{$id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="{$from}"/><stop offset="1" stop-color="{$to}"/></linearGradient></defs><circle cx="60" cy="60" r="60" fill="url(#{$id})"/><circle cx="60" cy="60" r="55" fill="none" stroke="{$ink}" stroke-opacity="0.28" stroke-width="1.5"/><text x="60" y="61" text-anchor="middle" dominant-baseline="central" font-size="{$size}" fill="{$ink}" class="av-initials">{$text}</text></svg>
+SVG;
+    }
+
+    /** Illustrated avatar (kept for reference; not used since the panel asked for initials). */
+    public static function illustrated(object $person, string $label = ''): string
+    {
         return self::svg(
             (string) ($person->name ?? ''),
             $person->gender ?? null,

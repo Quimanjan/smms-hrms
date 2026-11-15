@@ -97,7 +97,21 @@ body.app-body #sidebar {
 
 .app-side-link i { color: rgba(230, 207, 154, 0.75); transition: color 0.2s ease, transform 0.2s ease; }
 
-.app-side-link:hover { background: rgba(255, 255, 255, 0.07); color: #fff; padding-left: 1.75rem; }
+.app-side-link:hover { background: rgba(255, 255, 255, 0.07); color: #fff; }
+
+/* One line per menu item: tighter spacing and slightly smaller type. */
+body.app-body #sidebar .app-side-link {
+    gap: 10px;
+    margin-left: 8px;
+    margin-right: 8px;
+    padding: 11px 10px;
+    font-size: 0.79rem;
+    line-height: 1.3;
+    white-space: nowrap;
+}
+body.app-body #sidebar .app-side-link span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+body.app-body #sidebar .app-side-link i { width: 16px; flex: none; }
+body.app-body #sidebar .app-side-link:hover { padding-left: 13px; }
 .app-side-link:hover i { color: var(--mg-gold-soft); transform: scale(1.12); }
 
 .app-side-link.is-active {
@@ -347,10 +361,10 @@ body.app-body .calendar-day:not(.empty):hover { transform: translateY(-2px); bor
     html.sb-collapsed #sidebar > div:first-of-type::after { margin-top: 14px; width: 28px; }
 
     html.sb-collapsed #sidebar nav { padding-left: 0; padding-right: 0; }
-    html.sb-collapsed .app-side-link { justify-content: center; gap: 0; margin-left: 14px; margin-right: 14px; padding: 13px 0; }
+    html.sb-collapsed body.app-body #sidebar .app-side-link { justify-content: center; gap: 0; margin-left: 14px; margin-right: 14px; padding: 13px 0; }
     html.sb-collapsed .app-side-link span { display: none; }
     html.sb-collapsed .app-side-link i { width: auto; font-size: 1.05rem; }
-    html.sb-collapsed .app-side-link:hover { padding-left: 0; }
+    html.sb-collapsed body.app-body #sidebar .app-side-link:hover { padding-left: 0; }
     html.sb-collapsed .app-side-link.is-active::before { top: 12px; bottom: 12px; }
 
     html.sb-collapsed .sb-toggle { justify-content: center; margin: 8px 16px 22px; padding: 10px; }
@@ -396,6 +410,8 @@ body.app-body .calendar-day:not(.empty):hover { transform: translateY(-2px); bor
 @keyframes av-hat { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-1.5deg); } }
 @keyframes av-halo { to { transform: rotate(360deg); } }
 @keyframes av-hop { 0% { transform: translateY(0); } 35% { transform: translateY(-6px) scale(1.03); } 70% { transform: translateY(1px); } 100% { transform: none; } }
+
+.av--initials .av-initials { font-family: var(--mg-display); letter-spacing: 0.02em; }
 
 /* Fixed avatar sizes (the prebuilt stylesheet has no custom size classes). */
 .av-size-44 { width: 44px; height: 44px; flex: none; }
