@@ -95,6 +95,8 @@
                                 <td class="px-2 py-4">
                                     <input type="checkbox" :aria-label="'Select ' + e.name"
                                         class="h-4 w-4 cursor-pointer rounded border-gray-300 accent-[#b22222]"
+                                        :disabled="!e.dtrConfirmed"
+                                        :title="e.dtrConfirmed ? '' : 'Waiting for the employee to confirm their DTR'"
                                         :checked="selected.includes(e.id)" @change="toggleOne(e.id, $event.target.checked)">
                                 </td>
                                 <td class="px-4 py-4">
@@ -102,6 +104,8 @@
                                         <button type="button" @click="openDetails(i)"
                                             class="cursor-pointer rounded-lg px-2 py-1 text-sm font-extrabold text-[#b22222] hover:bg-[#fef2f2] hover:underline" x-text="e.name"></button>
                                         <span class="text-[0.72rem] font-semibold text-gray-500" x-text="e.employeeNumber"></span>
+                                        <span class="dtr-badge" :class="e.dtrConfirmed ? 'dtr-badge--ok' : 'dtr-badge--wait'"
+                                            x-text="e.dtrConfirmed ? 'DTR confirmed' : 'DTR not confirmed'"></span>
                                     </div>
                                 </td>
                                 <td class="px-4 py-4 text-gray-600" x-text="e.position || e.department || '-'"></td>
@@ -306,10 +310,12 @@
                 selected: [],
 
                 get allSelected() {
-                    return this.employees.length > 0 && this.selected.length === this.employees.length;
+                    const ready = this.employees.filter((e) => e.dtrConfirmed);
+                    return ready.length > 0 && this.selected.length === ready.length;
                 },
                 toggleAll(checked) {
-                    this.selected = checked ? this.employees.map((e) => e.id) : [];
+                    // Only employees who confirmed their DTR can be transferred.
+                    this.selected = checked ? this.employees.filter((e) => e.dtrConfirmed).map((e) => e.id) : [];
                 },
                 toggleOne(id, checked) {
                     this.selected = checked

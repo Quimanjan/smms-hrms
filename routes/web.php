@@ -248,6 +248,12 @@ Route::middleware(['auth', 'verified', TrackSystemDataUpdates::class])->group(fu
             'index',
         ])->name('attendance.attendance-employee.index');
 
+        // The employee confirms their DTR for a pay period (needed before payroll transfer).
+        Route::post('/attendance-employee-monitoring/confirm', [
+            EmployeeAttendanceController::class,
+            'confirm',
+        ])->name('attendance.attendance-employee.confirm');
+
         // School Employees
         Route::get('/school-employees', [SchoolEmployeeController::class, 'index'])
             ->name('employee.school-employees');

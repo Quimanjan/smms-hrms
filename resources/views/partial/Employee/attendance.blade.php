@@ -36,7 +36,46 @@
             <section class="dtr" aria-labelledby="dtr-title"
                 x-data="dtrSheet(@js($rows), @js($fileName), @js($employee->name ?? ''), @js($from->format('M d, Y').' to '.$to->format('M d, Y')))">
 
-                {{-- Pick the period --}}
+                {{-- Confirm the DTR for a pay period --}}
+                <div class="dtr-confirm {{ $confirmation ? 'is-done' : '' }}">
+                    <form method="GET" action="{{ route('attendance.attendance-employee.index') }}" class="dtr-confirm-pick">
+                        <label for="dtr-pay">Pay period</label>
+                        <select id="dtr-pay" name="pay" onchange="this.form.submit()">
+                            @unless ($payPeriod)
+                                <option value="" selected>Custom dates</option>
+                            @endunless
+                            @foreach ($payPeriods as $pp)
+                                <option value="{{ $pp['key'] }}" @selected($payPeriod && $payPeriod['key'] === $pp['key'])>{{ $pp['label'] }}</option>
+                            @endforeach
+                        </select>
+                        <noscript><button type="submit">Show</button></noscript>
+                    </form>
+
+                    <div class="dtr-confirm-state" role="status">
+                        @if (! $payPeriod)
+                            <p>Pick a pay period to confirm your DTR for payroll.</p>
+                        @elseif ($confirmation)
+                            <p><strong>Confirmed</strong> on {{ $confirmation->confirmed_at->timezone(config('app.timezone'))->format('F j, Y g:i A') }}. Accounting can now process your payslip.</p>
+                        @elseif (! $payPeriod['ended'])
+                            <p>This pay period ends on {{ $payPeriod['end']->format('F j, Y') }}. You can confirm your DTR after that.</p>
+                        @else
+                            <p>Check every day below. If something is wrong, file a time correction first. When it is right, confirm it so Accounting can process your payslip.</p>
+                        @endif
+                        @error('confirm') <p class="dtr-error">{{ $message }}</p> @enderror
+                    </div>
+
+                    @if ($payPeriod && $payPeriod['ended'] && ! $confirmation)
+                        <form method="POST" action="{{ route('attendance.attendance-employee.confirm') }}"
+                            data-confirm="Confirm that your DTR for the {{ $payPeriod['label'] }} is correct?" data-confirm-button="Confirm DTR">
+                            @csrf
+                            <input type="hidden" name="period" value="{{ $payPeriod['period'] }}">
+                            <input type="hidden" name="cutoff" value="{{ $payPeriod['cutoff'] }}">
+                            <button type="submit" class="dtr-confirm-btn">Confirm my DTR</button>
+                        </form>
+                    @endif
+                </div>
+
+                {{-- Or pick any dates --}}
                 <form method="GET" action="{{ route('attendance.attendance-employee.index') }}" class="dtr-steps">
                     <div class="dtr-step">
                         <span class="dtr-step-num" aria-hidden="true">1</span>

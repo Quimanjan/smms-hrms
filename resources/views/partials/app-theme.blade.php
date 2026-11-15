@@ -686,6 +686,27 @@ button.cx-day:focus-visible { outline: 2px solid var(--mg-gold); outline-offset:
 .gov-ids li { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 32px; font-size: 0.92rem; }
 .gov-ids__label { font-weight: 600; color: var(--mg-ink); }
 
+/* ---------- DTR confirmation ---------- */
+.dtr-confirm {
+    display: grid; grid-template-columns: minmax(240px, 360px) minmax(0, 1fr) auto; gap: 16px 22px; align-items: center;
+    padding: 20px 22px; border: 1px solid var(--mg-line); border-left: 5px solid var(--mg-gold); border-radius: 22px; background: #fff;
+}
+.dtr-confirm.is-done { border-left-color: #2e8b57; background: linear-gradient(90deg, #f0faf4, #fff 60%); }
+.dtr-confirm-pick { display: grid; gap: 6px; min-width: 0; }
+.dtr-confirm-pick label { font-weight: 600; font-size: 0.88rem; color: var(--mg-stone); }
+.dtr-confirm-pick select { width: 100%; min-width: 0; height: 46px; padding: 0 34px 0 12px; border: 1px solid var(--mg-line); border-radius: 12px; background-color: #fbf8f7; font-size: 0.92rem; }
+.dtr-confirm-pick select:focus { outline: 2px solid var(--mg-gold); outline-offset: 1px; border-color: transparent; box-shadow: none; }
+.dtr-confirm-state p { margin: 0; font-size: 0.92rem; color: var(--mg-ink); }
+.dtr-confirm-state strong { color: #2e8b57; }
+.dtr-confirm-btn { height: 46px; padding: 0 20px; border: 0; border-radius: 12px; background: var(--mg-crimson); color: #fff; font: 700 0.95rem var(--mg-body); cursor: pointer; white-space: nowrap; }
+.dtr-confirm-btn:hover { background: var(--mg-oxblood); }
+.dtr-confirm-btn:focus-visible { outline: 2px solid var(--mg-gold); outline-offset: 2px; }
+@media (max-width: 900px) { .dtr-confirm { grid-template-columns: 1fr; } .dtr-confirm-btn { width: 100%; } }
+
+.dtr-badge { margin-top: 3px; padding: 2px 8px; border-radius: 999px; font-size: 0.68rem; font-weight: 700; white-space: nowrap; }
+.dtr-badge--ok { background: #e3f5ea; color: #1f6b41; }
+.dtr-badge--wait { background: #fdf0d8; color: #8a5a00; }
+
 /* ---------- Proctoring days (HR) ---------- */
 .proc-form { display: grid; grid-template-columns: 1fr; gap: 14px; }
 @media (min-width: 640px) { .proc-form { grid-template-columns: 1fr 1.4fr auto; align-items: end; } .proc-form [role="alert"] { grid-column: 1 / -1; } }

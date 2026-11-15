@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Attendance;
 use App\Models\AttendanceRecord;
+use App\Models\DtrConfirmation;
 use App\Models\NonWorkingDay;
+use App\Support\PayPeriod;
 use App\Models\SchoolEmployee;
 use App\Support\AttendanceSchedule;
 
@@ -29,9 +31,23 @@ class EmployeeAttendanceController extends Controller
         $filters = $request->validate([
             'from' => ['nullable', 'date_format:Y-m-d'],
             'to'   => ['nullable', 'date_format:Y-m-d', 'after_or_equal:from'],
+            'pay'  => ['nullable', 'regex:/^\d{4}-\d{2}\|(15th|30th)$/'],
         ]);
 
         $today = now()->startOfDay();
+        $payPeriods = PayPeriod::recent(6);
+
+        // Choosing a pay period fills in its dates. Opening the page with
+        // nothing chosen shows the pay period running today.
+        $pay = $filters['pay'] ?? null;
+        if (! $pay && ! isset($filters['from']) && ! isset($filters['to'])) {
+            $pay = $payPeriods[0]['key'];
+        }
+        if ($pay) {
+            [$p, $c] = explode('|', $pay);
+            [$filters['from'], $filters['to']] = PayPeriod::range($p, $c);
+        }
+
         $from = isset($filters['from']) ? Carbon::parse($filters['from'])->startOfDay() : $today->copy()->startOfMonth();
         $to = isset($filters['to']) ? Carbon::parse($filters['to'])->startOfDay() : $today->copy();
 
@@ -47,6 +63,9 @@ class EmployeeAttendanceController extends Controller
             'to'       => $to,
             'maxDays'  => self::MAX_DAYS,
             'rows'     => [],
+            'payPeriods' => $payPeriods,
+            'payPeriod'  => $this->matchingPayPeriod($from, $to),
+            'confirmation' => null,
             'summary'  => ['present' => 0, 'late' => 0, 'late_minutes' => 0, 'half_day' => 0, 'absent' => 0, 'hours' => 0.0],
         ];
 
@@ -162,7 +181,67 @@ class EmployeeAttendanceController extends Controller
         $data['rows'] = $rows;
         $data['summary'] = $summary;
 
+        if ($data['payPeriod']) {
+            $data['confirmation'] = DtrConfirmation::query()
+                ->where('employee_id', $employee->id)
+                ->where('period', $data['payPeriod']['period'])
+                ->where('cutoff', $data['payPeriod']['cutoff'])
+                ->first();
+        }
+
         return view('attendance', $data);
+    }
+
+    /**
+     * The employee confirms that their DTR for a finished pay period is correct.
+     * Accounting needs this before moving the payslip to Salary Monitoring.
+     */
+    public function confirm(Request $request)
+    {
+        $data = $request->validate([
+            'period' => ['required', 'date_format:Y-m'],
+            'cutoff' => ['required', 'in:15th,30th'],
+        ]);
+
+        $employee = $this->employeeFor($request->user());
+        abort_unless($employee, 403, 'Your account is not linked to an employee record yet.');
+
+        [$start, $end] = PayPeriod::range($data['period'], $data['cutoff']);
+
+        if (Carbon::parse($end)->endOfDay()->isFuture()) {
+            return back()->withErrors([
+                'confirm' => 'You can confirm this DTR once the pay period ends on '.Carbon::parse($end)->format('F j, Y').'.',
+            ]);
+        }
+
+        DtrConfirmation::updateOrCreate(
+            ['employee_id' => $employee->id, 'period' => $data['period'], 'cutoff' => $data['cutoff']],
+            ['confirmed_at' => now()]
+        );
+
+        return redirect()
+            ->route('attendance.attendance-employee.index', ['pay' => $data['period'].'|'.$data['cutoff']])
+            ->with('success', 'DTR confirmed for the '.PayPeriod::label($data['period'], $data['cutoff']).'.');
+    }
+
+    /** The pay period whose dates exactly match the chosen range, if any. */
+    private function matchingPayPeriod(Carbon $from, Carbon $to): ?array
+    {
+        [$period, $cutoff] = PayPeriod::at($to);
+        [$start, $end] = PayPeriod::range($period, $cutoff);
+
+        if ($start !== $from->toDateString() || $end !== $to->toDateString()) {
+            return null;
+        }
+
+        return [
+            'period' => $period,
+            'cutoff' => $cutoff,
+            'key' => $period.'|'.$cutoff,
+            'label' => PayPeriod::label($period, $cutoff),
+            'end' => Carbon::parse($end),
+            'ended' => ! Carbon::parse($end)->endOfDay()->isFuture(),
+        ];
     }
 
     /** Find the employee record linked to this user, linking by email once if needed. */

@@ -52,8 +52,11 @@ class PayrollProcessingController extends Controller
         $inputs = $this->inputs($period, $cutoff);
         $this->persistPayrollRecords($inputs, $period, $cutoff);
 
+        $confirmed = $this->dtrConfirmedIds($period, $cutoff);
+
         $employees = $inputs->map(fn ($x) => [
             'id'             => $x['employee']->id,
+            'dtrConfirmed'   => $confirmed->contains($x['employee']->id),
             'name'           => $x['employee']->name,
             // The ZKTeco user ID is the employee ID (falls back to the old employee_id)
             'employeeNumber' => $x['employee']->zkteco_user_id ?? $x['employee']->employee_id,
@@ -279,6 +282,19 @@ class PayrollProcessingController extends Controller
             ]);
         }
 
+        // The employee must confirm their DTR for this pay period first.
+        $confirmed = $this->dtrConfirmedIds($period, $cutoff);
+        $unconfirmed = $inputs
+            ->filter(fn ($x) => $ids->contains($x['employee']->id) && ! $confirmed->contains($x['employee']->id))
+            ->map(fn ($x) => $x['employee']->name);
+
+        if ($unconfirmed->isNotEmpty()) {
+            return back()->withErrors([
+                'employee_ids' => 'These employees have not confirmed their DTR for this pay period yet: '
+                    .$unconfirmed->join(', ', ' and ').'.',
+            ]);
+        }
+
         $selected = $inputs
             ->filter(fn ($x) => $ids->contains($x['employee']->id));
 
@@ -416,6 +432,16 @@ class PayrollProcessingController extends Controller
             ->with('nonWorkingDay')
             ->get()
             ->groupBy('employee_id');
+    }
+
+    /** Employees who confirmed their DTR for this pay period. */
+    private function dtrConfirmedIds(string $period, string $cutoff): Collection
+    {
+        return \App\Models\DtrConfirmation::query()
+            ->where('period', $period)
+            ->where('cutoff', $cutoff)
+            ->pluck('employee_id')
+            ->map(fn ($id) => (int) $id);
     }
 
     /**
