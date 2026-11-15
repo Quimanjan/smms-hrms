@@ -548,10 +548,18 @@ class PayrollProcessingController extends Controller
                 continue;
             }
 
+            $portion = (float) ($record->leave_portion ?? 0);
+
             if ($record->status === Attendance::PAID_LEAVE) {
-                $leaveDays += 1;
+                // A half-day leave with no punches is half a day of leave.
+                $leaveDays += $portion > 0 ? $portion : 1;
 
                 continue;
+            }
+
+            // Worked part of the day and took half-day leave for the rest.
+            if ($portion > 0) {
+                $leaveDays += $portion;
             }
 
             if ($record->status === Attendance::PAID_HOLIDAY) {

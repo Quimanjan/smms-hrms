@@ -51,7 +51,7 @@ class LeaveManagementController extends Controller
                 'type' => $r->type,
                 'requested_date' => $r->requested_date->format('M d, Y'),
                 'duration' => $r->date_range,
-                'days' => $r->days_count.' '.str('day')->plural($r->days_count),
+                'days' => $r->days_label,
                 'reason' => $r->reason ?? 'Not provided',
                 'leave_balance' => $r->leave_balance ?? 'Not provided',
                 'status' => $r->status_label,
@@ -243,6 +243,26 @@ class LeaveManagementController extends Controller
     private function markApprovedLeaveAttendance(LeaveRequest $leaveRequest, Employee $employee): void
     {
         $status = $this->approvedLeaveAttendanceStatus($leaveRequest);
+        $paid = $status === Attendance::PAID_LEAVE;
+
+        // Half-day leave: keep any punches for the half the employee works and
+        // record half a day of leave. The biometric sync never touches leave_portion.
+        if ($leaveRequest->half_day) {
+            $date = $leaveRequest->start_date->toDateString();
+            $record = Attendance::where('employee_id', $employee->id)->whereDate('date', $date)->first();
+
+            if ($record && ($record->time_in || $record->time_out)) {
+                $record->leave_portion = $paid ? 0.5 : 0;
+                $record->save();
+            } else {
+                Attendance::updateOrCreate(
+                    ['employee_id' => $employee->id, 'date' => $date],
+                    ['time_in' => null, 'time_out' => null, 'hours_worked' => 0, 'status' => $status, 'archived' => false, 'leave_portion' => $paid ? 0.5 : 0]
+                );
+            }
+
+            return;
+        }
 
         for ($date = $leaveRequest->start_date->copy(); $date->lte($leaveRequest->end_date); $date->addDay()) {
             Attendance::updateOrCreate(
@@ -256,6 +276,7 @@ class LeaveManagementController extends Controller
                     'hours_worked' => 0,
                     'status' => $status,
                     'archived' => false,
+                    'leave_portion' => $paid ? 1 : 0,
                 ]
             );
         }

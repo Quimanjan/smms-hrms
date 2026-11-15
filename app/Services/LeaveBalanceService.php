@@ -62,12 +62,13 @@ class LeaveBalanceService
                 ->approved()
                 ->whereYear('start_date', $year)
                 ->when($resetAt, fn ($query) => $query->where('decided_at', '>=', $resetAt))
-                ->get(['type', 'start_date', 'end_date'])
+                ->get(['type', 'start_date', 'end_date', 'half_day'])
             : collect();
 
         // Non-regular: only the allowed type counts
         $eligible = $nonReg ? $approved->where('type', $nonRegType) : $approved;
-        $totalUsed = (int) $eligible->sum(fn (LeaveRequest $r) => $r->days_count);
+        // Half-day requests count as 0.5.
+        $totalUsed = (float) $eligible->sum(fn (LeaveRequest $r) => $r->days_count);
 
         $totalInitial = $nonReg ? $nonRegDays : $total;
 
@@ -76,8 +77,8 @@ class LeaveBalanceService
 
         $types = [];
         foreach ($typeList as $type => $days) {
-            $initial = (int) $days;
-            $used = (int) $eligible->where('type', $type)->sum(fn (LeaveRequest $r) => $r->days_count);
+            $initial = (float) $days;
+            $used = (float) $eligible->where('type', $type)->sum(fn (LeaveRequest $r) => $r->days_count);
 
             $types[$type] = [
                 'initial' => $initial,
@@ -101,7 +102,7 @@ class LeaveBalanceService
      * Days the employee can still file for a type (min of type and total balance).
      * "Other" only uses the total balance. Null = type not available/configured.
      */
-    public function remainingFor(array $balances, string $type): ?int
+    public function remainingFor(array $balances, string $type): int|float|null
     {
         $total = $balances['total']['remaining'];
 

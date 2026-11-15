@@ -73,6 +73,7 @@ class Attendance extends Model
         'hours_worked',
         'status',
         'archived',
+        'leave_portion',
     ];
 
     protected $casts = [

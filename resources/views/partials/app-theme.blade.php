@@ -759,6 +759,14 @@ button.cx-day:focus-visible { outline: 2px solid var(--mg-gold); outline-offset:
 .rm-table tfoot td { background: #fbf3f2; font-weight: 800; color: var(--mg-oxblood); border-top: 2px solid var(--mg-crimson); }
 @media (max-width: 900px) { .rm-totals { grid-template-columns: repeat(2, minmax(0, 1fr)); } .rm-export { margin-left: 0; } }
 
+/* ---------- Half-day leave ---------- */
+.half-day { display: grid; gap: 10px; padding: 12px 14px; border: 1px solid var(--mg-line); border-radius: 12px; background: #fbf8f7; }
+.half-day-toggle { display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--mg-ink); cursor: pointer; }
+.half-day-toggle small { font-weight: 500; color: var(--mg-stone); }
+.half-day-toggle input, .half-day-periods input { width: 18px; height: 18px; accent-color: var(--mg-crimson); }
+.half-day-periods { display: flex; flex-wrap: wrap; gap: 8px 22px; padding-left: 28px; }
+.half-day-periods label { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; cursor: pointer; }
+
 /* ---------- Proctoring days (HR) ---------- */
 .proc-form { display: grid; grid-template-columns: 1fr; gap: 14px; }
 @media (min-width: 640px) { .proc-form { grid-template-columns: 1fr 1.4fr auto; align-items: end; } .proc-form [role="alert"] { grid-column: 1 / -1; } }

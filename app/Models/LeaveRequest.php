@@ -25,6 +25,8 @@ class LeaveRequest extends Model
         'requested_date',
         'start_date',
         'end_date',
+        'half_day',
+        'half_day_period',
         'reason',
         'leave_balance',
         'status',
@@ -46,6 +48,7 @@ class LeaveRequest extends Model
         'start_date'        => 'date',
         'end_date'          => 'date',
         'admin_archived'    => 'boolean',
+        'half_day'          => 'boolean',
         'employee_archived' => 'boolean',   // NEW
         'decided_at'        => 'datetime',
         'hr_decided_at'     => 'datetime',
@@ -98,9 +101,26 @@ class LeaveRequest extends Model
         return $this->start_date->format('M d, Y') . ' - ' . $this->end_date->format('M d, Y');
     }
 
-    public function getDaysCountAttribute(): int
+    /** Leave days used: 0.5 for a half-day request, otherwise every calendar day in the range. */
+    public function getDaysCountAttribute(): float
     {
-        return (int) $this->start_date->diffInDays($this->end_date) + 1;
+        if ($this->half_day) {
+            return 0.5;
+        }
+
+        return (float) ((int) $this->start_date->diffInDays($this->end_date) + 1);
+    }
+
+    /** "0.5 day (morning)", "1 day", "3 days". */
+    public function getDaysLabelAttribute(): string
+    {
+        if ($this->half_day) {
+            return 'half day, '.($this->half_day_period === 'pm' ? 'afternoon' : 'morning');
+        }
+
+        $n = (int) $this->days_count;
+
+        return $n.' '.($n === 1 ? 'day' : 'days');
     }
 
     // NEW: "Pending" / "Approved" / "Rejected" for display

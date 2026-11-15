@@ -27,6 +27,8 @@
             'type'        => old('leave_type', ''),
             'start'       => old('start_date', ''),
             'end'         => old('end_date', ''),
+            'halfDay'     => (bool) old('half_day', false),
+            'halfPeriod'  => old('half_day_period', 'am'),
         ]))"
         @keydown.escape.window="detail = null; requestOpen = false">
 
@@ -50,10 +52,10 @@
 
                 @foreach ($cards as [$label, $value, $caption])
                     <article class="flex min-h-[132px] flex-col justify-center gap-1 rounded-[18px] border px-4 py-[18px]
-                        {{ $value === 0 ? 'border-[#b22222]/30 bg-[#fef2f2]' : 'border-gray-900/10 bg-white/70' }}">
+                        {{ (float) $value <= 0 ? 'border-[#b22222]/30 bg-[#fef2f2]' : 'border-gray-900/10 bg-white/70' }}">
                         <span class="text-[0.9rem] font-semibold text-gray-600">{{ $label }}</span>
-                        <span class="text-[2.4rem] font-extrabold leading-none {{ $value === 0 ? 'text-[#991b1b]' : 'text-[#111827]' }}">{{ $value }}</span>
-                        <small class="text-[0.82rem] {{ $value === 0 ? 'text-[#991b1b]' : 'text-gray-500' }}">{{ $caption }}</small>
+                        <span class="text-[2.4rem] font-extrabold leading-none {{ (float) $value <= 0 ? 'text-[#991b1b]' : 'text-[#111827]' }}">{{ $value }}</span>
+                        <small class="text-[0.82rem] {{ (float) $value <= 0 ? 'text-[#991b1b]' : 'text-gray-500' }}">{{ $caption }}</small>
                     </article>
                 @endforeach
             </div>
@@ -178,14 +180,28 @@
                     <div class="grid gap-4 sm:grid-cols-2">
                         <label class="grid min-w-0 gap-2">
                             <span class="{{ $labelClass }}">Start Date</span>
-                            <input type="date" name="start_date" x-model="start" :max="end || null" required class="{{ $fieldClass }}">
+                            <input type="date" name="start_date" x-model="start" :max="halfDay ? null : (end || null)" @change="if (halfDay) end = start" required class="{{ $fieldClass }}">
                             <span class="{{ $errClass }}">{{ $errors->first('start_date') }}</span>
                         </label>
                         <label class="grid min-w-0 gap-2">
                             <span class="{{ $labelClass }}">End Date</span>
-                            <input type="date" name="end_date" x-model="end" :min="start || null" required class="{{ $fieldClass }}">
+                            <input type="date" name="end_date" x-model="end" :min="start || null" required class="{{ $fieldClass }}"
+                                :readonly="halfDay" :class="halfDay ? 'opacity-60' : ''">
                             <span class="{{ $errClass }}">{{ $errors->first('end_date') }}</span>
                         </label>
+                    </div>
+
+                    {{-- Half-day leave: one date, morning or afternoon, uses 0.5 of the leave type --}}
+                    <div class="half-day">
+                        <label class="half-day-toggle">
+                            <input type="checkbox" name="half_day" value="1" x-model="halfDay" @change="if (halfDay) end = start">
+                            <span>Half day only <small>(uses 0.5 day of this leave)</small></span>
+                        </label>
+                        <div class="half-day-periods" x-show="halfDay" x-cloak role="radiogroup" aria-label="Which half">
+                            <label><input type="radio" name="half_day_period" value="am" x-model="halfPeriod"> Morning</label>
+                            <label><input type="radio" name="half_day_period" value="pm" x-model="halfPeriod"> Afternoon</label>
+                        </div>
+                        <span class="{{ $errClass }}">{{ $errors->first('half_day_period') }}</span>
                     </div>
 
                     <label class="grid gap-2">
@@ -214,6 +230,8 @@
                 type: cfg.type,
                 start: cfg.start,
                 end: cfg.end,
+                halfDay: cfg.halfDay,
+                halfPeriod: cfg.halfPeriod,
 
                 get visible() {
                     return this.requests.filter(r => this.tab === 'archive' ? r.archived : ! r.archived);
@@ -221,6 +239,7 @@
 
                 // Inclusive calendar days (same as the original script)
                 get days() {
+                    if (this.halfDay && this.start) return 0.5;
                     if (! this.start || ! this.end) return 0;
                     const diff = (new Date(this.end + 'T00:00:00') - new Date(this.start + 'T00:00:00')) / 86400000;
                     return diff >= 0 ? Math.floor(diff) + 1 : 0;

@@ -24,6 +24,9 @@ class StoreLeaveRequest extends FormRequest
             'other_leave_type' => ['required_if:leave_type,Other', 'nullable', 'string', 'max:100'],
             'start_date'       => ['required', 'date'],
             'end_date'         => ['required', 'date', 'after_or_equal:start_date'],
+            // Half-day leave: one date only, morning or afternoon, counts as 0.5 day.
+            'half_day'         => ['nullable', 'boolean'],
+            'half_day_period'  => ['nullable', 'required_if:half_day,1', 'in:am,pm'],
             'reason'           => ['required', 'string', 'max:1000'],
         ];
     }
@@ -54,10 +57,19 @@ class StoreLeaveRequest extends FormRequest
             $remaining = $service->remainingFor($balances, $type);
             $requested = (int) Carbon::parse($this->start_date)->diffInDays(Carbon::parse($this->end_date)) + 1;
 
+            if ($this->boolean('half_day')) {
+                if ($this->start_date !== $this->end_date) {
+                    $v->errors()->add('end_date', 'A half-day leave is for one date only. Use the same start and end date.');
+                    return;
+                }
+                $requested = 0.5;
+            }
+
             if ($remaining === null) {
                 $v->errors()->add('leave_type', 'No balance is configured for this leave type.');
             } elseif ($requested > $remaining) {
-                $v->errors()->add('end_date', "You have {$remaining} day" . ($remaining === 1 ? '' : 's') . " remaining, but selected {$requested} days.");
+                $fmt = fn ($n) => rtrim(rtrim(number_format((float) $n, 1), '0'), '.');
+                $v->errors()->add('end_date', 'You have '.$fmt($remaining).' day'.((float) $remaining === 1.0 ? '' : 's').' remaining, but selected '.$fmt($requested).' day'.((float) $requested === 1.0 ? '' : 's').'.');
             }
         });
     }

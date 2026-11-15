@@ -41,7 +41,7 @@ class LeaveRequestController extends Controller
                 'id'          => $r->id,
                 'label'       => $r->type,
                 'requested'   => $r->requested_date?->format('M j, Y') ?? $r->created_at->format('M j, Y'),
-                'range'       => $r->date_range . ' (' . $r->days_count . ' day' . ($r->days_count === 1 ? '' : 's') . ')',
+                'range'       => $r->date_range . ' (' . $r->days_label . ')',
                 'reason'      => $r->reason,
                 'status'      => $r->status_label,
                 'hr_status'   => ucfirst($r->hr_status ?? LeaveRequest::PENDING),
@@ -79,6 +79,7 @@ class LeaveRequestController extends Controller
             $days = (new LeaveRequest)->forceFill([
                 'start_date' => $data['start_date'],
                 'end_date'   => $data['end_date'],
+                'half_day'   => (bool) ($data['half_day'] ?? false),
             ])->days_count;
 
             if ($remaining === null || $days > $remaining) {
@@ -99,6 +100,8 @@ class LeaveRequestController extends Controller
             'requested_date' => now()->toDateString(),
             'start_date'     => $data['start_date'],
             'end_date'       => $data['end_date'],
+            'half_day'       => (bool) ($data['half_day'] ?? false),
+            'half_day_period'=> ! empty($data['half_day']) ? ($data['half_day_period'] ?? 'am') : null,
             'reason'         => $data['reason'],
             'leave_balance'  => (string) $remaining,
             'status'         => LeaveRequest::PENDING,
