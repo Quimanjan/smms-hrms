@@ -19,6 +19,8 @@
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <main class="main-content relative min-w-0 pt-[34px] pb-[42px] px-[clamp(20px,2.5vw,42px)] max-[960px]:pt-[82px]">
 
+            @include('partials.dashboard-overview')
+
             {{-- Promo banner --}}
             <section class="promo-banner relative mb-6 p-4 rounded-[28px] overflow-hidden max-[720px]:p-3 max-[720px]:rounded-3xl">
                 <div class="promo-slides relative overflow-hidden rounded-[20px]" id="promoSlides">

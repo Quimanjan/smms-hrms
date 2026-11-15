@@ -40,6 +40,8 @@
         {{-- .main-content --}}
         <main class="main-content relative min-w-0 pt-[34px] pb-8 px-[clamp(12px,2.5vw,42px)] sm:pb-[42px] max-[960px]:pt-[82px]">
 
+            @include('partials.dashboard-overview')
+
             {{-- .promo-banner --}}
             <section class="promo-banner relative mb-4 overflow-hidden rounded-2xl p-2 sm:mb-6 sm:rounded-[28px] sm:p-4">
                 <div class="promo-slides relative overflow-hidden rounded-xl sm:rounded-[20px]" id="promoSlides">

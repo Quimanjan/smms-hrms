@@ -129,10 +129,10 @@ it('shows the predefined application submissions on the job detail page', functi
     ])->render();
 
     expect($html)
-        ->toContain('Required Documents')
-        ->toContain('Resume or Curriculum Vitae (PDF, max 5 MB)')
-        ->toContain('Application or Cover Letter (PDF, max 5 MB)')
-        ->not->toContain('Application Letter (PDF, max 5 MB)');
+        ->toContain('Documents to prepare')
+        ->toContain('Resume or Curriculum Vitae<small>PDF, up to 5 MB</small>')
+        ->toContain('Application or Cover Letter<small>PDF, up to 5 MB</small>')
+        ->not->toContain('Application Letter<small>');
 });
 
 it('renders a single application-or-cover-letter upload and supports legacy documents', function () {
