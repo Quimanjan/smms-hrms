@@ -900,6 +900,50 @@ button.cx-day:focus-visible { outline: 2px solid var(--mg-gold); outline-offset:
 .al-action--deleted { background: #fde4e6; color: #8f1420; }
 .al-pages { padding: 14px 22px; }
 
+/* ---------- Messages ---------- */
+.sb-badge { display: inline-grid; place-items: center; min-width: 20px; height: 20px; margin-left: 8px; padding: 0 6px; border-radius: 999px; background: var(--mg-gold); color: var(--mg-oxblood-deep); font-size: 0.72rem; font-weight: 800; vertical-align: middle; }
+.msg { display: grid; grid-template-columns: 320px minmax(0, 1fr); height: min(72vh, 760px); overflow: hidden; border: 1px solid var(--mg-line); border-radius: 22px; background: #fff; box-shadow: 0 24px 50px -40px rgba(33, 23, 26, 0.45); }
+.msg-side { display: flex; flex-direction: column; min-height: 0; border-right: 1px solid var(--mg-line); background: #fbf8f7; }
+.msg-find { padding: 14px; border-bottom: 1px solid var(--mg-line); }
+.msg-find input { width: 100%; height: 42px; padding: 0 12px; border: 1px solid var(--mg-line); border-radius: 10px; font-size: 0.92rem; }
+.msg-find input:focus, .msg-compose textarea:focus { outline: 2px solid var(--mg-gold); outline-offset: 1px; border-color: transparent; box-shadow: none; }
+.msg-people, .msg-convos { flex: 1; overflow-y: auto; margin: 0; padding: 6px; list-style: none; }
+.msg-people button, .msg-convos button { position: relative; display: grid; gap: 2px; width: 100%; padding: 10px 12px; border: 0; border-radius: 12px; background: none; text-align: left; cursor: pointer; }
+.msg-people button:hover, .msg-convos button:hover { background: #fff; }
+.msg-convos button.is-active { background: #fff; box-shadow: inset 3px 0 0 var(--mg-crimson); }
+.msg-people small, .msg-who small { color: var(--mg-stone); font-size: 0.76rem; }
+.msg-who { display: flex; justify-content: space-between; gap: 8px; padding-right: 26px; }
+.msg-last { color: var(--mg-stone); font-size: 0.84rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 26px; }
+.msg-unread { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); display: grid; place-items: center; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; background: var(--mg-crimson); color: #fff; font-size: 0.72rem; }
+.msg-empty { padding: 14px; color: var(--mg-stone); font-size: 0.88rem; }
+.msg-main { display: flex; min-width: 0; min-height: 0; }
+.msg-main > div { flex: 1; }
+.msg-placeholder { display: grid; place-content: center; gap: 6px; padding: 30px; text-align: center; }
+.msg-placeholder h3 { margin: 0; font-family: var(--mg-display); font-weight: 400; font-size: 1.5rem; color: var(--mg-oxblood); }
+.msg-placeholder p { margin: 0; max-width: 420px; color: var(--mg-stone); }
+.msg-thread { display: flex; flex-direction: column; min-height: 0; height: 100%; }
+.msg-thread-head { display: flex; align-items: center; gap: 10px; padding: 14px 18px; border-bottom: 1px solid var(--mg-line); }
+.msg-thread-head div { display: grid; }
+.msg-thread-head small { color: var(--mg-stone); font-size: 0.8rem; }
+.msg-back { display: none; width: 36px; height: 36px; place-items: center; border: 0; border-radius: 50%; background: #f6efe9; color: var(--mg-oxblood); cursor: pointer; }
+.msg-back svg { width: 18px; height: 18px; }
+.msg-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 18px; list-style: none; background: linear-gradient(#fff, #fdfaf9); }
+.msg-list li:not(.msg-empty) { align-self: flex-start; max-width: min(75%, 560px); padding: 10px 14px; border-radius: 16px 16px 16px 4px; background: #f3eeec; }
+.msg-list li.is-mine { align-self: flex-end; border-radius: 16px 16px 4px 16px; background: var(--mg-oxblood); color: #fff; }
+.msg-list p { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.msg-list time { display: block; margin-top: 4px; font-size: 0.7rem; opacity: 0.7; }
+.msg-compose { display: flex; gap: 10px; padding: 12px 14px; border-top: 1px solid var(--mg-line); }
+.msg-compose textarea { flex: 1; min-height: 44px; max-height: 140px; padding: 10px 12px; border: 1px solid var(--mg-line); border-radius: 12px; font: 0.95rem/1.4 var(--mg-body); resize: vertical; }
+.msg-compose button { height: 44px; padding: 0 20px; border: 0; border-radius: 12px; background: var(--mg-crimson); color: #fff; font: 700 0.95rem var(--mg-body); cursor: pointer; }
+.msg-compose button:disabled { opacity: 0.5; cursor: default; }
+.msg-error { margin: 0; padding: 0 16px 12px; color: #8f1420; font-size: 0.85rem; font-weight: 600; }
+@media (max-width: 860px) {
+    .msg { grid-template-columns: 1fr; height: 76vh; }
+    .msg.is-open .msg-side { display: none; }
+    .msg:not(.is-open) .msg-main { display: none; }
+    .msg-back { display: grid; }
+}
+
 /* ---------- Proctoring days (HR) ---------- */
 .proc-form { display: grid; grid-template-columns: 1fr; gap: 14px; }
 @media (min-width: 640px) { .proc-form { grid-template-columns: 1fr 1.4fr auto; align-items: end; } .proc-form [role="alert"] { grid-column: 1 / -1; } }

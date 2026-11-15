@@ -159,6 +159,13 @@
             'match' => 'loans-accounting.*',
         ],
 
+        'messages' => [
+            'label' => 'Messages',
+            'icon'  => 'fa-comments',
+            'route' => 'messages.index',
+            'match' => 'messages.*',
+        ],
+
         'audit-trail' => [
             'label' => 'Audit Trail',
             'icon'  => 'fa-clipboard-list',
@@ -284,6 +291,7 @@
             'offboarding',
             'remittances',
             'homepage',
+            'messages',
             'audit-trail',
             'reports',
         ],
@@ -300,6 +308,7 @@
             'documents',
             'offboarding',
             'homepage',
+            'messages',
             'reports',
         ],
 
@@ -310,6 +319,7 @@
             'salary-records',
             'loans-accounting',
             'remittances',
+            'messages',
             'accounting-reports',
         ],
 
@@ -322,6 +332,7 @@
             'my-offboarding',
             'my-payslips',
             'my-documents',
+            'messages',
         ],
 
         'Applicant' => [
@@ -426,7 +437,7 @@
                 :icon="$item['icon']"
                 :active="request()->routeIs($item['match'])"
             >
-                {{ $item['label'] }}
+                {{ $item['label'] }}@if ($item['route'] === 'messages.index' && ($unreadMessages ??= \App\Http\Controllers\MessageController::unreadFor(auth()->id())) > 0)<b class="sb-badge" aria-label="{{ $unreadMessages }} unread">{{ $unreadMessages }}</b>@endif
             </x-sidebar-link>
         @empty
             <div class="px-3 py-4 text-sm text-gray-500">
