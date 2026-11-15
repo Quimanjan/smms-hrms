@@ -397,6 +397,32 @@ body.app-body .calendar-day:not(.empty):hover { transform: translateY(-2px); bor
 @keyframes av-halo { to { transform: rotate(360deg); } }
 @keyframes av-hop { 0% { transform: translateY(0); } 35% { transform: translateY(-6px) scale(1.03); } 70% { transform: translateY(1px); } 100% { transform: none; } }
 
+/* Fixed avatar sizes (the prebuilt stylesheet has no custom size classes). */
+.av-size-44 { width: 44px; height: 44px; flex: none; }
+.av-size-120 { width: 120px; height: 120px; }
+.av-size-top { width: 36px; height: 36px; flex: none; }
+.av-size-profile { width: 80px; height: 80px; flex: none; }
+@media (min-width: 640px) {
+    .av-size-top { width: 44px; height: 44px; }
+    .av-size-profile { width: 112px; height: 112px; }
+}
+
+/* ---------- Employee cards (compact) ---------- */
+.emp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+.emp-card {
+    display: flex; align-items: center; gap: 14px; min-width: 0; padding: 14px 16px;
+    border: 1px solid var(--mg-line); border-radius: 18px; background: #fff; text-align: left; cursor: pointer;
+    box-shadow: 0 10px 24px -22px rgba(33, 23, 26, 0.5);
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.emp-card:hover { transform: translateY(-2px); border-color: var(--mg-gold); box-shadow: 0 18px 30px -22px rgba(74, 10, 18, 0.55); }
+.emp-card:focus-visible { outline: 2px solid var(--mg-gold); outline-offset: 2px; }
+.emp-card-face { width: 64px; height: 64px; flex: none; box-shadow: 0 0 0 3px #fff, 0 0 0 4px #efe4e1; }
+.emp-card-info { display: grid; gap: 2px; min-width: 0; }
+.emp-card-name { margin: 0; font-weight: 700; font-size: 1rem; color: var(--mg-ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.emp-card-role { margin: 0; font-size: 0.9rem; color: var(--mg-crimson); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.emp-card-id { margin: 0; font-size: 0.82rem; color: var(--mg-stone); }
+
 /* ---------- Dashboard: people and workforce ---------- */
 .dp { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 20px; margin-bottom: 24px; }
 

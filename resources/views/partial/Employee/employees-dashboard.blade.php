@@ -136,7 +136,7 @@
                                 '-mx-2.5 rounded-xl bg-[#fff7f7] px-2.5 py-3' => $i === 0,
                                 'border-b border-[#f1f1f1] py-3 last:border-b-0' => $i !== 0,
                             ])>
-                                <div class="av-host h-[44px] w-[44px]" aria-hidden="true">{!! $b['avatar'] ?? '' !!}</div>
+                                <div class="av-host av-size-44" aria-hidden="true">{!! $b['avatar'] ?? '' !!}</div>
                                 <div class="min-w-0">
                                     <h3 class="truncate text-[0.9rem] font-extrabold text-gray-900">{{ $b['name'] }}</h3>
                                     <p class="mt-[3px] truncate text-[0.75rem] text-gray-400">{{ $b['role'] }}</p>

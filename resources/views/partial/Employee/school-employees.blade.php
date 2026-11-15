@@ -141,7 +141,7 @@
         @else
 
             {{-- EMPLOYEE CARDS --}}
-            <div class="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-[18px]">
+            <div class="emp-grid">
 
                 @foreach ($employees as $employee)
 
@@ -152,26 +152,21 @@
                         @keydown.space.prevent="openDetail({{ $employee->id }})"
                         role="button"
                         aria-label="View {{ $employee->name }} details"
-                        class="flex cursor-pointer flex-col items-center gap-3 rounded-2xl border border-[#f3e0e0] bg-gradient-to-b from-white to-[#fff7f7] px-[18px] py-[22px] text-center shadow-[0_8px_24px_rgba(15,23,42,0.06)] transition duration-200 hover:-translate-y-1.5 hover:shadow-[0_18px_36px_rgba(15,23,42,0.1)] focus:outline-none focus:ring-4 focus:ring-red-700/10"
+                        class="emp-card"
                     >
 
-                        <div class="av-host h-[96px] w-[96px] shrink-0">
+                        <div class="av-host emp-card-face">
                             {!! \App\Support\Avatar::for($employee, $employee->name ?? '') !!}
                         </div>
 
-                        <div class="flex flex-col items-center gap-1.5">
+                        <div class="emp-card-info">
 
-                            <h2 class="text-[1.05rem] font-bold text-gray-900">
+                            <h2 class="emp-card-name">
                                 {{ $employee->name }}
                             </h2>
 
-                            <p class="text-[15px] text-gray-500">
-                                {{ $employee->employee_id }}
-                            </p>
-
-                            <p class="text-[15px] text-gray-500">
-                                {{ $employee->position }}
-                            </p>
+                            <p class="emp-card-role">{{ $employee->position }}</p>
+                            <p class="emp-card-id">ID {{ $employee->employee_id }}</p>
 
                         </div>
 
@@ -223,7 +218,7 @@
                 <div>
 
                     {{-- INITIALS --}}
-                    <div class="av-host av-host--lg mx-auto h-[120px] w-[120px]" x-html="detail.avatar"></div>
+                    <div class="av-host av-host--lg av-size-120 mx-auto" x-html="detail.avatar"></div>
 
                     {{-- NAME --}}
                     <h3

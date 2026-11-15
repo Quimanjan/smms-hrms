@@ -68,7 +68,7 @@
     {{-- Identity + edit button --}}
     <div class="mb-7 flex flex-col gap-4 border-b border-gray-200 pb-[22px] sm:flex-row sm:items-start sm:justify-between sm:gap-5">
         <div class="flex min-w-0 items-center gap-[15px]">
-            <span class="av-host av-host--lg h-20 w-20 flex-none sm:h-28 sm:w-28" aria-hidden="true">{!! \App\Support\Avatar::for($employee, $fullName) !!}</span>
+            <span class="av-host av-host--lg av-size-profile" aria-hidden="true">{!! \App\Support\Avatar::for($employee, $fullName) !!}</span>
             <div class="min-w-0">
                 <h3 id="accountProfileHeading" class="mb-1 break-words text-2xl font-bold leading-tight text-gray-900 sm:text-3xl">{{ $fullName ?: 'My Account' }}</h3>
                 <div class="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.88rem] font-semibold text-gray-500" aria-label="Employment details">

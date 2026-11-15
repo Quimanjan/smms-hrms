@@ -127,7 +127,7 @@
                                         class="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white py-1.5 pl-1.5 pr-3 text-base shadow-sm transition hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-700 sm:gap-3 sm:py-2 sm:pl-2 sm:pr-4 sm:text-lg lg:mr-[70px]"
                                         aria-label="Account Menu">
                                     @if ($topAvatar)
-                                        <span class="av-host av-host--ring h-9 w-9 shrink-0 sm:h-11 sm:w-11">{!! $topAvatar !!}</span>
+                                        <span class="av-host av-host--ring av-size-top">{!! $topAvatar !!}</span>
                                     @else
                                         <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-red-700 text-xs font-bold text-white sm:h-9 sm:w-9 sm:text-sm">
                                             {{ $initials }}
