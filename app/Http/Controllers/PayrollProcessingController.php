@@ -8,6 +8,7 @@ use App\Models\Employee;
 use App\Models\Payslip;
 use App\Models\User;
 use App\Services\CashAdvancePayrollService;
+use App\Support\PayrollCalculator;
 use App\Support\AttendanceSchedule;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -54,7 +55,20 @@ class PayrollProcessingController extends Controller
 
         $confirmed = $this->dtrConfirmedIds($period, $cutoff);
 
+        $steps = $this->steps();
+
         $employees = $inputs->map(fn ($x) => [
+            // Calculated on the server with App\Support\PayrollCalculator; the browser only
+            // swaps in the loan amounts being edited and takes deductions in the same order.
+            'pay'            => $this->screenPay($this->compute($x['in'], $steps, $cutoff, $x['employee'])),
+            'contributions'  => [
+                'sss_ee' => $x['employee']->sss_ee, 'sss_er' => $x['employee']->sss_er,
+                'philhealth_ee' => $x['employee']->philhealth_ee, 'philhealth_er' => $x['employee']->philhealth_er,
+                'pagibig_ee' => $x['employee']->pagibig_ee, 'pagibig_er' => $x['employee']->pagibig_er,
+            ],
+            'undertimeMinutes' => (float) $x['in']['undertime_minutes'],
+            'leaveDays'      => (float) $x['in']['leave_days'],
+            'holidayDays'    => (float) $x['in']['holiday_days'],
             'id'             => $x['employee']->id,
             'dtrConfirmed'   => $confirmed->contains($x['employee']->id),
             'name'           => $x['employee']->name,
@@ -109,7 +123,26 @@ class PayrollProcessingController extends Controller
             'rows.*.philhealth_loan'  => ['nullable', 'numeric', 'min:0', 'max:99999999'],
             'rows.*.peraa_ceap_loan'  => ['nullable', 'numeric', 'min:0', 'max:99999999'],
             'rows.*.hdmf_loan'        => ['nullable', 'numeric', 'min:0', 'max:99999999'],
+            // Government contributions, entered once per employee (monthly amounts).
+            'rows.*.contributions'               => ['nullable', 'array'],
+            'rows.*.contributions.sss_ee'        => ['nullable', 'numeric', 'min:0', 'max:999999'],
+            'rows.*.contributions.sss_er'        => ['nullable', 'numeric', 'min:0', 'max:999999'],
+            'rows.*.contributions.philhealth_ee' => ['nullable', 'numeric', 'min:0', 'max:999999'],
+            'rows.*.contributions.philhealth_er' => ['nullable', 'numeric', 'min:0', 'max:999999'],
+            'rows.*.contributions.pagibig_ee'    => ['nullable', 'numeric', 'min:0', 'max:999999'],
+            'rows.*.contributions.pagibig_er'    => ['nullable', 'numeric', 'min:0', 'max:999999'],
         ]);
+
+        // Save the one-time contribution amounts on the employee record.
+        foreach ($data['rows'] as $r) {
+            if (! array_key_exists('contributions', $r) || ! is_array($r['contributions'])) {
+                continue;
+            }
+            $values = collect(['sss_ee', 'sss_er', 'philhealth_ee', 'philhealth_er', 'pagibig_ee', 'pagibig_er'])
+                ->mapWithKeys(fn ($k) => [$k => ($r['contributions'][$k] ?? null) === null || $r['contributions'][$k] === '' ? null : round((float) $r['contributions'][$k], 2)])
+                ->all();
+            DB::table('employees')->where('id', $r['employee_id'])->update($values);
+        }
 
         $requestedEmployeeIds = collect($data['rows'])->pluck('employee_id')->map(fn ($id) => (int) $id);
         $employees = Employee::excludeInternalStaff()
@@ -148,6 +181,9 @@ class PayrollProcessingController extends Controller
                 'days_worked'  => $metrics['days_worked'],
                 'hours_worked' => $metrics['hours_worked'],
                 'late_minutes' => $metrics['late_minutes'],
+                'undertime_minutes' => $metrics['undertime_minutes'],
+                'leave_days'   => $metrics['leave_days'],
+                'holiday_days' => $metrics['holiday_days'],
                 // honorarium is fixed by role; the browser value is ignored
                 'honorarium'   => $this->isAdministrative($employee) ? self::HONORARIUM : 0,
                 'period'       => $period,
@@ -174,7 +210,7 @@ class PayrollProcessingController extends Controller
                 $rows,
                 ['period', 'cutoff', 'employee_id'],
                 array_merge(
-                    ['step_no', 'days_worked', 'hours_worked', 'late_minutes', 'honorarium', 'updated_at'],
+                    ['step_no', 'days_worked', 'hours_worked', 'late_minutes', 'undertime_minutes', 'leave_days', 'holiday_days', 'honorarium', 'updated_at'],
                     self::DED,
                     self::AUTO
                 )
@@ -344,7 +380,8 @@ class PayrollProcessingController extends Controller
             ->get()->keyBy('employee_id');
 
         $defaults = array_merge(
-            ['step_no' => 1, 'days_worked' => 0, 'hours_worked' => 0, 'late_minutes' => 0, 'honorarium' => 0],
+            ['step_no' => 1, 'days_worked' => 0, 'hours_worked' => 0, 'late_minutes' => 0, 'undertime_minutes' => 0,
+                'leave_days' => 0, 'holiday_days' => 0, 'honorarium' => 0],
             array_fill_keys(array_merge(self::DED, self::AUTO), 0)
         );
 
@@ -391,6 +428,9 @@ class PayrollProcessingController extends Controller
                 'days_worked' => $inputs['days_worked'],
                 'hours_worked' => $inputs['hours_worked'],
                 'late_minutes' => $inputs['late_minutes'],
+                'undertime_minutes' => $inputs['undertime_minutes'],
+                'leave_days' => $inputs['leave_days'],
+                'holiday_days' => $inputs['holiday_days'],
                 'honorarium' => $inputs['honorarium'],
                 ...array_intersect_key($inputs, array_flip(array_merge(self::DED, self::AUTO))),
                 'created_at' => $now,
@@ -406,7 +446,7 @@ class PayrollProcessingController extends Controller
             $rows,
             ['period', 'cutoff', 'employee_id'],
             array_merge(
-                ['step_no', 'days_worked', 'hours_worked', 'late_minutes', 'honorarium', 'updated_at'],
+                ['step_no', 'days_worked', 'hours_worked', 'late_minutes', 'undertime_minutes', 'leave_days', 'holiday_days', 'honorarium', 'updated_at'],
                 self::DED,
                 self::AUTO
             )
@@ -471,7 +511,21 @@ class PayrollProcessingController extends Controller
         $daysWorked = 0.0;
         $hoursWorked = 0.0;
         $lateMinutes = 0;
+        $undertimeMinutes = 0;
+        $leaveDays = 0.0;
+        $holidayDays = 0.0;
         $unpaidLeaveDays = 0.0;
+
+        // The client: every holiday is paid one daily wage, regular or special, even
+        // without reporting. School suspensions follow the pay setting HR chose.
+        $holidayOf = function ($record) {
+            $day = $record instanceof AttendanceRecord
+                ? ($record->relationLoaded('nonWorkingDay') ? $record->getRelation('nonWorkingDay') : null)
+                : ($record->nonWorkingDay ?? null);
+
+            return $day;
+        };
+        $isHoliday = fn ($day) => $day && in_array($day->category, ['National Holiday', 'Local Holiday'], true);
 
         foreach ($records as $record) {
             $date = Carbon::parse($record->date)->startOfDay();
@@ -479,29 +533,37 @@ class PayrollProcessingController extends Controller
             $timeIn = AttendanceSchedule::toCarbon($date, $record->time_in);
             $timeOut = AttendanceSchedule::toCarbon($date, $record->time_out);
             $computedHours = $schedule->hoursWorked($timeIn, $timeOut);
+            $day = $holidayOf($record);
 
             if ($record->status === Attendance::NWD_REVIEW) {
+                // Came in on a non-working day: the work counts, and a holiday is still paid.
                 if ($timeIn && $timeOut) {
                     $hoursWorked += $computedHours;
                     $daysWorked += $computedHours / 8;
+                }
+                if ($isHoliday($day)) {
+                    $holidayDays += 1;
                 }
 
                 continue;
             }
 
             if ($record->status === Attendance::PAID_LEAVE) {
-                $daysWorked += 1;
-                $hoursWorked += 8;
+                $leaveDays += 1;
 
                 continue;
             }
 
             if ($record->status === Attendance::PAID_HOLIDAY) {
-                $holiday = $record instanceof AttendanceRecord
-                    ? ($record->relationLoaded('nonWorkingDay') ? $record->getRelation('nonWorkingDay') : null)
-                    : ($record->nonWorkingDay ?? null);
-                $daysWorked += (float) ($holiday?->paid_days ?? 1);
-                $hoursWorked += (float) ($holiday?->paid_hours ?? $record->hours_worked ?? 8);
+                $holidayDays += $isHoliday($day) ? 1 : (float) ($day?->paid_days ?? 1);
+
+                continue;
+            }
+
+            if ($record->status === Attendance::NON_WORKING_DAY) {
+                if ($isHoliday($day)) {
+                    $holidayDays += 1;
+                }
 
                 continue;
             }
@@ -518,117 +580,90 @@ class PayrollProcessingController extends Controller
                 ? $computedHours
                 : (float) $record->hours_worked;
             $lateMinutes += $schedule->lateMinutes($timeIn);
+
+            // A half day is already paid as half; only full days count undertime.
+            if ($record->status !== Attendance::HALF_DAY && $timeOut) {
+                $undertimeMinutes += $schedule->undertimeMinutes($timeOut);
+            }
         }
 
         return [
             'days_worked' => round($daysWorked, 2),
             'hours_worked' => round($hoursWorked, 2),
             'late_minutes' => $lateMinutes,
+            'undertime_minutes' => $undertimeMinutes,
+            'leave_days' => round($leaveDays, 2),
+            'holiday_days' => round($holidayDays, 2),
             'unpaid_leave_days' => round($unpaidLeaveDays, 2),
         ];
     }
 
-    /**
-     * Payroll rules:
-     *  - monthly wage: daily wage x 26
-     *  - late: 1.80 / minute
-     *  - MALASAKITAN: 50 on every pay period
-     *  - SSS 5%, HDMF 2%, PhilHealth 2.5%, PERAA/CEAP 4%: 30th pay period only (base = monthly wage)
-     *  - loans (SSS, PhilHealth, PERAA/CEAP, HDMF): manually entered and deducted each pay period
-     *  - prior month's cash advances: split equally between the 15th and 30th pay periods
-     *  - honorarium: fixed 1,900.00, administrative role only
-     */
+    /** Payroll rules live in App\Support\PayrollCalculator. */
     private function payslipValues(array $inputs, array $steps, string $cutoff, Employee $employee): array
     {
-        $pay = $this->compute($inputs, $steps, $cutoff, $this->isAdministrative($employee));
-        $deductions = $pay['breakdown'];
+        $pay = $this->compute($inputs, $steps, $cutoff, $employee);
+        $d = $pay['breakdown'];
 
         return [
-            'step_name'          => $pay['step']['name'],
-            'days_worked'        => $pay['days'],
-            'hours_worked'       => $pay['hours'],
-            'late_minutes'       => (int) round($pay['lateMinutes']),
-            'basic_pay'          => $pay['basicPay'],
-            'daily_wage'         => $pay['step']['dailyWage'],
-            'honorarium'         => $pay['honorarium'],
-            'gross_pay'          => $pay['grossPay'],
-            'malasakitan'        => $deductions['malasakitan'],
-            'late_deduction'     => $deductions['late'],
-            'absences_deduction' => 0.0,
-            'sss'                => $deductions['sss'],
-            'sss_loan'           => $deductions['sss_loan'],
-            'philhealth'         => $deductions['philhealth'],
-            'philhealth_loan'    => $deductions['philhealth_loan'],
-            'peraa_ceap'         => $deductions['peraa_ceap'],
-            'peraa_ceap_loan'    => $deductions['peraa_ceap_loan'],
-            'hdmf'               => $deductions['hdmf'],
-            'hdmf_loan'          => $deductions['hdmf_loan'],
-            'cash_advance'       => $deductions['cash_advance'],
-            'total_deductions'   => $pay['totalDeductions'],
-            'net_pay'            => $pay['netPay'],
+            'step_name'           => $pay['step']['name'],
+            'days_worked'         => $pay['days'],
+            'hours_worked'        => $pay['hours'],
+            'late_minutes'        => (int) round($pay['lateMinutes']),
+            'undertime_minutes'   => (int) round($pay['undertimeMinutes']),
+            'leave_days'          => $pay['leaveDays'],
+            'holiday_days'        => $pay['holidayDays'],
+            'basic_pay'           => $pay['basicPay'],
+            'leave_pay'           => $pay['leavePay'],
+            'holiday_pay'         => $pay['holidayPay'],
+            'daily_wage'          => $pay['step']['dailyWage'],
+            'honorarium'          => $pay['honorarium'],
+            'gross_pay'           => $pay['grossPay'],
+            'malasakitan'         => $d['malasakitan'],
+            'late_deduction'      => $d['late'],
+            'undertime_deduction' => $d['undertime'],
+            'absences_deduction'  => 0.0,
+            'sss'                 => $d['sss'],
+            'sss_loan'            => $d['sss_loan'],
+            'philhealth'          => $d['philhealth'],
+            'philhealth_loan'     => $d['philhealth_loan'],
+            'peraa_ceap'          => $d['peraa_ceap'],
+            'peraa_ceap_loan'     => $d['peraa_ceap_loan'],
+            'hdmf'                => $d['hdmf'],
+            'hdmf_loan'           => $d['hdmf_loan'],
+            'cash_advance'        => $d['cash_advance'],
+            'withholding_tax'     => $d['withholding_tax'],
+            'sss_er'              => $pay['employer']['sss'],
+            'philhealth_er'       => $pay['employer']['philhealth'],
+            'hdmf_er'             => $pay['employer']['hdmf'],
+            'total_deductions'    => $pay['totalDeductions'],
+            'net_pay'             => $pay['netPay'],
         ];
     }
 
-    private function compute(array $r, array $steps, string $cutoff, bool $isAdmin): array
+    /** The parts of a calculation the payroll screen needs. */
+    private function screenPay(array $pay): array
     {
-        $step  = $steps[((int) $r['step_no']) - 1] ?? ['name' => 'Unassigned', 'dailyWage' => 0];
-        $wage  = (float) $step['dailyWage'];
-        $days  = (float) $r['days_worked'];
-        $hours = min((float) $r['hours_worked'], $days * 8);
-
-        $absences = 0.0;
-
-        $late      = (float) $r['late_minutes'];
-        $lateMinutes = max(0, $late);
-        $lateDed = $lateMinutes * self::LATE_PER_MINUTE;
-
-        $ratio = $days > 0 ? min(max(($hours / $days) / 8, 0), 1) : 0;
-        $basic = $wage * $days * $ratio;
-        $honor = $isAdmin ? self::HONORARIUM : 0;
-        $gross = $basic + $honor;
-
-        $g      = fn (string $k) => max(0, (float) ($r[$k] ?? 0));
-        $only30 = $cutoff === '30th';
-
-        $monthlyWage = $wage * self::MONTHLY_DAYS;
-        $contrib     = fn (string $k) => $only30 ? $monthlyWage * self::RATES[$k] : 0;
-        $sss          = $only30 ? $this->sssContribution($monthlyWage) : 0;
-
-        $cashAdvance = $g('cash_advance');
-        $firstCashAdvanceInstallment = round($cashAdvance / 2, 2);
-
-        $breakdown = [
-            'malasakitan'     => self::MALASAKITAN,
-            'late'            => $lateDed,
-            'absences'        => 0.0,
-            'sss'             => $sss,
-            'philhealth'      => $contrib('philhealth'),
-            'hdmf'            => $only30 ? self::HDMF_CONTRIBUTION : 0,
-            'peraa_ceap'      => $contrib('peraa_ceap'),
-            'sss_loan'        => $g('sss_loan'),
-            'philhealth_loan' => $g('philhealth_loan'),
-            'peraa_ceap_loan' => $g('peraa_ceap_loan'),
-            'hdmf_loan'       => $g('hdmf_loan'),
-            'cash_advance'    => $only30
-                ? round($cashAdvance - $firstCashAdvanceInstallment, 2)
-                : $firstCashAdvanceInstallment,
-        ];
-        $breakdown = array_map(fn ($v) => round($v, 2), $breakdown);
-        $total     = round(array_sum($breakdown), 2);
-
         return [
-            'step'            => ['name' => $step['name'], 'dailyWage' => $wage],
-            'monthlyWage'     => round($monthlyWage, 2),
-            'days'            => $days,
-            'hours'           => $hours,
-            'lateMinutes'     => $lateMinutes,
-            'basicPay'        => round($basic, 2),
-            'honorarium'      => round($honor, 2),
-            'grossPay'        => round($gross, 2),
-            'breakdown'       => $breakdown,
-            'totalDeductions' => $total,
-            'netPay'          => round($gross - $total, 2),
+            'monthlyWage' => $pay['monthlyWage'],
+            'basicPay' => $pay['basicPay'],
+            'leavePay' => $pay['leavePay'],
+            'holidayPay' => $pay['holidayPay'],
+            'honorarium' => $pay['honorarium'],
+            'grossPay' => $pay['grossPay'],
+            'wanted' => $pay['wanted'],
+            'employer' => $pay['employer'],
+            'contributionsEntered' => $pay['contributions']['entered'],
+            'order' => PayrollCalculator::ORDER,
         ];
+    }
+
+    private function compute(array $r, array $steps, string $cutoff, Employee $employee): array
+    {
+        $step = $steps[((int) $r['step_no']) - 1] ?? ['name' => 'Unassigned', 'dailyWage' => 0];
+        $pay = PayrollCalculator::compute($r, (float) $step['dailyWage'], $cutoff, $this->isAdministrative($employee), $employee);
+        $pay['step'] = ['name' => $step['name'], 'dailyWage' => (float) $step['dailyWage']];
+
+        return $pay;
     }
 
     private function sssContribution(float $monthlyWage): float

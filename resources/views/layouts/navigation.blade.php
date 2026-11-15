@@ -159,6 +159,13 @@
             'match' => 'loans-accounting.*',
         ],
 
+        'remittances' => [
+            'label' => 'Remittances',
+            'icon'  => 'fa-building-columns',
+            'route' => 'remittances.index',
+            'match' => 'remittances.*',
+        ],
+
         'accounting-reports' => [
             'label' => 'Reports',
             'icon'  => 'fa-chart-line',
@@ -261,6 +268,7 @@
             'payroll',
             'loans',
             'offboarding',
+            'remittances',
             'reports',
         ],
 
@@ -284,6 +292,7 @@
             'salary-monitoring',
             'salary-records',
             'loans-accounting',
+            'remittances',
             'accounting-reports',
         ],
 

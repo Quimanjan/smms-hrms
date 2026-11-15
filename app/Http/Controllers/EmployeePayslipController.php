@@ -37,6 +37,24 @@ class EmployeePayslipController extends Controller
         ]);
     }
 
+    /** Download one of the employee's own released payslips as a PDF. */
+    public function download(Request $request, Payslip $payslip)
+    {
+        $employee = $this->currentEmployee($request);
+
+        // Only their own payslip, and only once it has been released to them.
+        abort_unless((int) $payslip->employee_id === (int) $employee->id && $payslip->isReleased(), 404);
+
+        $payslip->load('employee');
+        $date = ($payslip->transfer_date ?? $payslip->created_at)->format('Y-m');
+        $name = "payslip-{$employee->employee_id}-{$date}-{$payslip->cutoff}.pdf";
+
+        return \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf', [
+            'card' => $payslip->toCard(),
+            'payslip' => $payslip,
+        ])->setPaper('a4')->download($name);
+    }
+
     private function currentEmployee(Request $request): Employee
     {
         return Employee::where('user_id', $request->user()->id)->firstOrFail();
@@ -56,10 +74,17 @@ class EmployeePayslipController extends Controller
             'basic_pay'    => (float) $p->basic_pay,
             'daily_wage'   => (float) $p->daily_wage,
             'honorarium'   => (float) $p->honorarium,
+            'leave_days'   => (float) $p->leave_days,
+            'leave_pay'    => (float) $p->leave_pay,
+            'holiday_days' => (float) $p->holiday_days,
+            'holiday_pay'  => (float) $p->holiday_pay,
+            'download_url' => route('salary-records.employee.download', $p),
             'gross_pay'    => (float) $p->gross_pay,
             'deductions' => [
                 ['MALASAKITAN',     (float) $p->malasakitan],
                 ['Late',            (float) $p->late_deduction],
+                ['Undertime',       (float) $p->undertime_deduction],
+                ['Withholding tax', (float) $p->withholding_tax],
                 ['SSS',             (float) $p->sss],
                 ['SSS Loan',        (float) $p->sss_loan],
                 ['PhilHealth',      (float) $p->philhealth],

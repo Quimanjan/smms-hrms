@@ -7,26 +7,36 @@ use App\Models\NonWorkingDay;
 use App\Services\CashAdvancePayrollService;
 use Illuminate\Support\Collection;
 
+function payrollTestEmployee(array $attributes = []): Employee
+{
+    return new Employee($attributes + ['role_type' => 'Teaching Staff', 'position' => 'teacher', 'department' => 'highschool']);
+}
+
 function calculatePayrollProcessingRow(
     string $cutoff,
     float $lateMinutes = 0,
     float $hoursWorked = 176,
-    float $cashAdvance = 0
+    float $cashAdvance = 0,
+    float $undertimeMinutes = 0,
+    float $dailyWage = 650,
+    float $daysWorked = 22,
+    ?Employee $employee = null,
 ): array {
     $controller = new PayrollProcessingController;
     $calculate = new ReflectionMethod($controller, 'compute');
 
     return $calculate->invoke($controller, [
         'step_no' => 1,
-        'days_worked' => 22,
+        'days_worked' => $daysWorked,
         'hours_worked' => $hoursWorked,
         'late_minutes' => $lateMinutes,
+        'undertime_minutes' => $undertimeMinutes,
         'sss_loan' => 0,
         'philhealth_loan' => 0,
         'peraa_ceap_loan' => 0,
         'hdmf_loan' => 0,
         'cash_advance' => $cashAdvance,
-    ], [['name' => 'Step 1', 'dailyWage' => 650]], $cutoff, false);
+    ], [['name' => 'Step 1', 'dailyWage' => $dailyWage]], $cutoff, $employee ?? payrollTestEmployee());
 }
 
 test('HDMF contribution is fixed at 200 on the 30th pay period only', function () {
@@ -52,7 +62,7 @@ test('administrative staff receive a 1900 peso honorarium in payroll', function 
         'days_worked' => 0,
         'hours_worked' => 0,
         'late_minutes' => 0,
-    ], [['name' => 'Step 1', 'dailyWage' => 650]], '15th', true);
+    ], [['name' => 'Step 1', 'dailyWage' => 650]], '15th', $employee);
 
     expect($isAdministrative->invoke($controller, $employee))->toBeTrue()
         ->and($pay['honorarium'])->toBe(1900.0)
@@ -67,38 +77,13 @@ test('cash advances are deducted in equal installments on both payroll cutoffs',
         ->and($thirtieth['breakdown']['cash_advance'])->toBe(1000.0);
 });
 
-test('attendance undertime does not create a payroll deduction', function () {
-    $controller = new PayrollProcessingController;
-    $compute = new ReflectionMethod($controller, 'compute');
-    $inputs = [
-        'step_no' => 1,
-        'days_worked' => 1,
-        'hours_worked' => 8,
-        'late_minutes' => 0,
-        'sss_loan' => 0,
-        'philhealth_loan' => 0,
-        'peraa_ceap_loan' => 0,
-        'hdmf_loan' => 0,
-        'cash_advance' => 0,
-    ];
-    $withUndertime = $compute->invoke(
-        $controller,
-        $inputs + ['undertime_minutes' => 188],
-        [['name' => 'Step 1', 'dailyWage' => 650]],
-        '15th',
-        false
-    );
-    $withoutUndertime = $compute->invoke(
-        $controller,
-        $inputs,
-        [['name' => 'Step 1', 'dailyWage' => 650]],
-        '15th',
-        false
-    );
+// Client rule: undertime is deducted at 1.80 per minute, like late.
+test('undertime is deducted at 1.80 per minute', function () {
+    $withUndertime = calculatePayrollProcessingRow('15th', undertimeMinutes: 188);
+    $withoutUndertime = calculatePayrollProcessingRow('15th');
 
-    expect($withUndertime['breakdown'])->toBe($withoutUndertime['breakdown'])
-        ->and($withUndertime['netPay'])->toBe($withoutUndertime['netPay'])
-        ->and($withUndertime['breakdown'])->not->toHaveKey('undertime');
+    expect($withUndertime['breakdown']['undertime'])->toBe(338.4)
+        ->and(round($withoutUndertime['netPay'] - $withUndertime['netPay'], 2))->toBe(338.4);
 });
 
 test('cash advance installments reconcile to the monthly total when there are cents', function () {
@@ -109,6 +94,39 @@ test('cash advance installments reconcile to the monthly total when there are ce
         ->and($thirtieth['breakdown']['cash_advance'])->toBe(1000.0)
         ->and($fifteenth['breakdown']['cash_advance'] + $thirtieth['breakdown']['cash_advance'])
         ->toBe(2000.01);
+});
+
+// Client rule: withholding tax only when yearly pay is over 250,000 (BIR table).
+test('withholding tax applies only above 250,000 a year', function () {
+    $low = calculatePayrollProcessingRow('30th', dailyWage: 650);
+    $high = calculatePayrollProcessingRow('30th', dailyWage: 1388.27);
+    $highFifteenth = calculatePayrollProcessingRow('15th', dailyWage: 1388.27);
+
+    // 1388.27 x 26 = 36,095.02 a month; less SSS 1,000, PhilHealth 902.38, Pag-IBIG 200
+    // = 33,992.64 x 12 = 407,911.68 a year => 22,500 + 20% of 7,911.68 = 24,082.34 a year.
+    expect($low['breakdown']['withholding_tax'])->toBe(0.0)
+        ->and($high['breakdown']['withholding_tax'])->toBe(2006.86)
+        ->and($highFifteenth['breakdown']['withholding_tax'])->toBe(0.0);
+});
+
+test('contributions entered once for the employee replace the standard rates', function () {
+    $employee = payrollTestEmployee();
+    $employee->sss_ee = 900;
+    $employee->pagibig_ee = 300;
+
+    $pay = calculatePayrollProcessingRow('30th', employee: $employee);
+
+    expect($pay['breakdown']['sss'])->toBe(900.0)
+        ->and($pay['breakdown']['hdmf'])->toBe(300.0)
+        ->and($pay['employer']['sss'])->toBe(1800.0);
+});
+
+test('net pay never goes below zero', function () {
+    $pay = calculatePayrollProcessingRow('30th', daysWorked: 0, hoursWorked: 0, cashAdvance: 5000);
+
+    expect($pay['grossPay'])->toBe(0.0)
+        ->and($pay['netPay'])->toBe(0.0)
+        ->and($pay['notDeducted'])->toBeGreaterThan(0.0);
 });
 
 test('cash advance repayment allocations split the total across cutoff records', function () {
@@ -150,7 +168,7 @@ test('payroll attendance metrics use attendance records and the employee schedul
     ]);
 
     expect($summarize->invoke($controller, $employee, $records))
-        ->toBe(['days_worked' => 1.5, 'hours_worked' => 11.82, 'late_minutes' => 71, 'unpaid_leave_days' => 0.0]);
+        ->toBe(['days_worked' => 1.5, 'hours_worked' => 11.82, 'late_minutes' => 71, 'undertime_minutes' => 0, 'leave_days' => 0.0, 'holiday_days' => 0.0, 'unpaid_leave_days' => 0.0]);
 });
 
 test('payroll credits a full day when an employee clocks in within grace and out at 4:30 PM', function () {
@@ -168,7 +186,7 @@ test('payroll credits a full day when an employee clocks in within grace and out
     ]);
 
     expect($summarize->invoke($controller, $employee, $records))
-        ->toBe(['days_worked' => 1.0, 'hours_worked' => 8.0, 'late_minutes' => 0, 'unpaid_leave_days' => 0.0]);
+        ->toBe(['days_worked' => 1.0, 'hours_worked' => 8.0, 'late_minutes' => 0, 'undertime_minutes' => 0, 'leave_days' => 0.0, 'holiday_days' => 0.0, 'unpaid_leave_days' => 0.0]);
 });
 
 test('payroll does not credit time worked after the scheduled end', function () {
@@ -186,7 +204,7 @@ test('payroll does not credit time worked after the scheduled end', function () 
     ]);
 
     expect($summarize->invoke($controller, $employee, $records))
-        ->toBe(['days_worked' => 1.0, 'hours_worked' => 8.0, 'late_minutes' => 0, 'unpaid_leave_days' => 0.0]);
+        ->toBe(['days_worked' => 1.0, 'hours_worked' => 8.0, 'late_minutes' => 0, 'undertime_minutes' => 0, 'leave_days' => 0.0, 'holiday_days' => 0.0, 'unpaid_leave_days' => 0.0]);
 });
 
 test('payroll counts hours worked on a non-working day review record', function () {
@@ -204,10 +222,11 @@ test('payroll counts hours worked on a non-working day review record', function 
     ]);
 
     expect($summarize->invoke($controller, $employee, $records))
-        ->toBe(['days_worked' => 1.0, 'hours_worked' => 8.0, 'late_minutes' => 0, 'unpaid_leave_days' => 0.0]);
+        ->toBe(['days_worked' => 1.0, 'hours_worked' => 8.0, 'late_minutes' => 0, 'undertime_minutes' => 0, 'leave_days' => 0.0, 'holiday_days' => 0.0, 'unpaid_leave_days' => 0.0]);
 });
 
-test('payroll credits configured paid holiday days and hours', function () {
+// A paid non-working day that is not a holiday (e.g. a school suspension) follows HR's setting.
+test('payroll credits configured paid holiday days as holiday pay', function () {
     $controller = new PayrollProcessingController;
     $summarize = new ReflectionMethod($controller, 'attendanceMetrics');
     $employee = new Employee(['position' => 'teacher']);
@@ -225,14 +244,15 @@ test('payroll credits configured paid holiday days and hours', function () {
     ];
 
     expect($summarize->invoke($controller, $employee, new Collection([$holiday])))
-        ->toBe(['days_worked' => 0.5, 'hours_worked' => 4.0, 'late_minutes' => 0, 'unpaid_leave_days' => 0.0]);
+        ->toBe(['days_worked' => 0.0, 'hours_worked' => 0.0, 'late_minutes' => 0, 'undertime_minutes' => 0, 'leave_days' => 0.0, 'holiday_days' => 0.5, 'unpaid_leave_days' => 0.0]);
 });
 
-test('non-convertible leave is unpaid and reduces payroll credit without changing the payslip fields', function () {
+// Client rule: paid leave is its own earnings row worth one daily wage; unpaid leave earns nothing.
+test('paid leave is paid as its own row and unpaid leave earns nothing', function () {
     $controller = new PayrollProcessingController;
     $summarize = new ReflectionMethod($controller, 'attendanceMetrics');
     $compute = new ReflectionMethod($controller, 'compute');
-    $employee = new Employee(['position' => 'teacher']);
+    $employee = payrollTestEmployee();
     $records = new Collection([
         (object) [
             'date' => '2026-03-02',
@@ -251,34 +271,22 @@ test('non-convertible leave is unpaid and reduces payroll credit without changin
     ]);
 
     $metrics = $summarize->invoke($controller, $employee, $records);
-    $pay = $compute->invoke($controller, [
-        'step_no' => 1,
-        'days_worked' => $metrics['days_worked'],
-        'hours_worked' => $metrics['hours_worked'],
-        'late_minutes' => $metrics['late_minutes'],
-    ], [['name' => 'Step 1', 'dailyWage' => 650]], '15th', false);
-    $payWithTwoPaidDays = $compute->invoke($controller, [
-        'step_no' => 1,
-        'days_worked' => 2,
-        'hours_worked' => 16,
-        'late_minutes' => 0,
-    ], [['name' => 'Step 1', 'dailyWage' => 650]], '15th', false);
+    $pay = $compute->invoke($controller, ['step_no' => 1] + $metrics, [['name' => 'Step 1', 'dailyWage' => 650]], '15th', $employee);
 
     expect($metrics)
         ->toBe([
-            'days_worked' => 1.0,
-            'hours_worked' => 8.0,
+            'days_worked' => 0.0,
+            'hours_worked' => 0.0,
             'late_minutes' => 0,
+            'undertime_minutes' => 0,
+            'leave_days' => 1.0,
+            'holiday_days' => 0.0,
             'unpaid_leave_days' => 1.0,
         ])
-        ->and($pay['basicPay'])->toBe(650.0)
-        ->and($payWithTwoPaidDays['basicPay'] - $pay['basicPay'])->toBe(650.0)
-        ->and($pay['breakdown'])->not->toHaveKey('unpaid_leave')
-        ->and(array_keys($pay['breakdown']))->toBe([
-            'malasakitan', 'late', 'absences', 'sss', 'philhealth', 'hdmf',
-            'peraa_ceap', 'sss_loan', 'philhealth_loan', 'peraa_ceap_loan',
-            'hdmf_loan', 'cash_advance',
-        ]);
+        ->and($pay['basicPay'])->toBe(0.0)
+        ->and($pay['leavePay'])->toBe(650.0)
+        ->and($pay['grossPay'])->toBe(650.0)
+        ->and($pay['breakdown'])->not->toHaveKey('unpaid_leave');
 });
 
 test('payroll attendance ranges follow the 5th and 20th cutoffs', function () {

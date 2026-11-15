@@ -339,6 +339,12 @@ Route::middleware(['auth', 'verified', TrackSystemDataUpdates::class])->group(fu
             'index',
         ])->name('salary-records.employee.index');
 
+        // The employee downloads their own released payslip as a PDF.
+        Route::get('/payslip-employee/{payslip}/download', [
+            EmployeePayslipController::class,
+            'download',
+        ])->name('salary-records.employee.download');
+
         Route::get('/payslips', [PayslipController::class, 'index'])->name('payslips.index');
         Route::get('/payslips/{payslip}/download', [PayslipController::class, 'download'])->name('payslips.download');
 
@@ -470,6 +476,11 @@ Route::middleware(['auth', 'verified', TrackSystemDataUpdates::class])->group(fu
         // Reports
         Route::get('/reports', [ReportController::class, 'index'])
             ->name('reports.index');
+
+        // Government remittances (SSS, PhilHealth, Pag-IBIG, BIR) for a month
+        Route::get('/remittances', [\App\Http\Controllers\RemittanceController::class, 'index'])
+            ->middleware('role:Admin|Accounting')
+            ->name('remittances.index');
 
         Route::get('/reports/accounting/employees/export', [ReportController::class, 'exportPaidEmployees'])
             ->middleware('role:Admin|Accounting')

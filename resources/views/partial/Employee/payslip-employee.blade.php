@@ -159,6 +159,14 @@
                                 <span>Honorarium</span>
                                 <strong class="min-w-[110px] text-center text-gray-900" x-text="Number(slip.honorarium) > 0 ? peso(slip.honorarium) : '-'"></strong>
                             </div>
+                            <div class="flex min-h-[28px] items-center justify-between gap-3 border-b border-[#ecebea] text-[0.8rem] text-gray-500">
+                                <span x-text="'Paid leave (' + Number(slip.leave_days || 0) + (Number(slip.leave_days) === 1 ? ' day)' : ' days)')"></span>
+                                <strong class="min-w-[110px] text-center text-gray-900" x-text="Number(slip.leave_pay) > 0 ? peso(slip.leave_pay) : '-'"></strong>
+                            </div>
+                            <div class="flex min-h-[28px] items-center justify-between gap-3 border-b border-[#ecebea] text-[0.8rem] text-gray-500">
+                                <span x-text="'Holiday pay (' + Number(slip.holiday_days || 0) + (Number(slip.holiday_days) === 1 ? ' day)' : ' days)')"></span>
+                                <strong class="min-w-[110px] text-center text-gray-900" x-text="Number(slip.holiday_pay) > 0 ? peso(slip.holiday_pay) : '-'"></strong>
+                            </div>
                             <div class="mt-2 flex min-h-[28px] items-center justify-between gap-3 text-[0.8rem] font-extrabold text-gray-900">
                                 <span>Gross earnings</span>
                                 <strong class="min-w-[110px] text-center text-[#b22222]" x-text="peso(slip.gross_pay)"></strong>
@@ -183,6 +191,13 @@
                     <div class="flex items-center justify-between gap-3 border-t-2 border-[#b22222] bg-[#fef2f2] px-4 py-2.5 font-black tracking-[0.08em] text-[#b22222]">
                         <span>NET PAY</span>
                         <strong class="text-base tracking-normal" x-text="peso(slip.net_pay)"></strong>
+                    </div>
+
+                    <div class="pay-download">
+                        <a :href="slip.download_url" class="pay-download-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
+                            Download payslip (PDF)
+                        </a>
                     </div>
 
                 </div>

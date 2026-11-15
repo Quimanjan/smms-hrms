@@ -175,6 +175,14 @@
                                     <span>Honorarium</span>
                                     <strong class="min-w-[96px] text-right text-gray-900 sm:min-w-[120px] sm:text-center" x-text="Number(slip.honorarium) > 0 ? money(slip.honorarium) : '-'"></strong>
                                 </div>
+                                <div class="flex min-h-[28px] items-center justify-between gap-3 border-b border-[#ecebea] text-[0.82rem] text-gray-500 sm:min-h-[30px] sm:text-[0.85rem]">
+                                    <span x-text="'Paid leave (' + Number(slip.leave_days || 0) + (Number(slip.leave_days) === 1 ? ' day)' : ' days)')"></span>
+                                    <strong class="min-w-[96px] text-right text-gray-900 sm:min-w-[120px] sm:text-center" x-text="Number(slip.leave_pay) > 0 ? money(slip.leave_pay) : '-'"></strong>
+                                </div>
+                                <div class="flex min-h-[28px] items-center justify-between gap-3 border-b border-[#ecebea] text-[0.82rem] text-gray-500 sm:min-h-[30px] sm:text-[0.85rem]">
+                                    <span x-text="'Holiday pay (' + Number(slip.holiday_days || 0) + (Number(slip.holiday_days) === 1 ? ' day)' : ' days)')"></span>
+                                    <strong class="min-w-[96px] text-right text-gray-900 sm:min-w-[120px] sm:text-center" x-text="Number(slip.holiday_pay) > 0 ? money(slip.holiday_pay) : '-'"></strong>
+                                </div>
                                 <div class="mt-3 flex min-h-[30px] items-center justify-between gap-3 text-[0.85rem] font-extrabold text-gray-900">
                                     <span>Gross earnings</span>
                                     <strong class="min-w-[96px] text-right text-[#b22222] sm:min-w-[120px] sm:text-center" x-text="money(slip.gross_pay)"></strong>
@@ -236,7 +244,8 @@
                 ],
 
                 deductionRows: [
-                    ['MALASAKITAN', 'malasakitan'], ['Late', 'late'],
+                    ['MALASAKITAN', 'malasakitan'], ['Late', 'late'], ['Undertime', 'undertime'],
+                    ['Withholding tax', 'withholding_tax'],
                     ['SSS', 'sss'], ['SSS LOAN', 'sss_loan'], ['PhilHealth', 'philhealth'],
                     ['PERAA/CEAP', 'peraa_ceap'], ['PERAA/CEAP LOAN', 'peraa_ceap_loan'],
                     ['HDMF', 'hdmf'], ['HDMF LOAN', 'hdmf_loan'], ['Cash advance', 'cash_advance'],

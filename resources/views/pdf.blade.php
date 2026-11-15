@@ -18,10 +18,12 @@
     $deductionRows = [
         ['MALASAKITAN',     'malasakitan',     false],
         ['Late',            'late',            false],
+        ['Undertime',       'undertime',       false],
         ['SSS',             'sss',             true],
         ['PhilHealth',      'philhealth',      true],
         ['HDMF',            'hdmf',            true],
         ['PERAA/CEAP',      'peraa_ceap',      true],
+        ['Withholding tax', 'withholding_tax', true],
         ['SSS Loan',        'sss_loan',        true],
         ['PhilHealth Loan', 'philhealth_loan', true],
         ['PERAA/CEAP Loan', 'peraa_ceap_loan', true],
@@ -86,6 +88,8 @@
                     <tr class="row"><td>Basic salary</td><td>{{ $peso($card['basic_pay']) }}</td></tr>
                     <tr class="row"><td>Daily rate</td><td>{{ $peso($card['daily_wage']) }}</td></tr>
                     <tr class="row"><td>Honorarium</td><td>{{ (float) $card['honorarium'] > 0 ? $peso($card['honorarium']) : '-' }}</td></tr>
+                    <tr class="row"><td>Paid leave ({{ rtrim(rtrim(number_format($card['leave_days'] ?? 0, 2), '0'), '.') }} {{ ($card['leave_days'] ?? 0) == 1 ? 'day' : 'days' }})</td><td>{{ (float) ($card['leave_pay'] ?? 0) > 0 ? $peso($card['leave_pay']) : '-' }}</td></tr>
+                    <tr class="row"><td>Holiday pay ({{ rtrim(rtrim(number_format($card['holiday_days'] ?? 0, 2), '0'), '.') }} {{ ($card['holiday_days'] ?? 0) == 1 ? 'day' : 'days' }})</td><td>{{ (float) ($card['holiday_pay'] ?? 0) > 0 ? $peso($card['holiday_pay']) : '-' }}</td></tr>
                     <tr class="total"><td>Gross earnings</td><td style="text-align:right">{{ $peso($card['gross_pay']) }}</td></tr>
                 </table>
             </td>

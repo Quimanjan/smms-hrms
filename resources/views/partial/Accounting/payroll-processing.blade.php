@@ -209,8 +209,8 @@
                             <template x-for="(m, k) in [
                                 ['Date', formatCutoffDate(cutoff)],
                                 ['Days worked', draft.daysWorked],
-                                ['Hours worked', draft.hoursWorked],
                                 ['Late (mins)', draft.lateMinutes],
+                                ['Undertime (mins)', draft.undertimeMinutes],
                                 ['Monthly wage', money(preview.monthlyWage)]
                             ]" :key="k">
                                 <div class="grid min-w-0 justify-items-center gap-[2px] px-1 py-2 text-center" :class="k > 0 ? 'sm:border-l sm:border-[#ecebea]' : ''">
@@ -225,6 +225,8 @@
                             <section class="flex min-w-0 flex-col border-t border-[#ecebea] p-2.5">
                                 <h3 class="mb-1.5 text-[0.7rem] uppercase tracking-[0.08em] text-[#b22222]">Earnings</h3>
                                 <div class="{{ $row }}"><span>Basic salary</span><strong class="w-[120px] shrink-0 text-center text-gray-900" x-text="money(preview.basicPay)"></strong></div>
+                                <div class="{{ $row }}"><span x-text="'Paid leave (' + draft.leaveDays + ' day' + (draft.leaveDays == 1 ? '' : 's') + ')'"></span><strong class="w-[120px] shrink-0 text-center text-gray-900" x-text="draft.leaveDays > 0 ? money(preview.leavePay) : '-'"></strong></div>
+                                <div class="{{ $row }}"><span x-text="'Holiday pay (' + draft.holidayDays + ' day' + (draft.holidayDays == 1 ? '' : 's') + ')'"></span><strong class="w-[120px] shrink-0 text-center text-gray-900" x-text="draft.holidayDays > 0 ? money(preview.holidayPay) : '-'"></strong></div>
                                 <div class="{{ $row }}"><span>Daily rate</span><strong class="w-[120px] shrink-0 text-center text-gray-900" x-text="money(preview.step.dailyWage)"></strong></div>
                                 {{-- Honorarium is fixed (administrative role only), not editable --}}
                                 <div class="{{ $row }}"><span>Honorarium</span><strong class="w-[120px] shrink-0 text-center text-gray-900" x-text="draft.isAdmin ? money(preview.honorarium) : '-'"></strong></div>
@@ -259,6 +261,30 @@
                                 </template>
 
                                 <div class="mt-auto flex h-[38px] items-center justify-between gap-3 pt-2 text-[0.75rem] font-extrabold text-gray-900"><span>Total deductions</span><strong class="w-[120px] shrink-0 text-center text-[#b22222]" x-text="'- ' + money(preview.totalDeductions)"></strong></div>
+                                <p class="pay-note" x-show="preview.notDeducted > 0"
+                                    x-text="'Pay is not enough for every deduction this pay period: ' + money(preview.notDeducted) + ' was not deducted, so net pay stays at zero or above.'"></p>
+                            </section>
+
+                            {{-- Government contributions: entered once, used every 30th pay period --}}
+                            <section class="pay-contrib sm:col-span-2">
+                                <h3>Government contributions (monthly)</h3>
+                                <p>Enter these once. Every 30th pay period uses them until you change them. Leave a box empty to use the standard rate shown.</p>
+                                <div class="pay-contrib-grid">
+                                    <span></span><span class="pay-contrib-head">Employee share</span><span class="pay-contrib-head">Employer share</span>
+                                    <template x-for="c in contribFields" :key="c[1]">
+                                        <div class="contents">
+                                            <span class="pay-contrib-label" x-text="c[0]"></span>
+                                            <input type="number" min="0" step="0.01" :aria-label="c[0] + ' employee share'"
+                                                :placeholder="Number(defaultShare(draft, c[1], 'ee')).toFixed(2)"
+                                                :value="draft.contributions[c[1] + '_ee'] ?? ''"
+                                                @input="draft.contributions[c[1] + '_ee'] = $event.target.value === '' ? null : Math.max(0, Number($event.target.value) || 0)">
+                                            <input type="number" min="0" step="0.01" :aria-label="c[0] + ' employer share'"
+                                                :placeholder="Number(defaultShare(draft, c[1], 'er')).toFixed(2)"
+                                                :value="draft.contributions[c[1] + '_er'] ?? ''"
+                                                @input="draft.contributions[c[1] + '_er'] = $event.target.value === '' ? null : Math.max(0, Number($event.target.value) || 0)">
+                                        </div>
+                                    </template>
+                                </div>
                             </section>
                         </div>
 
@@ -325,10 +351,16 @@
 
                 // [label, key, only30] computed automatically, read-only
                 computedFields: [
-                    ['MALASAKITAN', 'fixed50', false], ['Late', 'late', false],
+                    ['MALASAKITAN', 'malasakitan', false], ['Late', 'late', false], ['Undertime', 'undertime', false],
                     ['SSS', 'sss', true], ['PhilHealth', 'philhealth', true],
-                    ['HDMF', 'hdmf', true], ['PERAA/CEAP', 'peraaCeap', true],
-                    ['Cash Advance', 'cashAdvance', false],
+                    ['Pag-IBIG (HDMF)', 'hdmf', true], ['PERAA/CEAP', 'peraa_ceap', true],
+                    ['Withholding tax', 'withholding_tax', true],
+                    ['Cash Advance', 'cash_advance', false],
+                ],
+
+                // One-time government contributions (monthly amounts), kept on the employee
+                contribFields: [
+                    ['SSS', 'sss'], ['PhilHealth', 'philhealth'], ['Pag-IBIG', 'pagibig'],
                 ],
 
                 // [label, key] editable loan and cash-advance deductions
@@ -343,44 +375,35 @@
 
                 // ---- calculation (same rules as the server; the server recalculates on transfer) ----
                 calc(e) {
+                    // The server calculated pay and every deduction (App\Support\PayrollCalculator).
+                    // Here only the loans being edited are swapped in, then deductions are taken
+                    // in the same order so net pay never goes below zero.
                     const step = this.steps[Number(e.step) - 1] || { name: 'Unassigned', dailyWage: 0 };
-                    const wage = Number(step.dailyWage);
-                    const days = Number(e.daysWorked) || 0;
-                    const hours = Number(e.hoursWorked) || 0;
-
-                    const absences = 0;
-                    const lateMinutes = Math.max(0, Number(e.lateMinutes) || 0);
-                    const lateDed = lateMinutes * LATE_PER_MINUTE;
-                    const ratio = days > 0 ? Math.min(Math.max(hours / days / 8, 0), 1) : 0;
-                    const basicPay = wage * days * ratio;
-                    const honorarium = e.isAdmin ? HONORARIUM : 0;
-                    const grossPay = basicPay + honorarium;
-
+                    const p = e.pay;
                     const d = e.deductions || {};
                     const g = (k) => Math.max(0, Number(d[k]) || 0);
-                    const is30 = this.cutoff === '30th';
-                    const monthly = wage * MONTHLY_DAYS;
-                    const c = (k) => is30 ? monthly * RATES[k] : 0;
-                    const sss = is30 && monthly >= 12750
-                        ? Math.min(1000, 650 + Math.floor((monthly - 12750) / 500) * 25)
-                        : 0;
-                    const hdmf = is30 ? HDMF_CONTRIBUTION : 0;
-                    const firstCashAdvanceInstallment = Math.round(g('cashAdvance') / 2 * 100) / 100;
-
-                    const deductions = {
-                        fixed50: MALASAKITAN, late: lateDed, absences,
-                        sss, philhealth: c('philhealth'), hdmf, peraaCeap: c('peraaCeap'),
-                        sssLoan: g('sssLoan'),
-                        philhealthLoan: g('philhealthLoan'),
-                        peraaCeapLoan: g('peraaCeapLoan'),
-                        hdmfLoan: g('hdmfLoan'),
-                        cashAdvance: is30
-                            ? Math.round((g('cashAdvance') - firstCashAdvanceInstallment) * 100) / 100
-                            : firstCashAdvanceInstallment,
+                    const r2 = (n) => Math.round(n * 100) / 100;
+                    const wanted = {
+                        ...p.wanted,
+                        sss_loan: g('sssLoan'), philhealth_loan: g('philhealthLoan'),
+                        peraa_ceap_loan: g('peraaCeapLoan'), hdmf_loan: g('hdmfLoan'),
                     };
-                    const totalDeductions = Object.values(deductions).reduce((a, b) => a + b, 0);
+                    let left = p.grossPay;
+                    const deductions = {};
+                    p.order.forEach((k) => {
+                        const amount = r2(Math.min(wanted[k] || 0, Math.max(0, left)));
+                        deductions[k] = amount;
+                        left = r2(left - amount);
+                    });
+                    const totalDeductions = r2(Object.values(deductions).reduce((a, b) => a + b, 0));
+                    const notDeducted = r2(Object.keys(wanted).reduce((a, k) => a + (wanted[k] || 0), 0) - totalDeductions);
 
-                    return { step, monthlyWage: monthly, basicPay, honorarium, grossPay, deductions, totalDeductions, netPay: grossPay - totalDeductions };
+                    return {
+                        step, monthlyWage: p.monthlyWage,
+                        basicPay: p.basicPay, leavePay: p.leavePay, holidayPay: p.holidayPay, honorarium: p.honorarium,
+                        grossPay: p.grossPay, deductions, totalDeductions, notDeducted,
+                        netPay: r2(p.grossPay - totalDeductions),
+                    };
                 },
 
                 get preview() { return this.draft ? this.calc(this.draft) : null; },
@@ -424,13 +447,32 @@
                     this.activeIndex = i;
                     this.draft = JSON.parse(JSON.stringify(this.employees[i]));
                 },
-                saveDetails() {
+                // Standard monthly share used when nothing was entered.
+                defaultShare(e, agency, side) {
+                    const monthly = e.pay.monthlyWage;
+                    const sss = monthly < 12750 ? 0 : Math.min(1000, 650 + Math.floor((monthly - 12750) / 500) * 25);
+                    const phil = Math.round(monthly * 0.025 * 100) / 100;
+                    const map = {
+                        sss: { ee: sss, er: sss * 2 },
+                        philhealth: { ee: phil, er: phil },
+                        pagibig: { ee: 200, er: 200 },
+                    };
+                    const ee = e.contributions[agency + '_ee'];
+                    if (side === 'er' && agency !== 'pagibig' && ee !== null && ee !== undefined && ee !== '') {
+                        return agency === 'sss' ? Number(ee) * 2 : Number(ee);
+                    }
+                    return map[agency][side];
+                },
+                async saveDetails() {
                     if (this.activeIndex === null) return;
                     const e = this.employees[this.activeIndex];
                     e.step = Math.max(1, Number(this.draft.step) || 1);
                     e.deductions = { ...this.draft.deductions };
-                    this.queueSave();
+                    e.contributions = { ...this.draft.contributions };
+                    this.dirty = true;
                     this.closeAll();
+                    // Save, then reload so the server recalculates pay with the new values.
+                    if (await this.flushSave()) window.location.reload();
                 },
 
                 // ---- steps modal ----
@@ -491,7 +533,7 @@
                 // Contributions and honorarium are computed server-side; only manual fields are sent
                 rowsPayload() {
                     return this.employees.map((e) => ({
-                        employee_id: e.id, step_no: e.step,
+                        employee_id: e.id, step_no: Math.max(1, Number(e.step) || 1),
                         days_worked: Number(e.daysWorked) || 0,
                         hours_worked: Number(e.hoursWorked) || 0,
                         late_minutes: Number(e.lateMinutes) || 0,
@@ -499,6 +541,7 @@
                         philhealth_loan: Number(e.deductions.philhealthLoan) || 0,
                         peraa_ceap_loan: Number(e.deductions.peraaCeapLoan) || 0,
                         hdmf_loan: Number(e.deductions.hdmfLoan) || 0,
+                        contributions: e.contributions,
                     }));
                 },
 

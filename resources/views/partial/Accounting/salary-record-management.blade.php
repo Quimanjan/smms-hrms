@@ -143,6 +143,14 @@
                                     <span>Honorarium</span>
                                     <strong class="min-w-[120px] text-center text-gray-900" x-text="Number(slip.honorarium) > 0 ? money(slip.honorarium) : '-'"></strong>
                                 </div>
+                                <div class="flex min-h-[30px] items-center justify-between gap-3 border-b border-[#ecebea] text-[0.85rem] text-gray-500">
+                                    <span x-text="'Paid leave (' + Number(slip.leave_days || 0) + (Number(slip.leave_days) === 1 ? ' day)' : ' days)')"></span>
+                                    <strong class="min-w-[120px] text-center text-gray-900" x-text="Number(slip.leave_pay) > 0 ? money(slip.leave_pay) : '-'"></strong>
+                                </div>
+                                <div class="flex min-h-[30px] items-center justify-between gap-3 border-b border-[#ecebea] text-[0.85rem] text-gray-500">
+                                    <span x-text="'Holiday pay (' + Number(slip.holiday_days || 0) + (Number(slip.holiday_days) === 1 ? ' day)' : ' days)')"></span>
+                                    <strong class="min-w-[120px] text-center text-gray-900" x-text="Number(slip.holiday_pay) > 0 ? money(slip.holiday_pay) : '-'"></strong>
+                                </div>
                                 <div class="mt-3 flex min-h-[30px] items-center justify-between gap-3 text-[0.85rem] font-extrabold text-gray-900">
                                     <span>Gross earnings</span>
                                     <strong class="min-w-[120px] text-center text-[#b22222]" x-text="money(slip.gross_pay)"></strong>
@@ -200,6 +208,8 @@
                         ['Basic salary', s.basic_pay],
                         ['Daily rate', s.daily_wage],
                         ['Honorarium', s.honorarium],
+                        ['Paid leave', s.leave_pay],
+                        ['Holiday pay', s.holiday_pay],
                         ['Gross earnings', s.gross_pay],
                     ] : [];
                 },
@@ -211,6 +221,8 @@
                     return [
                         ['MALASAKITAN', d.malasakitan],
                         ['Late', d.late],
+                        ['Undertime', d.undertime],
+                        ['Withholding tax', d.withholding_tax],
                         ['SSS', d.sss],
                         ['SSS LOAN', d.sss_loan],
                         ['PhilHealth', d.philhealth],

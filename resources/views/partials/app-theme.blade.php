@@ -707,6 +707,58 @@ button.cx-day:focus-visible { outline: 2px solid var(--mg-gold); outline-offset:
 .dtr-badge--ok { background: #e3f5ea; color: #1f6b41; }
 .dtr-badge--wait { background: #fdf0d8; color: #8a5a00; }
 
+/* ---------- Payroll details: contributions and notes ---------- */
+.pay-note { margin: 8px 0 0; padding: 8px 10px; border-radius: 8px; background: #fdf0d8; color: #7a4f00; font-size: 0.72rem; font-weight: 600; }
+.pay-contrib { padding: 12px 10px 14px; border-top: 1px solid #ecebea; }
+.pay-contrib h3 { margin: 0 0 4px; color: #b22222; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; }
+.pay-contrib p { margin: 0 0 10px; color: #6b7280; font-size: 0.72rem; }
+.pay-contrib-grid { display: grid; grid-template-columns: minmax(80px, 1fr) minmax(0, 1fr) minmax(0, 1fr); gap: 6px 10px; align-items: center; }
+.pay-contrib-head { font-size: 0.66rem; font-weight: 800; text-transform: uppercase; color: #6b7280; text-align: center; }
+.pay-contrib-label { font-size: 0.78rem; font-weight: 700; color: #111827; }
+.pay-contrib-grid input { width: 100%; height: 30px; padding: 0 8px; border: 1px solid #ecebea; border-radius: 8px; text-align: center; font-size: 0.78rem; font-weight: 700; }
+.pay-contrib-grid input::placeholder { color: #9ca3af; font-weight: 500; }
+.pay-contrib-grid input:focus { outline: 2px solid var(--mg-gold); outline-offset: 1px; border-color: transparent; box-shadow: none; }
+.pay-contrib .contents { display: contents; }
+
+.pay-download { display: flex; justify-content: flex-end; padding: 12px 16px 16px; }
+.pay-download-btn { display: inline-flex; align-items: center; gap: 8px; height: 42px; padding: 0 18px; border-radius: 12px; background: var(--mg-crimson); color: #fff; font-weight: 700; font-size: 0.9rem; text-decoration: none; }
+.pay-download-btn svg { width: 18px; height: 18px; }
+.pay-download-btn:hover { background: var(--mg-oxblood); }
+.pay-download-btn:focus-visible { outline: 2px solid var(--mg-gold); outline-offset: 2px; }
+
+/* ---------- Government remittances ---------- */
+.rm { display: grid; gap: 18px; }
+.rm-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; padding: 16px 20px; border: 1px solid var(--mg-line); border-radius: 20px; background: #fff; }
+.rm-bar label { font-weight: 600; font-size: 0.88rem; color: var(--mg-stone); }
+.rm-bar-gap { margin-left: 8px; }
+.rm-bar input, .rm-bar select { height: 42px; padding: 0 12px; border: 1px solid var(--mg-line); border-radius: 10px; background-color: #fbf8f7; font-size: 0.92rem; }
+.rm-bar select { padding-right: 32px; }
+.rm-bar input:focus, .rm-bar select:focus { outline: 2px solid var(--mg-gold); outline-offset: 1px; border-color: transparent; box-shadow: none; }
+.rm-export { margin-left: auto; height: 42px; padding: 0 18px; border: 0; border-radius: 10px; background: var(--mg-crimson); color: #fff; font-weight: 700; cursor: pointer; }
+.rm-export:hover { background: var(--mg-oxblood); }
+.rm-export:disabled { opacity: 0.5; cursor: default; }
+.rm-totals { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.rm-total { display: grid; gap: 4px; padding: 16px 18px; border: 1px solid var(--mg-line); border-radius: 18px; background: #fff; }
+.rm-total span { font-size: 0.85rem; color: var(--mg-stone); }
+.rm-total strong { font-family: var(--mg-display); font-weight: 400; font-size: 1.6rem; color: var(--mg-oxblood); }
+.rm-card { overflow: hidden; border: 1px solid var(--mg-line); border-radius: 22px; background: #fff; }
+.rm-card-head { padding: 20px 22px 14px; }
+.rm-card-head h3 { margin: 0; font-family: var(--mg-display); font-weight: 400; font-size: 1.5rem; color: var(--mg-oxblood); }
+.rm-card-head p { margin: 4px 0 0; font-size: 0.88rem; color: var(--mg-stone); }
+.rm-empty { margin: 0; padding: 30px 22px; text-align: center; color: var(--mg-stone); }
+.rm-wrap { overflow-x: auto; border-top: 1px solid var(--mg-line); }
+.rm-table { width: 100%; min-width: 900px; border-collapse: collapse; font-size: 0.86rem; }
+.rm-table th { padding: 9px 8px; background: var(--mg-oxblood); color: #fff; font-weight: 600; text-align: right; }
+.rm-table thead tr:first-child th { text-align: center; border-bottom: 1px solid rgba(255, 255, 255, 0.18); }
+.rm-table td { padding: 11px 8px; border-bottom: 1px solid #f1e9e7; text-align: right; white-space: nowrap; }
+.rm-table .rm-name { text-align: left; }
+.rm-table td.rm-name { white-space: normal; }
+.rm-table td.rm-name strong, .rm-table td.rm-name small { display: block; }
+.rm-table td.rm-name small { color: var(--mg-stone); }
+.rm-sum { font-weight: 700; color: var(--mg-oxblood); }
+.rm-table tfoot td { background: #fbf3f2; font-weight: 800; color: var(--mg-oxblood); border-top: 2px solid var(--mg-crimson); }
+@media (max-width: 900px) { .rm-totals { grid-template-columns: repeat(2, minmax(0, 1fr)); } .rm-export { margin-left: 0; } }
+
 /* ---------- Proctoring days (HR) ---------- */
 .proc-form { display: grid; grid-template-columns: 1fr; gap: 14px; }
 @media (min-width: 640px) { .proc-form { grid-template-columns: 1fr 1.4fr auto; align-items: end; } .proc-form [role="alert"] { grid-column: 1 / -1; } }
