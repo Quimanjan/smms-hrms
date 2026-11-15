@@ -165,12 +165,12 @@
 
         {{-- Government IDs --}}
         <section x-show="tab === 'ids'" x-cloak role="tabpanel" class="min-h-[200px] py-2">
-            <p class="mb-[22px] text-[0.9rem] text-gray-500">Manage your government identification numbers.</p>
+            <p class="mb-[22px] text-[0.9rem] text-gray-500">Your government ID numbers are hidden. Click the eye to show one. Only you, HR, and Admin can see them.</p>
             <div class="grid grid-cols-1 gap-[18px] sm:grid-cols-2">
-                @include('profile.partials.account-field', ['key' => 'sss_number', 'label' => 'SSS Number', 'value' => $employee->sss_number, 'attrs' => 'maxlength="32" autocomplete="off"'])
-                @include('profile.partials.account-field', ['key' => 'philhealth_number', 'label' => 'PhilHealth Number', 'value' => $employee->philhealth_number, 'attrs' => 'maxlength="32" autocomplete="off"'])
-                @include('profile.partials.account-field', ['key' => 'pagibig_number', 'label' => 'Pag-IBIG Number', 'value' => $employee->pagibig_number, 'attrs' => 'maxlength="32" autocomplete="off"'])
-                @include('profile.partials.account-field', ['key' => 'tin', 'label' => 'TIN', 'value' => $employee->tin, 'attrs' => 'maxlength="32" autocomplete="off"'])
+                @include('profile.partials.account-field', ['key' => 'sss_number', 'secret' => true, 'label' => 'SSS Number', 'value' => $employee->sss_number, 'attrs' => 'maxlength="32" autocomplete="off"'])
+                @include('profile.partials.account-field', ['key' => 'philhealth_number', 'secret' => true, 'label' => 'PhilHealth Number', 'value' => $employee->philhealth_number, 'attrs' => 'maxlength="32" autocomplete="off"'])
+                @include('profile.partials.account-field', ['key' => 'pagibig_number', 'secret' => true, 'label' => 'Pag-IBIG Number', 'value' => $employee->pagibig_number, 'attrs' => 'maxlength="32" autocomplete="off"'])
+                @include('profile.partials.account-field', ['key' => 'tin', 'label' => 'TIN', 'secret' => true, 'value' => $employee->tin, 'attrs' => 'maxlength="32" autocomplete="off"'])
             </div>
         </section>
 

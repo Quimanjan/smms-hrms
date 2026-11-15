@@ -626,6 +626,24 @@ button.cx-day:focus-visible { outline: 2px solid var(--mg-gold); outline-offset:
     .dp-face { width: 64px; height: 64px; }
 }
 
+/* ---------- Hidden government IDs ---------- */
+.secret-value { display: inline-flex; align-items: center; gap: 8px; }
+.secret-value__text { font-variant-numeric: tabular-nums; letter-spacing: 0.04em; }
+.secret-value__eye {
+    display: inline-grid; place-items: center; width: 30px; height: 30px; flex: none;
+    border: 1px solid var(--mg-line); border-radius: 999px; background: #fff; color: var(--mg-stone); cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+.secret-value__eye svg { width: 16px; height: 16px; }
+.secret-value__eye:hover { color: var(--mg-crimson); border-color: var(--mg-crimson); }
+.secret-value__eye:focus-visible { outline: 2px solid var(--mg-gold); outline-offset: 2px; }
+
+.gov-ids { padding: 14px 16px; border: 1px solid var(--mg-line); border-radius: 14px; background: #fbf8f7; }
+.gov-ids__title { margin: 0 0 8px; font-family: var(--mg-display); font-weight: 400; font-size: 1.1rem; color: var(--mg-oxblood); }
+.gov-ids ul { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.gov-ids li { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 32px; font-size: 0.92rem; }
+.gov-ids__label { font-weight: 600; color: var(--mg-ink); }
+
 /* ---------- Motion ---------- */
 @media (prefers-reduced-motion: no-preference) {
     .dx-hero-copy > *, .dx-actions { animation: dx-rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }

@@ -128,6 +128,14 @@ class EmployeeController extends Controller
                     'address' => $e->address,
                     'emergency_name' => $e->emergency_name,
                     'emergency_contact' => $e->emergency_contact,
+
+                    // HR and Admin need these for deductions. Shown hidden by default.
+                    'gov_ids' => [
+                        ['label' => 'SSS Number', 'value' => $e->sss_number],
+                        ['label' => 'PhilHealth Number', 'value' => $e->philhealth_number],
+                        ['label' => 'Pag-IBIG Number', 'value' => $e->pagibig_number],
+                        ['label' => 'TIN', 'value' => $e->tin],
+                    ],
                 ],
             ]
         );

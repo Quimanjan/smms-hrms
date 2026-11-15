@@ -16,6 +16,7 @@
     $inputName   = $inputName ?? $key;
     $placeholder = $placeholder ?? '';
     $multiline   = $multiline ?? false;
+    $secret      = $secret ?? false;
 
     $current  = old($key, $value ?? '');
     $hasValue = filled($current);
@@ -33,8 +34,14 @@
     {{ $label }}
 
     {{-- View mode --}}
+    @if ($secret && $hasValue)
+    <span x-show="!editing" class="min-h-6 text-[0.95rem] font-normal leading-normal text-gray-900">
+        <x-secret-value :value="$current" :label="$label" />
+    </span>
+    @else
     <span x-show="!editing"
         class="min-h-6 whitespace-pre-wrap break-words text-[0.95rem] font-normal leading-normal {{ $hasValue ? 'text-gray-900' : 'italic text-gray-400' }}">{{ $display }}</span>
+    @endif
 
     {{-- Edit mode --}}
     @if ($options)
