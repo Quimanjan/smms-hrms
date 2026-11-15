@@ -80,15 +80,8 @@ class Avatar
     /** A round badge with the person's initials in school colors. */
     public static function initials(string $name, string $label = ''): string
     {
-        $palettes = [
-            ['#4a0a12', '#7a1420', '#e6cf9a'],
-            ['#a5121e', '#6e0c15', '#fff4dc'],
-            ['#c9a24b', '#9c7a2c', '#33060c'],
-            ['#5b2a33', '#33060c', '#e6cf9a'],
-            ['#8a3b2b', '#5a1f17', '#fbe9d7'],
-        ];
-        $seed = crc32(strtolower(trim($name)) ?: 'smms');
-        [$from, $to, $ink] = $palettes[$seed % count($palettes)];
+        // One look for everyone: school oxblood with gold initials.
+        [$from, $to, $ink] = ['#7a1420', '#33060c', '#e6cf9a'];
         $id = 'ini'.substr(md5($name), 0, 8);
         $text = e(self::initialsOf($name));
         $title = e($label !== '' ? $label : $name);
