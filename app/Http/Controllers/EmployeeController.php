@@ -87,6 +87,12 @@ class EmployeeController extends Controller
             ->orderBy('step_no')
             ->pluck('name', 'step_no');
 
+        // Highest education each hired applicant reported on their application.
+        $attainment = DB::table('applications')
+            ->whereIn('user_id', $employees->getCollection()->pluck('user_id')->filter())
+            ->orderBy('id')
+            ->pluck('education', 'user_id');
+
         // Data for details and edit modal.
         $cards = $employees->getCollection()->mapWithKeys(
             fn (Employee $e) => [
@@ -128,6 +134,9 @@ class EmployeeController extends Controller
                     'address' => $e->address,
                     'emergency_name' => $e->emergency_name,
                     'emergency_contact' => $e->emergency_contact,
+
+                    'attainment' => $e->user_id ? ($attainment[$e->user_id] ?? null) : null,
+                    'education' => $this->educationRows($e->education),
 
                     // HR and Admin need these for deductions. Shown hidden by default.
                     'gov_ids' => [
@@ -524,5 +533,31 @@ class EmployeeController extends Controller
             'province' => '',
             'zip_code' => '',
         ];
+    }
+
+    /**
+     * Education the employee completed, by level, for the details window.
+     * School names are left out, as the panel asked.
+     *
+     * @return array<int, array{level: string, detail: string, years: string}>
+     */
+    private function educationRows($education): array
+    {
+        $education = is_array($education) ? $education : [];
+        $rows = [];
+
+        foreach (Employee::EDUCATION_LEVELS as $level => $config) {
+            $entry = (array) ($education[$level] ?? []);
+            $detail = trim((string) ($entry['course'] ?? $entry['strand'] ?? ''));
+            $years = trim((string) ($entry['years'] ?? ''));
+
+            if ($detail === '' && $years === '' && blank($entry['school'] ?? null)) {
+                continue;
+            }
+
+            $rows[] = ['level' => $config['label'], 'detail' => $detail, 'years' => $years];
+        }
+
+        return $rows;
     }
 }

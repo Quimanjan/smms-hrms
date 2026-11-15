@@ -66,6 +66,11 @@ class EmployeeAttendanceController extends Controller
             ->get()
             ->keyBy(fn ($d) => Carbon::parse($d->date)->toDateString());
 
+        $proctoring = \App\Models\ProctoringDay::query()
+            ->whereBetween('date', [$from->toDateString(), $to->toDateString()])
+            ->get()
+            ->keyBy(fn ($d) => Carbon::parse($d->date)->toDateString());
+
         $role = AttendanceSchedule::isMaintenanceEmployee($employee->role_type, $employee->position)
             ? 'maintenance'
             : $employee->role_type;
@@ -88,11 +93,14 @@ class EmployeeAttendanceController extends Controller
                 $shiftType = $holiday->name;
             } elseif (! AttendanceSchedule::isWorkingDay($role, $date)) {
                 [$type, $shiftType] = ['rest', 'Rest Day'];
+            } elseif ($proctoring->has($key)) {
+                // A working day, only labelled and colored differently.
+                [$type, $shiftType] = ['proctoring', 'Proctoring'];
             } else {
                 [$type, $shiftType] = ['regular', 'Regular'];
             }
 
-            $scheduled = in_array($type, ['regular', 'leave'], true);
+            $scheduled = in_array($type, ['regular', 'proctoring', 'leave'], true);
             $timeIn = $record ? AttendanceSchedule::toCarbon($date, $record->time_in) : null;
             $timeOut = $record ? AttendanceSchedule::toCarbon($date, $record->time_out) : null;
 
@@ -102,14 +110,14 @@ class EmployeeAttendanceController extends Controller
                 default => 0.0,
             };
 
-            $late = $type === 'regular' && $timeIn ? (int) $schedule->lateMinutes($timeIn) : 0;
-            $under = $type === 'regular' && $timeOut ? (int) $schedule->undertimeMinutes($timeOut) : 0;
+            $late = in_array($type, ['regular', 'proctoring'], true) && $timeIn ? (int) $schedule->lateMinutes($timeIn) : 0;
+            $under = in_array($type, ['regular', 'proctoring'], true) && $timeOut ? (int) $schedule->undertimeMinutes($timeOut) : 0;
             $hours = $record ? $this->hoursForRecord($record, $schedule) : 0.0;
 
             if (! $status) {
                 $status = match (true) {
                     $date->gt($today) => 'Upcoming',
-                    $type === 'regular' => $date->eq($today) ? 'No punch yet' : 'No record',
+                    in_array($type, ['regular', 'proctoring'], true) => $date->eq($today) ? 'No punch yet' : 'No record',
                     default => '',
                 };
             }
@@ -133,7 +141,7 @@ class EmployeeAttendanceController extends Controller
                 'lunch'       => $scheduled ? $this->clock($schedule->lunchStart).' to '.$this->clock($schedule->lunchEnd) : '',
                 'grace'       => $scheduled && $schedule->graceMinutes ? $schedule->graceMinutes.' mins' : '',
                 'holiday_pay' => $holiday ? ($holiday->isPaid() ? 'Paid ('.rtrim(rtrim((string) $holiday->paid_hours, '0'), '.').' hrs)' : 'Unpaid') : '',
-                'category'    => $holiday?->category ?? '',
+                'category'    => $holiday?->category ?? ($proctoring->get($key)?->name ?? ''),
             ];
 
             // Summary cards for the range.

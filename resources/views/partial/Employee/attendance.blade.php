@@ -73,6 +73,7 @@
                             <li><span class="dtr-swatch dtr-swatch--rest"></span>Rest day</li>
                             <li><span class="dtr-swatch dtr-swatch--holiday"></span>Holiday</li>
                             <li><span class="dtr-swatch dtr-swatch--special"></span>Special day</li>
+                            <li><span class="dtr-swatch dtr-swatch--proctoring"></span>Proctoring</li>
                             <li><span class="dtr-swatch dtr-swatch--leave"></span>Leave</li>
                         </ul>
                     </header>
@@ -142,7 +143,7 @@
                                                 <div><dt>Hours worked</dt><dd x-text="row.hours"></dd></div>
                                                 <template x-if="row.lunch"><div><dt>Lunch break</dt><dd x-text="row.lunch"></dd></div></template>
                                                 <template x-if="row.grace"><div><dt>Grace period</dt><dd x-text="row.grace"></dd></div></template>
-                                                <template x-if="row.category"><div><dt>Holiday type</dt><dd x-text="row.category"></dd></div></template>
+                                                <template x-if="row.category"><div><dt x-text="row.type === 'proctoring' ? 'Proctoring' : 'Holiday type'"></dt><dd x-text="row.category"></dd></div></template>
                                                 <template x-if="row.holiday_pay"><div><dt>Holiday pay</dt><dd x-text="row.holiday_pay"></dd></div></template>
                                             </dl>
                                         </td>

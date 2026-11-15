@@ -390,6 +390,10 @@ Route::middleware(['auth', 'verified', TrackSystemDataUpdates::class])->group(fu
         Route::post('/non-working-days', [NonWorkingDayController::class, 'store'])->name('hr.non-working-days.store');
         Route::delete('/non-working-days/{nonWorkingDay}', [NonWorkingDayController::class, 'destroy'])->name('non-working-days.destroy');
 
+        // Exam proctoring days (shown purple on the DTR)
+        Route::post('/proctoring-days', [\App\Http\Controllers\ProctoringDayController::class, 'store'])->name('proctoring-days.store');
+        Route::delete('/proctoring-days/{proctoringDay}', [\App\Http\Controllers\ProctoringDayController::class, 'destroy'])->name('proctoring-days.destroy');
+
         Route::get('/attendance-monitoring/export', [
             AttendanceController::class,
             'export',

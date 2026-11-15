@@ -232,6 +232,7 @@
                         <div class="ed-tabs" role="tablist" aria-label="Employee details">
                             <button type="button" role="tab" :aria-selected="(tab === 'personal').toString()" @click="tab = 'personal'">Personal information</button>
                             <button type="button" role="tab" :aria-selected="(tab === 'work').toString()" @click="tab = 'work'">Work</button>
+                            <button type="button" role="tab" :aria-selected="(tab === 'education').toString()" @click="tab = 'education'">Educational background</button>
                             <button type="button" role="tab" :aria-selected="(tab === 'emergency').toString()" @click="tab = 'emergency'">Emergency contact</button>
                             <button type="button" role="tab" :aria-selected="(tab === 'ids').toString()" @click="tab = 'ids'">Government IDs</button>
                         </div>
@@ -254,6 +255,22 @@
                                 <div><dt>Salary step</dt><dd x-text="detail.step_label || '—'"></dd></div>
                                 <div><dt>Biometric ID</dt><dd x-text="detail.zkteco_user_id || detail.employee_id || '—'"></dd></div>
                             </dl>
+
+                            <div x-show="tab === 'education'" x-cloak role="tabpanel">
+                                <dl class="ed-grid">
+                                    <div class="ed-wide"><dt>Highest education attained</dt><dd x-text="detail.attainment || '—'"></dd></div>
+                                </dl>
+                                <ol class="ed-edu" x-show="(detail.education || []).length">
+                                    <template x-for="row in (detail.education || [])" :key="row.level">
+                                        <li>
+                                            <span class="ed-edu-level" x-text="row.level"></span>
+                                            <span class="ed-edu-detail" x-text="row.detail || 'Completed'"></span>
+                                            <span class="ed-edu-years" x-text="row.years"></span>
+                                        </li>
+                                    </template>
+                                </ol>
+                                <p class="ed-note" x-show="!(detail.education || []).length">The employee has not filled in their schooling yet. They can add it under My Account.</p>
+                            </div>
 
                             <dl class="ed-grid" x-show="tab === 'emergency'" x-cloak role="tabpanel">
                                 <div><dt>Contact person</dt><dd x-text="detail.emergency_name || '—'"></dd></div>
