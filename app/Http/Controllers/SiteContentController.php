@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Announcement;
+use App\Models\Banner;
 use App\Models\CampusPhoto;
 use App\Support\SiteContent;
 use Illuminate\Support\Facades\File;
@@ -22,6 +23,8 @@ class SiteContentController extends Controller
             'values' => SiteContent::all(),
             'announcements' => Announcement::orderByDesc('posted_on')->orderByDesc('id')->get(),
             'campusPhotos' => CampusPhoto::orderBy('sort_order')->orderBy('id')->get(),
+            'bannerSlides' => Banner::slidesFor('homepage'),
+            'maxBanners' => AdminDashboardController::MAX_BANNERS,
         ]);
     }
 
@@ -140,5 +143,61 @@ class SiteContentController extends Controller
         $photo->delete();
 
         return back()->with('success', 'Photo removed.')->withFragment('campus');
+    }
+
+    /* ---------- Homepage banner (the slider at the top of the homepage) ---------- */
+
+    public function storeBanners(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'images' => ['required', 'array', 'min:1'],
+            'images.*' => ['image', 'mimes:jpeg,png', 'max:5120'],
+        ], [
+            'images.required' => 'Choose at least one image to upload.',
+            'images.*.mimes' => 'Banner images must be PNG or JPEG.',
+            'images.*.max' => 'Each banner image can be up to 5 MB.',
+        ]);
+
+        $files = $request->file('images', []);
+        $max = AdminDashboardController::MAX_BANNERS;
+        Banner::slidesFor('homepage');
+        if (Banner::where('placement', 'homepage')->count() + count($files) > $max) {
+            return back()->withErrors(['images' => "The homepage banner can have up to {$max} images. Remove some first."])->withFragment('banner');
+        }
+
+        $order = (int) Banner::where('placement', 'homepage')->max('sort_order');
+        File::ensureDirectoryExists(public_path('banner'));
+        foreach ($files as $file) {
+            $name = Str::uuid().'.'.$file->guessExtension();
+            $file->move(public_path('banner'), $name);
+            Banner::create([
+                'placement' => 'homepage',
+                'path' => 'banner/'.$name,
+                'alt' => Str::limit(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME), 100, ''),
+                'sort_order' => ++$order,
+                'uploaded_by' => $request->user()->id,
+            ]);
+        }
+
+        return back()->with('success', count($files) === 1 ? 'Banner image added.' : count($files).' banner images added.')->withFragment('banner');
+    }
+
+    public function destroyBanner(Banner $banner): RedirectResponse
+    {
+        abort_unless($banner->placement === 'homepage', 404);
+        if (Banner::where('placement', 'homepage')->count() <= 1) {
+            return back()->withErrors(['images' => 'Keep at least one banner image on the homepage.'])->withFragment('banner');
+        }
+        $banner->deleteImage();
+        $banner->delete();
+
+        return back()->with('success', 'Banner image removed.')->withFragment('banner');
+    }
+
+    public function resetBanners(): RedirectResponse
+    {
+        Banner::restoreDefaults('homepage');
+
+        return back()->with('success', 'The homepage banner is back to the original images.')->withFragment('banner');
     }
 }

@@ -10,10 +10,10 @@
                 <p>Change what visitors see on the public homepage. Every change shows on the site right away.</p>
                 <div class="cms-links">
                     <a href="{{ url('/') }}" target="_blank" rel="noopener">Open the homepage</a>
+                    <a href="#banner">Homepage banner</a>
                     <a href="#announcements">Announcements</a>
                     <a href="#campus">Campus photos</a>
                     <a href="#page-text">Page text</a>
-                    <a href="{{ route('dashboard') }}">Announcement slider images (on the dashboard)</a>
                 </div>
             </div>
 
@@ -23,6 +23,38 @@
             @if ($errors->any())
                 <p class="rq-flash rq-flash--error" role="alert">{{ $errors->first() }}</p>
             @endif
+
+            {{-- ---------- Homepage banner (moved here from the dashboard's Edit banner) ---------- --}}
+            <section class="cms-group" id="banner" aria-labelledby="banner-title">
+                <h3 class="cms-h" id="banner-title">Homepage banner</h3>
+                <p class="cms-help">These images rotate in the banner at the top of the homepage, in this order. PNG or JPEG, up to 5 MB each, up to {{ $maxBanners }} images.</p>
+
+                <form method="POST" action="{{ route('site-content.banners.store') }}" enctype="multipart/form-data" class="cms-photo-add">
+                    @csrf
+                    <label class="cms-field cms-field--wide"><span>Images (you can choose several)</span><input type="file" name="images[]" accept="image/png,image/jpeg" multiple required></label>
+                    <button type="submit" class="cms-btn">Upload</button>
+                </form>
+
+                <ol class="cms-photos cms-banners">
+                    @foreach ($bannerSlides as $slide)
+                        <li>
+                            <img src="{{ $slide['url'] }}" alt="{{ $slide['alt'] }}" loading="lazy">
+                            <div class="cms-photo-actions">
+                                <span class="cms-banner-no">{{ $loop->iteration }} of {{ $loop->count }}</span>
+                                <form method="POST" action="{{ route('site-content.banners.destroy', $slide['id']) }}" onsubmit="return confirm('Remove this image from the homepage banner?')">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="cms-link cms-link--danger" @disabled($loop->count === 1)>Remove</button>
+                                </form>
+                            </div>
+                        </li>
+                    @endforeach
+                </ol>
+
+                <form method="POST" action="{{ route('site-content.banners.reset') }}" class="cms-row-end" onsubmit="return confirm('Put back the original banner images? Uploaded banner images will be removed.')">
+                    @csrf
+                    <button type="submit" class="cms-link">Reset to the original images</button>
+                </form>
+            </section>
 
             {{-- ---------- Announcements ---------- --}}
             <section class="cms-group" id="announcements" aria-labelledby="ann-title">

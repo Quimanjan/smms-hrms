@@ -937,6 +937,10 @@ button.cx-day:focus-visible { outline: 2px solid var(--mg-gold); outline-offset:
 .cms-photo-caption { display: grid; gap: 6px; }
 .cms-photo-caption input { width: 100%; padding: 8px 10px; border: 1px solid var(--mg-line); border-radius: 9px; font-size: 0.9rem; }
 .cms-photo-caption .cms-link { justify-self: start; }
+.cms-banners img { aspect-ratio: 16 / 9; object-fit: cover; }
+.cms-photo-add:has(.cms-field--wide) { grid-template-columns: 1fr auto; }
+.cms-banner-no { color: var(--mg-stone); font-size: 0.85rem; margin-right: auto; }
+.cms-banners + .cms-row-end { margin-top: 14px; }
 .cms-photo-actions { margin-top: 0; gap: 14px; }
 .cms-actions { position: sticky; bottom: 12px; display: flex; justify-content: flex-end; }
 .cms-actions button { height: 48px; padding: 0 24px; border: 0; border-radius: 12px; background: var(--mg-crimson); color: #fff; font: 700 1rem var(--mg-body); cursor: pointer; box-shadow: 0 14px 28px -16px rgba(74, 10, 18, 0.7); }

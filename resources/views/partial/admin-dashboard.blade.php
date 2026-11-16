@@ -75,8 +75,6 @@
                         <div class="hrms-tablist hrms-tablist-nowrap min-w-0 overflow-x-auto" role="tablist" aria-label="Banner destination">
                             <button type="button" id="adminBannerTab" role="tab" aria-selected="true" aria-controls="bannerEditorPanel"
                                 class="hrms-tab banner-tab text-sm font-bold">Dashboard Banner</button>
-                            <button type="button" id="homepageBannerTab" role="tab" aria-selected="false" aria-controls="bannerEditorPanel"
-                                class="hrms-tab banner-tab text-sm font-semibold">Homepage Banner</button>
                         </div>
                         <button id="closeBannerModal" aria-label="Close" class="close-btn h-10 w-10 shrink-0 cursor-pointer rounded-full border-0 bg-transparent text-[1.4rem] text-[#b22222] transition-transform hover:scale-[1.08] hover:text-[#dc2626] active:scale-[0.94] sm:h-[38px] sm:w-[38px]">&times;</button>
                     </div>
@@ -88,6 +86,7 @@
                                     <p class="m-0 mb-1.5 text-sm font-bold text-gray-700 sm:mb-2 sm:text-base">Tap to upload images<span class="hidden sm:inline"> or drag and drop</span></p>
                                     <span class="text-[0.82rem] text-[#6b7280] sm:text-[0.92rem]">PNG or JPEG images, up to 5 MB each. Saved directly to public/banner.</span>
                                     <span class="mt-2 block text-xs text-gray-500">New images are added. Existing banners stay unless you remove them.</span>
+                                    <span class="mt-1 block text-xs text-gray-500">The homepage banner is changed under Homepage in the menu.</span>
                                 </div>
                                 <input type="file" id="imageUpload" class="absolute inset-0 cursor-pointer opacity-0" multiple accept="image/png,image/jpeg" />
                             </div>
@@ -246,7 +245,6 @@
     const editorError = document.getElementById("bannerEditorError");
     const bannerTabs = {
         admin: document.getElementById("adminBannerTab"),
-        homepage: document.getElementById("homepageBannerTab"),
     };
     let promoIndex = 0;
     let promoIntervalId = null;
@@ -473,7 +471,7 @@
         document.getElementById("editBannerBtn").addEventListener("click", () => {
             discardDrafts();
             drafts = {};
-            ["admin", "homepage"].forEach((key) => {
+            ["admin"].forEach((key) => {
                 drafts[key] = { slides: bannerConfig[key].map((slide) => ({ ...slide })), removedIds: [], files: [] };
             });
             setActivePlacement("admin");

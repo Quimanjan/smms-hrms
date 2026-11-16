@@ -189,6 +189,9 @@ Route::middleware(['auth', 'verified', TrackSystemDataUpdates::class])->group(fu
         Route::put('/homepage-content/campus/{photo}', [\App\Http\Controllers\SiteContentController::class, 'updatePhoto'])->name('site-content.photos.update');
         Route::post('/homepage-content/campus/{photo}/move', [\App\Http\Controllers\SiteContentController::class, 'movePhoto'])->name('site-content.photos.move');
         Route::delete('/homepage-content/campus/{photo}', [\App\Http\Controllers\SiteContentController::class, 'destroyPhoto'])->name('site-content.photos.destroy');
+        Route::post('/homepage-content/banner', [\App\Http\Controllers\SiteContentController::class, 'storeBanners'])->name('site-content.banners.store');
+        Route::post('/homepage-content/banner/reset', [\App\Http\Controllers\SiteContentController::class, 'resetBanners'])->name('site-content.banners.reset');
+        Route::delete('/homepage-content/banner/{banner}', [\App\Http\Controllers\SiteContentController::class, 'destroyBanner'])->name('site-content.banners.destroy');
 
         // Cause of separation (decides separation pay in the final pay breakdown)
         Route::patch('/offboarding/{offboardingCase}/cause', [OffboardingController::class, 'cause'])
