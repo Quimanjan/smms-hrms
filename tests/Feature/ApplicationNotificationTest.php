@@ -90,6 +90,7 @@ test('a submitted application notifies HR and Admin with applicant and applicati
             'step_no' => 1,
             'email' => '',
             'birthday' => '1990-01-01',
+            'date_hired' => '2024-06-01',
             'gender' => 'Female',
             'address_line' => '12 Sample Street',
             'address_landmark' => '',
