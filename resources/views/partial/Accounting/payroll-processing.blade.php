@@ -243,12 +243,10 @@
                                     <div class="{{ $row }}">
                                         <span>
                                             <span x-text="r[0]"></span>
-                                            {{-- Last month's cash advance: half on the 15th, half on the 30th --}}
-                                            <small x-show="r[1] === 'cash_advance' && preview.wanted.cash_advance > 0" class="pp-due"
-                                                x-text="'Due this pay period: ' + money(preview.wanted.cash_advance)"></small>
                                         </span>
+                                        {{-- Cash advance shows this pay period's installment (half of last month's advance) --}}
                                         <span class="w-[120px] shrink-0 text-center font-bold text-gray-900"
-                                            x-text="(r[2] && cutoff !== '30th') ? '-' : money(preview.deductions[r[1]])"></span>
+                                            x-text="(r[2] && cutoff !== '30th') ? '-' : money(r[1] === 'cash_advance' ? Math.max(preview.wanted.cash_advance || 0, preview.deductions.cash_advance || 0) : preview.deductions[r[1]])"></span>
                                     </div>
                                 </template>
 
@@ -456,7 +454,7 @@
                 // Standard monthly share used when nothing was entered.
                 defaultShare(e, agency, side) {
                     const monthly = e.pay.monthlyWage;
-                    const sss = monthly < 12750 ? 0 : Math.min(1000, 650 + Math.floor((monthly - 12750) / 500) * 25);
+                    const sss = monthly <= 0 ? 0 : Math.max(5000, Math.min(35000, Math.floor((monthly + 250) / 500) * 500)) * 0.05; // SSS table: 5% of the salary credit
                     const phil = Math.round(monthly * 0.025 * 100) / 100;
                     const map = {
                         sss: { ee: sss, er: sss * 2 },

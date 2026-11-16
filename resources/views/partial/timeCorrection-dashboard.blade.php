@@ -127,7 +127,7 @@
                                 ['Correct time', 'correct_time'],
                                 ['Note', 'note'],
                             ] as [$label, $key])
-                                <p class="grid min-w-0 gap-1 border-b border-gray-100 pb-2">
+                                <p class="grid min-w-0 content-start gap-1 border-b border-gray-100 pb-2">
                                     <strong class="text-xs font-semibold text-gray-500">{{ $label }}</strong>
                                     <span class="break-words text-sm text-gray-900" x-text="detail.{{ $key }}"></span>
                                 </p>

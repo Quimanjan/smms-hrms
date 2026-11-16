@@ -24,7 +24,7 @@
     @endphp
 
     <div class="mx-auto max-w-[1920px] px-4 pb-12 pt-4 sm:px-8 lg:px-12"
-        @keydown.escape.window="closePreview()"
+        @keydown.escape.window="closePreview(); reasonOpen = false"
         x-data="correctionRequest(@js([
             'type' => old('correction_type', ''),
             'date' => old('correction_date', ''),
@@ -139,15 +139,29 @@
                             <div class="grid gap-2">
                                 <div class="flex items-center justify-between gap-4 border-t border-gray-200 px-2 py-2 text-sm text-gray-700">
                                     <span class="inline-flex items-center gap-2"><i class="fa-solid fa-user-tie w-4 text-center text-[#b22222]"></i> HR review</span>
-                                    <strong class="whitespace-nowrap rounded-full px-[9px] py-[5px] text-[0.7rem] {{ $badge($latest->hr_status) }}">
-                                        {{ $latest->hr_status === 'Pending' ? 'Pending review' : $latest->hr_status }}
-                                    </strong>
+                                    @if ($latest->hr_status === 'Rejected')
+                                        <button type="button" @click="reasonOpen = true" title="See why it was rejected"
+                                            class="inline-flex cursor-pointer items-center gap-1 whitespace-nowrap rounded-full px-[9px] py-[5px] text-[0.7rem] font-bold underline decoration-dotted underline-offset-2 {{ $badge($latest->hr_status) }}">
+                                            Rejected <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                                        </button>
+                                    @else
+                                        <strong class="whitespace-nowrap rounded-full px-[9px] py-[5px] text-[0.7rem] {{ $badge($latest->hr_status) }}">
+                                            {{ $latest->hr_status === 'Pending' ? 'Pending review' : $latest->hr_status }}
+                                        </strong>
+                                    @endif
                                 </div>
                                 <div class="flex items-center justify-between gap-4 border-t border-gray-200 px-2 py-2 text-sm text-gray-700">
                                     <span class="inline-flex items-center gap-2"><i class="fa-solid fa-user-shield w-4 text-center text-[#b22222]"></i> Admin review</span>
-                                    <strong class="whitespace-nowrap rounded-full px-[9px] py-[5px] text-[0.7rem] {{ $badge($latest->admin_status) }}">
-                                        {{ $latest->admin_status === 'Pending' ? 'Pending review' : $latest->admin_status }}
-                                    </strong>
+                                    @if ($latest->admin_status === 'Rejected')
+                                        <button type="button" @click="reasonOpen = true" title="See why it was rejected"
+                                            class="inline-flex cursor-pointer items-center gap-1 whitespace-nowrap rounded-full px-[9px] py-[5px] text-[0.7rem] font-bold underline decoration-dotted underline-offset-2 {{ $badge($latest->admin_status) }}">
+                                            Rejected <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                                        </button>
+                                    @else
+                                        <strong class="whitespace-nowrap rounded-full px-[9px] py-[5px] text-[0.7rem] {{ $badge($latest->admin_status) }}">
+                                            {{ $latest->admin_status === 'Pending' ? 'Pending review' : $latest->admin_status }}
+                                        </strong>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -165,6 +179,21 @@
                 </div>
             </form>
         </section>
+
+        {{-- Why the latest request was rejected (opened from a Rejected status) --}}
+        @if ($latest)
+            <div x-show="reasonOpen" x-cloak class="fixed inset-0 z-[70] grid place-items-center bg-black/40 p-4" @click.self="reasonOpen = false">
+                <div class="relative w-full max-w-[460px] rounded-2xl bg-white p-6 shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="tcReasonTitle">
+                    <button type="button" @click="reasonOpen = false" aria-label="Close"
+                        class="absolute right-4 top-4 grid h-8 w-8 cursor-pointer place-items-center rounded-lg bg-[#f9e8e8] text-[#b22222]">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                    <h3 id="tcReasonTitle" class="pr-10 text-lg font-extrabold text-[#231f20]">Why it was rejected</h3>
+                    <p class="mt-1 text-sm text-gray-500">{{ $latest->correction_type }} on {{ $latest->correction_date->format('M j, Y') }}</p>
+                    <p class="mt-4 whitespace-pre-line rounded-lg bg-red-50 p-3 text-sm text-red-800">{{ $latest->rejection_reason ?: 'No reason was given.' }}</p>
+                </div>
+            </div>
+        @endif
 
         <div x-show="previewOpen" x-cloak x-transition.opacity
             class="fixed inset-0 z-[70] grid place-items-center p-4 sm:p-6"
@@ -187,6 +216,7 @@
     <script>
         function correctionRequest(cfg) {
             return {
+                reasonOpen: false,
                 type: cfg.type,
                 date: cfg.date,
                 incorrectTime: cfg.incorrectTime,

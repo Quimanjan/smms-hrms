@@ -30,7 +30,7 @@
             'halfDay'     => (bool) old('half_day', false),
             'halfPeriod'  => old('half_day_period', 'am'),
         ]))"
-        @keydown.escape.window="detail = null; requestOpen = false">
+        @keydown.escape.window="detail = null; requestOpen = false; reasonFor = null">
 
    
         @unless ($employee)
@@ -107,11 +107,19 @@
                         <div class="flex flex-wrap items-center gap-4">
                             <span class="inline-flex items-center gap-2">
                                 <strong class="text-[0.78rem] uppercase text-gray-600">HR:</strong>
-                                <span class="inline-flex min-w-[118px] justify-center rounded-full px-[18px] py-2 text-[0.95rem] font-bold" :class="badge(r.hr_status)" x-text="r.hr_status"></span>
+                                <button type="button" x-show="r.hr_status === 'Rejected'" @click.stop="reasonFor = r" title="See why it was rejected"
+                                    class="inline-flex min-w-[118px] cursor-pointer items-center justify-center gap-1.5 rounded-full px-[18px] py-2 text-[0.95rem] font-bold underline decoration-dotted underline-offset-4" :class="badge(r.hr_status)">
+                                    <span x-text="r.hr_status"></span><i class="fa-solid fa-circle-info text-[0.8em]" aria-hidden="true"></i>
+                                </button>
+                                <span x-show="r.hr_status !== 'Rejected'" class="inline-flex min-w-[118px] justify-center rounded-full px-[18px] py-2 text-[0.95rem] font-bold" :class="badge(r.hr_status)" x-text="r.hr_status"></span>
                             </span>
                             <span class="inline-flex items-center gap-2">
                                 <strong class="text-[0.78rem] uppercase text-gray-600">Admin:</strong>
-                                <span class="inline-flex min-w-[118px] justify-center rounded-full px-[18px] py-2 text-[0.95rem] font-bold" :class="badge(r.admin_status)" x-text="r.admin_status"></span>
+                                <button type="button" x-show="r.admin_status === 'Rejected'" @click.stop="reasonFor = r" title="See why it was rejected"
+                                    class="inline-flex min-w-[118px] cursor-pointer items-center justify-center gap-1.5 rounded-full px-[18px] py-2 text-[0.95rem] font-bold underline decoration-dotted underline-offset-4" :class="badge(r.admin_status)">
+                                    <span x-text="r.admin_status"></span><i class="fa-solid fa-circle-info text-[0.8em]" aria-hidden="true"></i>
+                                </button>
+                                <span x-show="r.admin_status !== 'Rejected'" class="inline-flex min-w-[118px] justify-center rounded-full px-[18px] py-2 text-[0.95rem] font-bold" :class="badge(r.admin_status)" x-text="r.admin_status"></span>
                             </span>
                         </div>
                     </article>
@@ -135,8 +143,11 @@
                     <div class="grid grid-cols-[110px_1fr] gap-3"><dt class="font-bold text-gray-500">Leave Type</dt><dd class="text-gray-900" x-text="detail?.label"></dd></div>
                     <div class="grid grid-cols-[110px_1fr] gap-3"><dt class="font-bold text-gray-500">Requested</dt><dd class="text-gray-900" x-text="detail?.requested"></dd></div>
                     <div class="grid grid-cols-[110px_1fr] gap-3"><dt class="font-bold text-gray-500">Duration</dt><dd class="text-gray-900" x-text="detail?.range"></dd></div>
-                    <div class="grid grid-cols-[110px_1fr] gap-3"><dt class="font-bold text-gray-500">Reason</dt><dd class="whitespace-pre-line text-gray-900" x-text="detail?.reason"></dd></div>
+                    <div class="grid grid-cols-[110px_1fr] gap-3"><dt class="font-bold text-gray-500">Reason</dt><dd class="min-w-0 whitespace-pre-line text-gray-900" x-text="detail?.reason"></dd></div>
                 </dl>
+                <p x-show="detail?.rejection_reason" class="mt-4 min-w-0 whitespace-pre-line rounded-lg bg-red-50 p-3 text-sm text-red-800">
+                    <strong class="block">Reason for rejection</strong><span x-text="detail?.rejection_reason"></span>
+                </p>
 
                 <form method="POST" :action="detail?.archive_url" x-show="detail && ! detail.archived" class="mt-6 flex justify-end">
                     @csrf
@@ -145,6 +156,19 @@
                         <i class="fa-solid fa-box-archive"></i> Archive
                     </button>
                 </form>
+            </div>
+        </div>
+
+        {{-- ============ Rejection reason (opened from a Rejected status) ============ --}}
+        <div x-show="reasonFor" x-cloak class="fixed inset-0 z-[55] grid place-items-center bg-black/40 p-4" @click.self="reasonFor = null">
+            <div class="relative w-full max-w-[460px] rounded-2xl bg-white p-6 shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="leaveReasonTitle">
+                <button type="button" @click="reasonFor = null" aria-label="Close"
+                    class="absolute right-4 top-4 grid h-8 w-8 cursor-pointer place-items-center rounded-lg bg-[#f9e8e8] text-[#b22222]">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <h3 id="leaveReasonTitle" class="pr-10 text-lg font-extrabold text-[#231f20]">Why it was rejected</h3>
+                <p class="mt-1 text-sm text-gray-500" x-text="reasonFor ? reasonFor.label + ', ' + reasonFor.range : ''"></p>
+                <p class="mt-4 whitespace-pre-line rounded-lg bg-red-50 p-3 text-sm text-red-800" x-text="reasonFor?.rejection_reason || 'No reason was given.'"></p>
             </div>
         </div>
 
@@ -226,6 +250,7 @@
                 requests: cfg.requests,
                 remaining: cfg.remaining,   // { 'Sick Leave': 3, ..., 'Other': 25 }
                 detail: null,
+                reasonFor: null,
                 requestOpen: cfg.openRequest,
                 type: cfg.type,
                 start: cfg.start,

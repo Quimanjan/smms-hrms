@@ -1281,5 +1281,11 @@ button.cx-day:focus-visible { outline: 2px solid var(--mg-gold); outline-offset:
 .rm-table.al-table th, .rm-table.al-table thead tr:first-child th { text-align: left; }
 @media (min-width: 640px) { .pp-strip { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
 .pp-due { display: block; margin-top: 1px; color: #8a5a00; font-size: 0.66rem; font-weight: 700; line-height: 1.25; }
+
+/* ---------- Long text never runs past a window or card border (client revision) ---------- */
+[role="dialog"] :is(p, span, dd, dt, small, strong, li, div, td),
+.break-words, .whitespace-pre-line, .whitespace-pre-wrap { overflow-wrap: anywhere; word-break: normal; }
+[role="dialog"] { min-width: 0; }
+[role="dialog"] dl > div, [role="dialog"] .grid > * { min-width: 0; }
 </style>
 @endverbatim

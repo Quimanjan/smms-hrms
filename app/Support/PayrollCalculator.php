@@ -44,11 +44,16 @@ final class PayrollCalculator
     /** SSS employee share used when none was entered for the employee. */
     public static function sssDefault(float $monthlyWage): float
     {
-        if ($monthlyWage < 12750) {
+        // SSS table: the salary falls in a 500 peso bracket whose midpoint is the
+        // monthly salary credit (MSC). The employee pays 5% of the MSC:
+        // 12,250 to 12,749.99 pays 625.00, each higher bracket adds 25.00,
+        // and 34,750 and over pays 1,750.00 (MSC 35,000). The lowest MSC is 5,000.
+        if ($monthlyWage <= 0) {
             return 0.0;
         }
+        $msc = max(5000, min(35000, floor(($monthlyWage + 250) / 500) * 500));
 
-        return (float) min(1000, 650 + floor(($monthlyWage - 12750) / 500) * 25);
+        return round($msc * 0.05, 2);
     }
 
     /**

@@ -29,9 +29,16 @@ class TimeCorrectionController extends Controller
         $employee = $request->user()->employee;
         $hasSubmittedCorrection = $request->session()->get('time_correction_submitted', false);
 
-        $latest = $employee && $hasSubmittedCorrection
+        $latest = $employee
             ? TimeCorrection::where('employee_id', $employee->id)->latest('id')->first()
             : null;
+
+        // Show the latest request right after sending it, and again once it has
+        // been decided, so a rejected request (and its reason) is never hidden.
+        if ($latest && ! $hasSubmittedCorrection
+            && $latest->hr_status === TimeCorrection::PENDING && $latest->admin_status === TimeCorrection::PENDING) {
+            $latest = null;
+        }
 
         return view('timeCorrection', [
             'employee' => $employee,

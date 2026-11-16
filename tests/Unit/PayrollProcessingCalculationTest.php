@@ -102,10 +102,10 @@ test('withholding tax applies only above 250,000 a year', function () {
     $high = calculatePayrollProcessingRow('30th', dailyWage: 1388.27);
     $highFifteenth = calculatePayrollProcessingRow('15th', dailyWage: 1388.27);
 
-    // 1388.27 x 26 = 36,095.02 a month; less SSS 1,000, PhilHealth 902.38, Pag-IBIG 200
-    // = 33,992.64 x 12 = 407,911.68 a year => 22,500 + 20% of 7,911.68 = 24,082.34 a year.
+    // 1388.27 x 26 = 36,095.02 a month; less SSS 1,750 (34,750 and over bracket),
+    // PhilHealth 902.38 and Pag-IBIG 200 before the tax table is applied.
     expect($low['breakdown']['withholding_tax'])->toBe(0.0)
-        ->and($high['breakdown']['withholding_tax'])->toBe(2006.86)
+        ->and($high['breakdown']['withholding_tax'])->toBe(1861.4)
         ->and($highFifteenth['breakdown']['withholding_tax'])->toBe(0.0);
 });
 

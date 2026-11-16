@@ -683,11 +683,7 @@ class PayrollProcessingController extends Controller
 
     private function sssContribution(float $monthlyWage): float
     {
-        if ($monthlyWage < 12750) {
-            return 0;
-        }
-
-        return min(1000, 650 + floor(($monthlyWage - 12750) / 500) * 25);
+        return \App\Support\PayrollCalculator::sssDefault($monthlyWage);
     }
 
     /** Administrative task/role gets the fixed honorarium. Adjust to your employees table. */

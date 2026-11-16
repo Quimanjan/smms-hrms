@@ -46,6 +46,7 @@ class LeaveRequestController extends Controller
                 'status'      => $r->status_label,
                 'hr_status'   => ucfirst($r->hr_status ?? LeaveRequest::PENDING),
                 'admin_status'=> ucfirst($r->admin_status ?? LeaveRequest::PENDING),
+                'rejection_reason' => $r->rejection_reason,
                 'archived'    => (bool) $r->employee_archived,
                 'archive_url' => route('leave-requests.archive', $r),
             ])->values(),

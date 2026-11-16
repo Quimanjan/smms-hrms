@@ -29,7 +29,19 @@
         $peso = fn ($n) => '₱' . number_format((float) $n, 2);
     @endphp
 
-    <div class="px-4 pb-12 pt-2 sm:px-6 lg:px-10" x-data>
+    <div class="px-4 pb-12 pt-2 sm:px-6 lg:px-10" x-data="{ why: null }" @keydown.escape.window="why = null">
+        {{-- Why a loan request was rejected (opened from a Rejected status) --}}
+        <div x-show="why" x-cloak class="fixed inset-0 z-[70] grid place-items-center bg-black/40 p-4" @click.self="why = null">
+            <div class="relative w-full max-w-[460px] rounded-2xl bg-white p-6 shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="loanWhyTitle">
+                <button type="button" @click="why = null" aria-label="Close"
+                    class="absolute right-4 top-4 grid h-8 w-8 cursor-pointer place-items-center rounded-lg bg-[#f9e8e8] text-[#b22222]">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <h3 id="loanWhyTitle" class="pr-10 text-lg font-extrabold text-[#231f20]" x-text="why ? 'Why ' + why.who + ' rejected it' : ''"></h3>
+                <p class="mt-1 text-sm text-gray-500" x-text="why?.type"></p>
+                <p class="mt-4 whitespace-pre-line rounded-lg bg-red-50 p-3 text-sm text-red-800" x-text="why?.reason"></p>
+            </div>
+        </div>
 
         @if (! $employee)
             <div class="rounded-[20px] bg-white p-10 text-center text-gray-500 shadow-[0_10px_30px_rgba(15,23,42,0.05)]">
@@ -235,22 +247,27 @@
                                                     <h3 class="font-extrabold text-gray-900">{{ $loan->loan_type }}</h3>
                                                     <strong class="text-[#b22222]">{{ $peso($loan->amount) }}</strong>
                                                 </div>
-                                                <p class="mt-1 break-words text-[15px] text-gray-600">{{ $loan->reason }}</p>
+                                                <p class="mt-1 break-words text-[15px] text-gray-600" style="overflow-wrap: anywhere">{{ $loan->reason }}</p>
                                                 <small class="text-gray-400">Sent {{ $loan->requested_at->format('M d, Y') }}</small>
                                             </div>
                                         </div>
 
                                         <div class="flex shrink-0 flex-wrap items-start gap-2" aria-label="Approval progress">
                                             @foreach (['hr' => 'HR', 'accounting' => 'Accounting', 'admin' => 'Admin'] as $key => $stage)
-                                                @php $s = $loan->effectiveStatus($key); @endphp
-                                                <div class="rounded-full px-2.5 py-1.5 text-xs {{ $stageBadge($s) }}">
-                                                    <strong class="font-bold">{{ $stage }}: {{ $stageLabel($stage, $s) }}</strong>
-                                                    @if ($s === 'rejected' && $loan->{$key . '_rejection_reason'})
-                                                        <small class="mt-1 block break-words" title="{{ $loan->{$key . '_rejection_reason'} }}">
-                                                            Reason: {{ $loan->{$key . '_rejection_reason'} }}
-                                                        </small>
-                                                    @endif
-                                                </div>
+                                                @php $s = $loan->effectiveStatus($key); $why = $loan->{$key . '_rejection_reason'}; @endphp
+                                                @if ($s === 'rejected' && $why)
+                                                    {{-- Rejected: the status opens a window with the reason instead of stretching the row --}}
+                                                    <button type="button" title="See why it was rejected"
+                                                        @click="why = @js(['who' => $stage, 'type' => $loan->loan_type.' of '.$peso($loan->amount), 'reason' => $why])"
+                                                        class="inline-flex cursor-pointer items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs underline decoration-dotted underline-offset-2 {{ $stageBadge($s) }}">
+                                                        <strong class="font-bold">{{ $stage }}: {{ $stageLabel($stage, $s) }}</strong>
+                                                        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                                                    </button>
+                                                @else
+                                                    <div class="rounded-full px-2.5 py-1.5 text-xs {{ $stageBadge($s) }}">
+                                                        <strong class="font-bold">{{ $stage }}: {{ $stageLabel($stage, $s) }}</strong>
+                                                    </div>
+                                                @endif
                                             @endforeach
 
                                             @if ($archived)
