@@ -146,45 +146,23 @@
                         </template>
                         <li class="cx-empty" x-show="upcoming.length === 0">No holidays or tasks in the next few weeks.</li>
                     </ul>
+                    {{-- Every employee's birthday, soonest first (client revision) --}}
+                    <h3 class="cx-sub">Birthdays</h3>
+                    <ul class="cx-upcoming cx-birthdays">
+                        @forelse ($birthdays as $b)
+                            <li @class(['cx-bday-today' => $b['is_today']])>
+                                <time datetime="{{ $b['iso'] }}">{{ $b['is_today'] ? 'Today' : $b['date_label'] }}</time>
+                                <i class="fa-solid fa-cake-candles cx-bday-icon" aria-hidden="true"></i>
+                                <span>{{ $b['name'] }}@if ($b['role'])<small>{{ $b['role'] }}</small>@endif</span>
+                            </li>
+                        @empty
+                            <li class="cx-empty">No employee birthdays on record.</li>
+                        @endforelse
+                    </ul>
                     <p class="cx-footnote">Holiday dates follow the usual Philippine calendar. Check each year's official proclamation for changes.</p>
                 </aside>
             </section>
 
-            {{-- ============ Upcoming birthdays ============ --}}
-            <aside aria-labelledby="birthdaysHeading" class="rounded-[22px] bg-white p-[22px] shadow-[0_10px_30px_rgba(15,23,42,0.05)]">
-                <div class="mb-5 flex items-start justify-between gap-3">
-                    <div>
-                        
-                        <h2 id="birthdaysHeading" class="dp-title">Upcoming birthdays</h2>
-                    </div>
-                    <i class="fa-solid fa-cake-candles flex h-14 w-14 shrink-0 items-center justify-center text-[40px] leading-none text-[#b22222]" aria-hidden="true"></i>
-                </div>
-
-                @if (count($birthdays) === 0)
-                    <div class="grid justify-items-center gap-2 rounded-[14px] bg-[#fff7f7] px-4 py-[34px] text-center text-gray-400">
-                        <i class="fa-regular fa-calendar text-2xl text-[#b22222]" aria-hidden="true"></i>
-                        <p class="text-[0.85rem]">No upcoming employee birthdays.</p>
-                    </div>
-                @else
-                    <div class="grid max-h-[520px] gap-2.5 overflow-y-auto [-ms-overflow-style:none] [scrollbar-width:none]
-           [&::-webkit-scrollbar]:hidden">
-                        @foreach ($birthdays as $i => $b)
-                            <article @class([
-                                'grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3',
-                                '-mx-2.5 rounded-xl bg-[#fff7f7] px-2.5 py-3' => $i === 0,
-                                'border-b border-[#f1f1f1] py-3 last:border-b-0' => $i !== 0,
-                            ])>
-                                <div class="av-host av-size-44" aria-hidden="true">{!! $b['avatar'] ?? '' !!}</div>
-                                <div class="min-w-0">
-                                    <h3 class="truncate text-[0.9rem] font-extrabold text-gray-900">{{ $b['name'] }}</h3>
-                                    <p class="mt-[3px] truncate text-[0.75rem] text-gray-400">{{ $b['role'] }}</p>
-                                </div>
-                                <time datetime="{{ $b['iso'] }}" class="whitespace-nowrap text-[0.8rem] font-extrabold text-[#b22222]">{{ $b['date_label'] }}</time>
-                            </article>
-                        @endforeach
-                    </div>
-                @endif
-            </aside>
         </div>
 
     </div>

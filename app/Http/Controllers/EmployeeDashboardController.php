@@ -81,12 +81,12 @@ class EmployeeDashboardController extends Controller
     }
 
     // ------------------------------------------------------------------
-    // Employee birthdays (this year, from today onwards, soonest first)
+    // Every employee's next birthday, soonest first (past ones roll to next year)
     // ------------------------------------------------------------------
 
     private function upcomingBirthdays(): array
     {
-        $today = now()->startOfDay();
+        $today = now('Asia/Manila')->startOfDay();
 
         return Employee::query()
             ->current()
@@ -94,12 +94,18 @@ class EmployeeDashboardController extends Controller
             ->get(['name', 'position', 'birthday'])
             ->map(function (Employee $e) use ($today) {
                 // Feb 29 in a non-leap year falls back to Feb 28
-                $month = $today->copy()->setDate($today->year, $e->birthday->month, 1);
-                $date  = $month->copy()->day(min($e->birthday->day, $month->daysInMonth));
+                $next = function (int $year) use ($e, $today) {
+                    $month = $today->copy()->setDate($year, $e->birthday->month, 1);
+
+                    return $month->copy()->day(min($e->birthday->day, $month->daysInMonth));
+                };
+                $date = $next($today->year);
+                if ($date->lt($today)) {
+                    $date = $next($today->year + 1);
+                }
 
                 return ['employee' => $e, 'date' => $date];
             })
-            ->filter(fn ($b) => $b['date']->gte($today))
             ->sortBy(fn ($b) => $b['date']->timestamp)
             ->values()
             ->map(fn ($b) => [
@@ -109,6 +115,7 @@ class EmployeeDashboardController extends Controller
                 'avatar'     => $b['employee']->avatarSvg(),
                 'iso'        => $b['date']->toDateString(),
                 'date_label' => $b['date']->format('M j'),
+                'is_today'   => $b['date']->equalTo($today),
             ])
             ->all();
     }

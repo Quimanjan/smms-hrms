@@ -1364,5 +1364,14 @@ input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; a
     background: #f9fafb; color: #111827; font: inherit; transition: border-color .15s, box-shadow .15s, background-color .15s; }
 .hrms-input:focus { outline: none; border-color: #b22222; background: #fff; box-shadow: 0 0 0 4px rgba(178, 34, 34, .12); }
 .hrms-brand-name { font-family: 'Marcellus', 'Times New Roman', serif; font-weight: 400; color: #3a0a10; }
+
+/* ---------- Employee calendar: birthdays under Coming up (client revision) ---------- */
+.cx-birthdays { max-height: 210px; overflow-y: auto; padding-right: 4px; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.25) transparent; }
+.cx-birthdays::-webkit-scrollbar { width: 6px; }
+.cx-birthdays::-webkit-scrollbar-thumb { background: rgba(255,255,255,.25); border-radius: 999px; }
+.cx-birthdays li { align-items: flex-start; }
+.cx-bday-icon { margin-top: 3px; font-size: .72rem; color: #e7c27a; }
+.cx-birthdays small { display: block; font-size: .7rem; opacity: .65; }
+.cx-bday-today span { font-weight: 700; color: #f6e7c8; }
 </style>
 @endverbatim
