@@ -256,7 +256,7 @@
                                 <div><dt>Gender</dt><dd x-text="detail.gender || '—'"></dd></div>
                                 <div><dt>Civil status</dt><dd x-text="detail.civil_status || '—'"></dd></div>
                                 <div><dt>Email</dt><dd x-text="detail.email || '—'"></dd></div>
-                                <div class="ed-wide"><dt>Address</dt><dd x-text="detail.address || '—'"></dd></div>
+                                <div class="ed-wide"><dt>Address</dt><dd x-text="detail.address_label || '—'"></dd></div>
                             </dl>
 
                             <dl class="ed-grid" x-show="tab === 'work'" x-cloak role="tabpanel">

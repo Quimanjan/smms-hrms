@@ -135,7 +135,7 @@
                 @include('profile.partials.account-field', ['key' => 'email', 'label' => 'Email Address', 'value' => $employee->email, 'type' => 'email', 'attrs' => 'required maxlength="254" autocomplete="email"'])
                 @include('profile.partials.account-field', ['key' => 'phone', 'label' => 'Contact Number', 'value' => $employee->phone, 'type' => 'tel', 'attrs' => 'inputmode="tel" maxlength="20" autocomplete="tel"'])
 
-                @include('profile.partials.account-field', ['key' => 'address', 'label' => 'Home Address', 'value' => $employee->address, 'wide' => true, 'multiline' => true, 'attrs' => 'maxlength="500" autocomplete="street-address"'])
+                @include('profile.partials.account-field', ['key' => 'address', 'label' => 'Home Address', 'value' => $employee->address, 'displayText' => $employee->address_label, 'wide' => true, 'multiline' => true, 'attrs' => 'maxlength="500" autocomplete="street-address"'])
             </div>
         </section>
 

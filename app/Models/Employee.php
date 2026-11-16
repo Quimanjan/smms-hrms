@@ -194,4 +194,10 @@ class Employee extends Model
             'emergency_contact' => $this->emergency_contact,
         ];
     }
+
+    /** The address for display, without the empty parts left by a blank landmark. */
+    public function getAddressLabelAttribute(): string
+    {
+        return collect(explode(',', (string) $this->address))->map(fn ($p) => trim($p))->filter()->implode(', ');
+    }
 }

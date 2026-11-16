@@ -141,6 +141,7 @@ class EmployeeController extends Controller
                     'gender' => $e->gender,
 
                     'address' => $e->address,
+                    'address_label' => $e->address_label,
                     'emergency_name' => $e->emergency_name,
                     'emergency_contact' => $e->emergency_contact,
 

@@ -21,6 +21,9 @@
     $current  = old($key, $value ?? '');
     $hasValue = filled($current);
     $display  = $hasValue ? ($options[$current] ?? $current) : 'Not provided';
+    if ($hasValue && isset($displayText) && filled($displayText)) {
+        $display = $displayText;
+    }
 
     if ($hasValue && $type === 'date') {
         $display = \Illuminate\Support\Carbon::parse($current)->format('F j, Y');
