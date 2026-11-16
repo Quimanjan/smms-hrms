@@ -989,6 +989,8 @@ button.cx-day:focus-visible { outline: 2px solid var(--mg-gold); outline-offset:
 .att-table td span.block.font-bold { font-size: 0.92rem; line-height: 1.3; }
 .att-table td small { font-size: 0.76rem !important; }
 .att-table td:not(:first-child):not(:last-child) { white-space: nowrap; }
+/* Employee names always wrap inside their column (the hidden checkbox column shifts :first-child) */
+.att-table td:has(> span.block.font-bold) { white-space: normal; overflow-wrap: anywhere; }
 .att-table tr > :first-child:not([x-show]) { padding-left: 18px !important; }
 
 /* ---------- Offboarding case window: roomier layout, fixed requirement list ---------- */
