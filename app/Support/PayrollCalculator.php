@@ -14,8 +14,9 @@ namespace App\Support;
  * Deductions
  *  - Late and undertime: 1.80 per minute each.
  *  - MALASAKITAN: 50 every pay period.
- *  - SSS, PhilHealth, Pag-IBIG (HDMF): the monthly employee share entered once per
- *    employee; when none is entered, the standard rates below are used. 30th pay period only.
+ *  - SSS: employee share from the SSS bracket table (5% of the monthly salary credit).
+ *  - PhilHealth: 2.5% of the monthly wage.  Pag-IBIG (HDMF): 200.
+ *    All three are automatic (no manual amounts), 30th pay period only.
  *  - PERAA/CEAP: 4% of the monthly wage, 30th pay period only.
  *  - Withholding tax: only when yearly taxable pay is over 250,000 (BIR graduated
  *    income tax table, TRAIN law, 2023 onwards). Monthly tax, deducted on the 30th.
@@ -63,7 +64,8 @@ final class PayrollCalculator
      */
     public static function contributions(float $monthlyWage, ?object $employee = null): array
     {
-        $v = fn (string $key) => $employee && $employee->{$key} !== null && $employee->{$key} !== '' ? (float) $employee->{$key} : null;
+        // Always the standard rates: amounts are no longer typed in per employee.
+        $v = fn (string $key) => null;
 
         $sss = $v('sss_ee') ?? self::sssDefault($monthlyWage);
         $phil = $v('philhealth_ee') ?? round($monthlyWage * self::PHILHEALTH_RATE, 2);

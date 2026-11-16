@@ -269,27 +269,6 @@
                                     x-text="'Pay is not enough for every deduction this pay period: ' + money(preview.notDeducted) + ' was not deducted, so net pay stays at zero or above.'"></p>
                             </section>
 
-                            {{-- Government contributions: entered once, used every 30th pay period --}}
-                            <section class="pay-contrib sm:col-span-2">
-                                <h3>Government contributions (monthly)</h3>
-                                <p>Enter these once. Every 30th pay period uses them until you change them. Leave a box empty to use the standard rate shown.</p>
-                                <div class="pay-contrib-grid">
-                                    <span></span><span class="pay-contrib-head">Employee share</span><span class="pay-contrib-head">Employer share</span>
-                                    <template x-for="c in contribFields" :key="c[1]">
-                                        <div class="contents">
-                                            <span class="pay-contrib-label" x-text="c[0]"></span>
-                                            <input type="number" min="0" step="0.01" :aria-label="c[0] + ' employee share'"
-                                                :placeholder="Number(defaultShare(draft, c[1], 'ee')).toFixed(2)"
-                                                :value="draft.contributions[c[1] + '_ee'] ?? ''"
-                                                @input="draft.contributions[c[1] + '_ee'] = $event.target.value === '' ? null : Math.max(0, Number($event.target.value) || 0)">
-                                            <input type="number" min="0" step="0.01" :aria-label="c[0] + ' employer share'"
-                                                :placeholder="Number(defaultShare(draft, c[1], 'er')).toFixed(2)"
-                                                :value="draft.contributions[c[1] + '_er'] ?? ''"
-                                                @input="draft.contributions[c[1] + '_er'] = $event.target.value === '' ? null : Math.max(0, Number($event.target.value) || 0)">
-                                        </div>
-                                    </template>
-                                </div>
-                            </section>
                         </div>
 
                         <div class="flex items-center justify-between gap-3 border-t-2 border-[#b22222] bg-[#fef2f2] px-4 py-3 font-black tracking-[0.08em] text-[#b22222]">
@@ -545,7 +524,6 @@
                         philhealth_loan: Number(e.deductions.philhealthLoan) || 0,
                         peraa_ceap_loan: Number(e.deductions.peraaCeapLoan) || 0,
                         hdmf_loan: Number(e.deductions.hdmfLoan) || 0,
-                        contributions: e.contributions,
                     }));
                 },
 

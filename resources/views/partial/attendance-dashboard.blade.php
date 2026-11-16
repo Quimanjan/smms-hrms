@@ -56,7 +56,7 @@
         Sync Biometric Attendance
     </button>
 </form> --}}
-    <div
+    <div data-live-region="admin-attendance"
         class="px-4 pb-12 sm:px-6 lg:px-10"
         x-data="attendanceTable(@js([
             'pageIds' => $pageIds,
@@ -66,7 +66,7 @@
         ]))"
     >
         {{-- ============ Filters ============ --}}
-        <form method="GET" action="{{ route('attendance.index') }}" class="mt-2 flex max-w-[1100px] flex-wrap items-center gap-3">
+        <form data-live-search method="GET" action="{{ route('attendance.index') }}" class="mt-2 flex max-w-[1100px] flex-wrap items-center gap-3">
             <input type="hidden" name="view" value="{{ $view }}">
             @if ($folder)
                 <input type="hidden" name="folder" value="{{ $folder }}">

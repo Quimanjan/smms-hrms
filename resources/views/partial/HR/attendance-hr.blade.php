@@ -48,7 +48,7 @@
         $title        = $isArchive ? 'Attendance Archive' : 'Current Month Attendance';
     @endphp
 
-    <div
+    <div data-live-region="hr-attendance"
         class="px-4 pb-24 pt-2 sm:px-6 lg:px-10"
         x-data="attendancePage(@js([
             'employees'  => $employees,
@@ -88,7 +88,7 @@
                 </div>
             @endif
             {{-- Toolbar: search + filters (runs in the database) --}}
-            <form method="GET" action="{{ route('attendance.index') }}" x-ref="filters"
+            <form data-live-search method="GET" action="{{ route('attendance.index') }}" x-ref="filters"
                 class="flex flex-wrap items-end gap-3.5 {{ $cardClass }} p-[18px]">
 
                 <input type="hidden" name="view" value="{{ $view }}">
@@ -100,7 +100,6 @@
                     <i class="fa-solid fa-magnifying-glass absolute bottom-[14px] left-[14px] text-gray-400"></i>
                     <input type="search" id="attendanceSearch" name="search" value="{{ request('search') }}"
                         placeholder="Search by name or ID..."
-                        @input.debounce.400ms="$refs.filters.submit()"
                         x-init="if ($el.value) { $el.focus(); $el.setSelectionRange($el.value.length, $el.value.length) }"
                         class="w-full rounded-xl border border-gray-200 bg-gray-50 py-3 pl-[42px] pr-3.5 text-gray-900 focus:border-[#b22222] focus:outline-none focus:ring-4 focus:ring-red-700/10">
                 </label>

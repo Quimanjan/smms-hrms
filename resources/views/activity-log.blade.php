@@ -7,8 +7,8 @@
     <div class="pb-12 ml-4 -mt-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="p-6 text-gray-900">
-        <div class="rm">
-            <form method="GET" action="{{ route('activity-log.index') }}" class="rm-bar">
+        <div class="rm" data-live-region="audit-trail">
+            <form data-live-search method="GET" action="{{ route('activity-log.index') }}" class="rm-bar">
                 <label for="al-q">Search</label>
                 <input id="al-q" type="search" name="q" value="{{ $filters['q'] ?? '' }}" placeholder="Name or record">
                 <label for="al-action" class="rm-bar-gap">Action</label>

@@ -123,26 +123,7 @@ class PayrollProcessingController extends Controller
             'rows.*.philhealth_loan'  => ['nullable', 'numeric', 'min:0', 'max:99999999'],
             'rows.*.peraa_ceap_loan'  => ['nullable', 'numeric', 'min:0', 'max:99999999'],
             'rows.*.hdmf_loan'        => ['nullable', 'numeric', 'min:0', 'max:99999999'],
-            // Government contributions, entered once per employee (monthly amounts).
-            'rows.*.contributions'               => ['nullable', 'array'],
-            'rows.*.contributions.sss_ee'        => ['nullable', 'numeric', 'min:0', 'max:999999'],
-            'rows.*.contributions.sss_er'        => ['nullable', 'numeric', 'min:0', 'max:999999'],
-            'rows.*.contributions.philhealth_ee' => ['nullable', 'numeric', 'min:0', 'max:999999'],
-            'rows.*.contributions.philhealth_er' => ['nullable', 'numeric', 'min:0', 'max:999999'],
-            'rows.*.contributions.pagibig_ee'    => ['nullable', 'numeric', 'min:0', 'max:999999'],
-            'rows.*.contributions.pagibig_er'    => ['nullable', 'numeric', 'min:0', 'max:999999'],
         ]);
-
-        // Save the one-time contribution amounts on the employee record.
-        foreach ($data['rows'] as $r) {
-            if (! array_key_exists('contributions', $r) || ! is_array($r['contributions'])) {
-                continue;
-            }
-            $values = collect(['sss_ee', 'sss_er', 'philhealth_ee', 'philhealth_er', 'pagibig_ee', 'pagibig_er'])
-                ->mapWithKeys(fn ($k) => [$k => ($r['contributions'][$k] ?? null) === null || $r['contributions'][$k] === '' ? null : round((float) $r['contributions'][$k], 2)])
-                ->all();
-            DB::table('employees')->where('id', $r['employee_id'])->update($values);
-        }
 
         $requestedEmployeeIds = collect($data['rows'])->pluck('employee_id')->map(fn ($id) => (int) $id);
         $employees = Employee::excludeInternalStaff()
@@ -596,8 +577,8 @@ class PayrollProcessingController extends Controller
                 : (float) $record->hours_worked;
             $lateMinutes += $schedule->lateMinutes($timeIn);
 
-            // A half day is already paid as half; only full days count undertime.
-            if ($record->status !== Attendance::HALF_DAY && $timeOut) {
+            // No undertime on a half day: a half day (or a half-day leave) is already paid as half.
+            if ($record->status !== Attendance::HALF_DAY && $portion <= 0 && $timeOut) {
                 $undertimeMinutes += $schedule->undertimeMinutes($timeOut);
             }
         }

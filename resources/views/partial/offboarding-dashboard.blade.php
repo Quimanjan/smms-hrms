@@ -31,7 +31,7 @@
         ];
     @endphp
 
-    <div
+    <div data-live-region="offboarding"
         class="px-4 pb-12 sm:px-6 lg:px-10"
         x-data="offboardingReview(@js([
             'items' => $cards,
@@ -86,7 +86,7 @@
             </nav>
 
             @if ($tab === 'archive')
-                <form method="GET" action="{{ route('offboarding.index') }}"
+                <form data-live-search method="GET" action="{{ route('offboarding.index') }}"
                     class="mb-6 grid gap-3 rounded-xl border border-[#f0dada] bg-gray-50 p-4 sm:grid-cols-[minmax(220px,1fr)_minmax(150px,0.6fr)_minmax(120px,0.5fr)_auto_auto] sm:items-end">
                     <input type="hidden" name="tab" value="archive">
                     <div class="grid gap-1.5">

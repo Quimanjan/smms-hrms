@@ -18,7 +18,7 @@ class EmployeeDashboardController extends Controller
         // Must be the view file resources/views/dashboard/employee.blade.php
         return view('dashboard', [
             'slides'    => $this->slides(),
-            'today'     => now()->toDateString(),
+            'today'     => now('Asia/Manila')->toDateString(), // the school's date, not the server's UTC date
             'birthdays' => $this->upcomingBirthdays(),
         ]);
     }

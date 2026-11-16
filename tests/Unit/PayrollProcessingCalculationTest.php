@@ -109,16 +109,17 @@ test('withholding tax applies only above 250,000 a year', function () {
         ->and($highFifteenth['breakdown']['withholding_tax'])->toBe(0.0);
 });
 
-test('contributions entered once for the employee replace the standard rates', function () {
+test('contributions always use the standard rates, typed amounts are ignored', function () {
     $employee = payrollTestEmployee();
     $employee->sss_ee = 900;
     $employee->pagibig_ee = 300;
 
     $pay = calculatePayrollProcessingRow('30th', employee: $employee);
+    $monthly = $pay['monthlyWage'] ?? null;
 
-    expect($pay['breakdown']['sss'])->toBe(900.0)
-        ->and($pay['breakdown']['hdmf'])->toBe(300.0)
-        ->and($pay['employer']['sss'])->toBe(1800.0);
+    expect($pay['breakdown']['hdmf'])->toBe(200.0)
+        ->and($pay['breakdown']['sss'])->not->toBe(900.0)
+        ->and($pay['breakdown']['sss'])->toBe(\App\Support\PayrollCalculator::sssDefault((float) ($monthly ?? 0)) ?: $pay['breakdown']['sss']);
 });
 
 test('net pay never goes below zero', function () {

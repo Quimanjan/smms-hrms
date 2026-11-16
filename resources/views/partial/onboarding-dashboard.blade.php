@@ -58,7 +58,7 @@
         $fieldClass = 'rounded-md border border-gray-200 px-3 py-2.5 text-sm font-normal outline-none focus:border-[#b22222] focus:ring-2 focus:ring-[#b22222]/10';
     @endphp
 
-    <div
+    <div data-live-region="onboarding"
         class="px-4 pb-12 sm:px-6 lg:px-10"
         x-data="onboardingApplicants(@js(['items' => $cards, 'open' => session('open_application')]))"
         @keydown.escape.window="rejecting ? rejecting = false : closeDetail()"
@@ -157,7 +157,7 @@
             </nav>
 
             {{-- Search + status filter --}}
-            <form method="GET" action="{{ route('onboarding.index') }}" class="mb-5 flex flex-col gap-3 sm:flex-row">
+            <form data-live-search method="GET" action="{{ route('onboarding.index') }}" class="mb-5 flex flex-col gap-3 sm:flex-row">
                 <input type="hidden" name="tab" value="{{ $tab }}">
                 <label class="flex flex-1 items-center gap-3 rounded-lg border border-gray-200 bg-white px-5 py-3 shadow-sm focus-within:border-[#b22222] focus-within:ring-2 focus-within:ring-[#b22222]/10">
                     <i class="fas fa-search text-gray-400" aria-hidden="true"></i>

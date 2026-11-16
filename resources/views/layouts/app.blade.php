@@ -205,5 +205,6 @@
                 addEventListener('pagehide', () => { try { sessionStorage.setItem('smms.sideScroll', String(side.scrollTop)); } catch (e) {} });
             })();
         </script>
+        @include('partials.live-search')
     </body>
 </html>

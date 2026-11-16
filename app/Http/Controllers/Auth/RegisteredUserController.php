@@ -55,6 +55,11 @@ class RegisteredUserController extends Controller
 
         $user = User::create([
             'name' => $name,
+            // Kept separately so the application form fills each name box exactly.
+            'first_name' => trim($data['first_name']),
+            'middle_name' => filled($data['middle_name'] ?? null) ? trim($data['middle_name']) : null,
+            'last_name' => trim($data['last_name']),
+            'suffix' => filled($data['suffix'] ?? null) ? trim($data['suffix']) : null,
             'email' => $data['email'],
             'password' => Hash::make($request->password),
         ]);

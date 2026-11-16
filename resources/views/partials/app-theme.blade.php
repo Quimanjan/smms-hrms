@@ -1334,5 +1334,9 @@ input:not([type="checkbox"]):not([type="radio"]):focus, select:focus, textarea:f
 .border-indigo-400 { border-color: var(--brand-red, #b22222) !important; }
 .text-indigo-700, .focus\:text-indigo-800:focus { color: var(--brand-red, #b22222) !important; }
 .bg-indigo-50, .focus\:bg-indigo-100:focus { background-color: #fdf2f2 !important; }
+
+/* Clear (x) button inside search boxes: brand red instead of browser blue */
+input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; height: 14px; width: 14px; cursor: pointer;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23b22222' d='M18.3 5.7a1 1 0 0 0-1.4 0L12 10.6 7.1 5.7a1 1 0 1 0-1.4 1.4l4.9 4.9-4.9 4.9a1 1 0 1 0 1.4 1.4l4.9-4.9 4.9 4.9a1 1 0 0 0 1.4-1.4L13.4 12l4.9-4.9a1 1 0 0 0 0-1.4z'/></svg>") center / 14px no-repeat; }
 </style>
 @endverbatim

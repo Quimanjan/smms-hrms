@@ -1529,6 +1529,8 @@ body {
 
 .mg-btn-ghost { border-color: rgba(255, 255, 255, 0.45); color: #fff; background: transparent; }
 .mg-btn-ghost:hover { border-color: #fff; background: rgba(255, 255, 255, 0.08); }
+.mg-btn-outline { border-color: var(--mg-crimson); color: var(--mg-crimson); background: #fff; }
+.mg-btn-outline:hover { background: var(--mg-crimson); color: #fff; }
 
 .mg-nav .mg-btn { min-height: 40px; padding: 0 20px; margin-left: 8px; }
 
@@ -2587,6 +2589,7 @@ body {
                 @auth
                     <a href="{{ route('dashboard') }}" class="mg-btn mg-btn-crimson">Dashboard</a>
                 @else
+                    <button class="mg-btn mg-btn-outline" type="button" onclick="window.openSignupModal && window.openSignupModal()">Sign up</button>
                     <button id="login-btn" class="mg-btn mg-btn-crimson" type="button">Log in</button>
                 @endauth
             </nav>
@@ -3149,6 +3152,10 @@ document.addEventListener('DOMContentLoaded', function () {
         if (passwordCount) passwordCount.textContent = `(${metCount}/${passwordRequirements.length})`;
         if (signupSubmitButton) signupSubmitButton.disabled = metCount !== passwordRequirements.length;
     }
+
+    // The second sign-up script on this page uses these too.
+    window.updatePasswordRequirements = (p) => updatePasswordRequirements(p);
+    window.checkPasswords = () => checkPasswords();
 
     function checkPasswords() {
         if (!signupPassword || !signupConfirmPassword || !signupErrorMessage) return true;

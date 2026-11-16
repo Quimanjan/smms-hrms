@@ -23,7 +23,6 @@
                 'banners' => route('dashboard.banners.current'),
             ],
         ]))"
-        @keydown.escape.window="closeTasks()"
     >
 
         {{-- Page heading --}}
@@ -59,10 +58,11 @@
             </button>
         </section>
 
-        <div class="grid items-stretch gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(320px,400px)]">
+        <div class="grid items-stretch gap-5">
 
             {{-- ============ Calendar with personal tasks ============ --}}
-            <section class="cx cx--solo" aria-label="Calendar">
+            {{-- Same layout as the Admin calendar: month grid plus the selected-day panel --}}
+            <section class="cx" aria-label="Calendar and tasks">
                 <div class="cx-main">
                     <header class="cx-head">
                         <h2 id="calendarHeading" class="cx-month" x-text="monthLabel" aria-live="polite"></h2>
@@ -86,7 +86,7 @@
                             <div class="contents">
                                 <template x-if="c === null"><span class="cx-day cx-day--empty" aria-hidden="true"></span></template>
                                 <template x-if="c !== null">
-                                    <button type="button" @click="openTasks(c.iso)" :style="'--d:' + c.day"
+                                    <button type="button" @click="selectDay(c.iso)" :style="'--d:' + c.day" :aria-pressed="c.iso === selected"
                                         :class="dayClasses(c)"
                                         :aria-label="dayLabel(c)">
                                         <span class="cx-num" x-text="c.day"></span>
@@ -110,6 +110,44 @@
                         <li><span class="cx-dot cx-dot--task"></span>Your tasks</li>
                     </ul>
                 </div>
+
+                <aside class="cx-agenda" :class="flash && 'cx-agenda--flash'" aria-label="Selected day">
+                    <div class="cx-selected">
+                        <span class="cx-selected-num" x-text="selDate.getDate()"></span>
+                        <span class="cx-selected-text">
+                            <span x-text="selDate.toLocaleDateString('en-US', { weekday: 'long' })"></span>
+                            <span x-text="selDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })"></span>
+                        </span>
+                    </div>
+                    <template x-if="holiday(selected)">
+                        <p class="cx-holiday" :class="'cx-holiday--' + holiday(selected).type">
+                            <strong x-text="holiday(selected).name"></strong><span x-text="typeLabel[holiday(selected).type]"></span>
+                        </p>
+                    </template>
+
+                    <h3 class="cx-sub">Tasks</h3>
+                    <ul class="cx-tasks">
+                        <template x-for="t in tasksForDate" :key="t.id">
+                            <li><span x-text="t.title"></span><button type="button" @click="removeTask(t)" :aria-label="'Remove task: ' + t.title">Remove</button></li>
+                        </template>
+                        <li class="cx-empty" x-show="tasksForDate.length === 0">Nothing planned. Add a task below.</li>
+                    </ul>
+                    <form class="cx-add" @submit.prevent="addTask()">
+                        <label class="sr-only" for="cx-new-employee">New task</label>
+                        <input id="cx-new-employee" type="text" x-model="newTask" maxlength="255" placeholder="Add a task for this day" autocomplete="off">
+                        <button type="submit" :disabled="saving">Add</button>
+                    </form>
+                    <p class="mt-2 text-xs font-semibold text-[#fecaca]" x-show="error" x-text="error"></p>
+
+                    <h3 class="cx-sub">Coming up</h3>
+                    <ul class="cx-upcoming">
+                        <template x-for="(it, n) in upcoming" :key="n">
+                            <li><time x-text="it.d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })"></time><span class="cx-dot" :class="'cx-dot--' + it.type"></span><span x-text="it.text"></span></li>
+                        </template>
+                        <li class="cx-empty" x-show="upcoming.length === 0">No holidays or tasks in the next few weeks.</li>
+                    </ul>
+                    <p class="cx-footnote">Holiday dates follow the usual Philippine calendar. Check each year's official proclamation for changes.</p>
+                </aside>
             </section>
 
             {{-- ============ Upcoming birthdays ============ --}}
@@ -149,45 +187,6 @@
             </aside>
         </div>
 
-        {{-- ============ Tasks modal ============ --}}
-        <div x-show="taskDate" x-cloak x-transition.opacity @click.self="closeTasks()"
-            class="fixed inset-0 z-[60] grid place-items-center bg-black/50 p-5">
-            <div role="dialog" aria-modal="true" aria-labelledby="taskModalTitle"
-                class="w-full max-w-[520px] overflow-hidden rounded-3xl bg-white shadow-[0_28px_70px_rgba(15,23,42,0.2)]">
-
-                <div class="flex items-center justify-between border-b border-[#ecebea] px-6 py-[22px]">
-                    <h3 id="taskModalTitle" class="text-[1.2rem] font-bold text-gray-900" x-text="'Tasks for ' + taskDateLabel"></h3>
-                    <button type="button" @click="closeTasks()" aria-label="Close"
-                        class="h-[38px] w-[38px] cursor-pointer rounded-full text-[1.4rem] text-[#b22222] transition hover:bg-red-50">&times;</button>
-                </div>
-
-                <div class="p-6">
-                    <form @submit.prevent="addTask()" class="mb-[18px] grid grid-cols-[1fr_auto] gap-2.5">
-                        <input type="text" x-model="newTask" x-ref="taskInput" maxlength="255" placeholder="Add a new task"
-                            class="w-full rounded-[14px] border border-gray-300 bg-gray-50 px-4 py-3.5 text-gray-900 focus:border-[#b22222] focus:outline-none focus:ring-4 focus:ring-red-700/10">
-                        <button type="submit" :disabled="saving"
-                            class="cursor-pointer rounded-[14px] bg-[#b22222] px-4 py-3 font-bold text-white transition hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-60">Add</button>
-                    </form>
-                    <p class="-mt-3 mb-3 text-xs font-semibold text-red-600" x-text="error"></p>
-
-                    <div class="grid gap-3">
-                        <p x-show="tasksForDate.length === 0" class="text-gray-500">No tasks for this date. Add a new task below.</p>
-
-                        <template x-for="t in tasksForDate" :key="t.id">
-                            <div class="flex items-center justify-between gap-3 rounded-2xl border border-[#e5e7eb] bg-[#f8fafc] px-3.5 py-3">
-                                <label class="flex min-w-0 items-center gap-2.5">
-                                    <input type="checkbox" class="h-[18px] w-[18px] cursor-pointer accent-[#b22222]"
-                                        @change="if ($event.target.checked) removeTask(t)">
-                                    <span class="inline-block min-w-0 overflow-hidden text-ellipsis whitespace-nowrap font-semibold text-gray-900" x-text="t.title"></span>
-                                </label>
-                                <button type="button" @click="removeTask(t)"
-                                    class="cursor-pointer rounded-[14px] border border-gray-300 bg-white/95 px-4 py-3 font-bold text-[#b22222] transition hover:-translate-y-px hover:border-[#8f1c1c]/30 hover:bg-white">Remove</button>
-                            </div>
-                        </template>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 
     @include('partials.ph-holidays')
@@ -346,17 +345,34 @@
                         : '';
                 },
 
-                get tasksForDate() { return this.taskDate ? (this.tasks[this.taskDate] || []) : []; },
+                get tasksForDate() { return this.tasks[this.selected] || []; },
 
-                openTasks(iso) {
+                // ===== Selected-day panel (same as the Admin calendar) =====
+                flash: false,
+                typeLabel: { regular: 'Regular holiday', special: 'Special non-working day', school: 'School day' },
+                get selDate() { return new Date(this.selected + 'T00:00:00'); },
+
+                selectDay(iso) {
                     this.selected = iso;
-                    this.taskDate = iso;
                     this.newTask = '';
                     this.error = '';
-                    this.$nextTick(() => this.$refs.taskInput && this.$refs.taskInput.focus());
+                    this.flash = false;
+                    this.$nextTick(() => { this.flash = true; });
                 },
 
-                closeTasks() { this.taskDate = null; },
+                // Next 45 days: holidays and saved tasks (up to five).
+                get upcoming() {
+                    const items = [];
+                    const base = new Date(this.today + 'T00:00:00');
+                    for (let n = 1; n <= 45 && items.length < 5; n++) {
+                        const d = new Date(base.getFullYear(), base.getMonth(), base.getDate() + n);
+                        const iso = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+                        const h = this.holiday(iso);
+                        if (h) items.push({ d, text: h.name, type: h.type });
+                        (this.tasks[iso] || []).forEach((t) => items.push({ d, text: t.title, type: 'task' }));
+                    }
+                    return items.slice(0, 5);
+                },
 
                 async addTask() {
                     const title = this.newTask.trim();
@@ -368,7 +384,7 @@
                         const res = await fetch(cfg.routes.tasks, {
                             method: 'POST',
                             headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json', 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ title, task_date: this.taskDate }),
+                            body: JSON.stringify({ title, task_date: this.selected }),
                         });
                         if (!res.ok) { this.error = await readError(res); return; }
 

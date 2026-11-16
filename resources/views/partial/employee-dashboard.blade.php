@@ -89,7 +89,7 @@
         $formDepartments   = collect($formDepartments ?? []);
     @endphp
 
-    <div
+    <div data-live-region="employees"
         class="px-4  pb-12 pt-2 sm:px-6 lg:px-10"
         x-data="employeeDirectory(@js([
             'employees'   => $cards,
@@ -126,7 +126,7 @@
         <section aria-label="Employee directory" class="flex flex-col gap-5">
 
 {{-- Toolbar: Search + Filters (Manual submission) --}}
-<form method="GET"
+<form data-live-search method="GET"
     action="{{ route('employees.index') }}"
     x-ref="filters"
     class="flex flex-wrap items-end gap-3.5 rounded-[20px] bg-white p-[18px] shadow-[0_10px_30px_rgba(15,23,42,0.05)]">

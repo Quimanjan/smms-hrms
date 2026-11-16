@@ -15,9 +15,18 @@
         if (count($initialNameParts) > 1 && preg_match('/^(jr\.?|sr\.?|ii|iii|iv|v)$/i', rtrim(end($initialNameParts), ','))) {
             $initialSuffix = preg_replace('/,$/', '', (string) array_pop($initialNameParts));
         }
-        $initialFirstName = array_shift($initialNameParts) ?? '';
-        $initialLastName = count($initialNameParts) > 1 ? array_pop($initialNameParts) : (array_pop($initialNameParts) ?? '');
-        $initialMiddleName = implode(' ', $initialNameParts);
+        // Older accounts only have the full name: the last word is the last name and
+        // everything before it is the first name (middle name is left for the applicant).
+        $initialLastName = count($initialNameParts) > 1 ? (string) array_pop($initialNameParts) : '';
+        $initialFirstName = implode(' ', $initialNameParts);
+        $initialMiddleName = '';
+        // Accounts made after this change keep the exact boxes typed at sign-up.
+        if (filled($user->first_name ?? null)) {
+            $initialFirstName = (string) $user->first_name;
+            $initialMiddleName = (string) ($user->middle_name ?? '');
+            $initialLastName = (string) ($user->last_name ?? '');
+            $initialSuffix = (string) ($user->suffix ?? '');
+        }
     @endphp
 
     <div

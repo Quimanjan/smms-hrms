@@ -397,7 +397,8 @@ class AttendanceController extends Controller
             'days_worked' => $daysWorked,
             'late_minutes' => $lateMinutes,
             'tardiness_minutes' => (int) $schedule->lateMinutes($timeIn),
-            'undertime_minutes' => (int) $schedule->undertimeMinutes($timeOut),
+            // No undertime on a half day or a day with half-day leave.
+            'undertime_minutes' => ($a->status === Attendance::HALF_DAY || (float) ($a->leave_portion ?? 0) > 0) ? 0 : (int) $schedule->undertimeMinutes($timeOut),
             'status' => $status,
             'review_note' => ($nwd && $a->status === Attendance::NWD_REVIEW)
                 ? "{$nwd->category}: {$nwd->name} - recorded hours counted in payroll"

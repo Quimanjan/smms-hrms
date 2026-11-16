@@ -297,6 +297,15 @@ class OnboardingManagementController extends Controller
             ]);
             HrmsNotifier::applicantAdminDecided($application->fresh());
 
+            // Hired: HR and Admin both approved, so the employee profile is made right away.
+            if ($data['decision'] === 'approved') {
+                $employee = \App\Support\HireApplicant::fromApplication($application->fresh());
+
+                return back()->with('success', $employee
+                    ? "Application approved. {$employee->name} is now an employee (ID {$employee->employee_id}). Add the emergency contact in Employee Management."
+                    : 'Application approved by Admin and moved to Archive.');
+            }
+
             return back()->with('success', 'Application '.$data['decision'].' by Admin and moved to Archive.');
         }
 

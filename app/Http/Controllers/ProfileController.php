@@ -112,6 +112,10 @@ class ProfileController extends Controller
             ]);
 
             $user->fill(['name' => $data['name'], 'email' => $data['email']]);
+            if ($user->isDirty('name')) {
+                // The full name changed by hand: the saved parts no longer match it.
+                $user->forceFill(['first_name' => null, 'middle_name' => null, 'last_name' => null, 'suffix' => null]);
+            }
 
             if ($user->isDirty('email')) {
                 $user->email_verified_at = null;
