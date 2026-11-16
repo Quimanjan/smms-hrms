@@ -1,4 +1,5 @@
 <x-app-layout>
+    <x-slot name="title">Homepage Content</x-slot>
     <x-slot name="header">
         <h2 class="text-2xl font-extrabold leading-tight text-red-700 sm:text-3xl md:text-4xl">Homepage</h2>
     </x-slot>
