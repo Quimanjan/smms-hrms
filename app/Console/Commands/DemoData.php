@@ -63,7 +63,6 @@ class DemoData extends Command
             $this->addRequests($extra);
             $this->addApplicants();
             $this->addAnnouncements();
-            $this->addConversation();
         });
 
         Storage::disk('local')->put(self::LEDGER, json_encode($this->ledger, JSON_PRETTY_PRINT));
@@ -338,25 +337,6 @@ class DemoData extends Command
         }
     }
 
-    /** A short HR and employee chat, so the chat bubble has an unread message. */
-    private function addConversation(): void
-    {
-        $hr = User::role('HR')->first();
-        $staff = $this->currentEmployees()->first(fn ($e) => $e->user_id && ! $e->user?->hasAnyRole(['Admin', 'HR', 'Accounting']));
-        if (! $hr || ! $staff) {
-            return;
-        }
-        $cid = DB::table('conversations')->insertGetId(['last_message_at' => now(), 'created_at' => now(), 'updated_at' => now()]);
-        $this->track('conversations', $cid);
-        $first = DB::table('messages')->insertGetId(['conversation_id' => $cid, 'user_id' => $staff->user_id,
-            'body' => 'Good morning po. Is my DTR for the 15th pay period ready to confirm?', 'created_at' => now()->subMinutes(30), 'updated_at' => now()->subMinutes(30)]);
-        $reply = DB::table('messages')->insertGetId(['conversation_id' => $cid, 'user_id' => $hr->id,
-            'body' => 'Good morning! Yes, please check it under Attendance and confirm it so Accounting can process your payslip.', 'created_at' => now()->subMinutes(20), 'updated_at' => now()->subMinutes(20)]);
-        foreach ([[$staff->user_id, $first], [$hr->id, $reply]] as [$uid, $read]) {
-            DB::table('conversation_participants')->insert(['conversation_id' => $cid, 'user_id' => $uid, 'last_read_message_id' => $read, 'created_at' => now(), 'updated_at' => now()]);
-        }
-    }
-
     /* ------------------------------------------------------------------ */
 
     private function clear(): int
@@ -369,11 +349,6 @@ class DemoData extends Command
 
         DB::transaction(function () {
             $c = $this->ledger['created'];
-            if (! empty($c['conversations'])) {
-                DB::table('messages')->whereIn('conversation_id', $c['conversations'])->delete();
-                DB::table('conversation_participants')->whereIn('conversation_id', $c['conversations'])->delete();
-                DB::table('conversations')->whereIn('id', $c['conversations'])->delete();
-            }
             foreach (Application::whereIn('id', $c['applications'] ?? [])->get() as $a) {
                 Storage::disk(Application::DOCUMENT_DISK)->deleteDirectory('applications/'.$a->user_id);
             }

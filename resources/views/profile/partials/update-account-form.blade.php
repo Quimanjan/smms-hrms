@@ -103,7 +103,7 @@
     </div>
 
     @unless ($canEdit)
-        <p class="acc-readonly-note" role="note"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Only HR can change your details. If something is wrong or missing, message HR with the chat button.</p>
+        <p class="acc-readonly-note" role="note"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Only HR can change your details. If something is wrong or missing, please let HR know.</p>
     @endunless
 
     <form method="POST" action="{{ route('profile.updateAccount') }}" x-ref="form" novalidate>

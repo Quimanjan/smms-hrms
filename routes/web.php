@@ -482,15 +482,6 @@ Route::middleware(['auth', 'verified', TrackSystemDataUpdates::class])->group(fu
     |--------------------------------------------------------------------------
     */
 
-    // Direct messages between staff (all signed-in staff roles)
-    Route::middleware('role:Admin|HR|Accounting|Employee')->group(function () {
-        Route::get('/messages', [\App\Http\Controllers\MessageController::class, 'index'])->name('messages.index');
-        Route::get('/messages/people', [\App\Http\Controllers\MessageController::class, 'people'])->name('messages.people');
-        Route::get('/messages/conversations', [\App\Http\Controllers\MessageController::class, 'conversations'])->name('messages.conversations');
-        Route::get('/messages/conversations/{conversation}', [\App\Http\Controllers\MessageController::class, 'show'])->whereNumber('conversation')->name('messages.show');
-        Route::post('/messages', [\App\Http\Controllers\MessageController::class, 'store'])->middleware('throttle:60,1')->name('messages.store');
-    });
-
     Route::middleware('role:Admin|HR|Accounting')->group(function () {
 
         // Reports

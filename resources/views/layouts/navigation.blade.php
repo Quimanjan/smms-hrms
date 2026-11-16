@@ -159,13 +159,6 @@
             'match' => 'loans-accounting.*',
         ],
 
-        'messages' => [
-            'label' => 'Messages',
-            'icon'  => 'fa-comments',
-            'route' => 'messages.index',
-            'match' => 'messages.*',
-        ],
-
         'audit-trail' => [
             'label' => 'Audit Trail',
             'icon'  => 'fa-clipboard-list',
@@ -426,7 +419,7 @@
                 :icon="$item['icon']"
                 :active="request()->routeIs($item['match'])"
             >
-                {{ $item['label'] }}@if ($item['route'] === 'messages.index' && ($unreadMessages ??= \App\Http\Controllers\MessageController::unreadFor(auth()->id())) > 0)<b class="sb-badge" aria-label="{{ $unreadMessages }} unread">{{ $unreadMessages }}</b>@endif
+                {{ $item['label'] }}
             </x-sidebar-link>
         @empty
             <div class="px-3 py-4 text-sm text-gray-500">

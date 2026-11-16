@@ -193,12 +193,6 @@
                 </main>
             </div>
         </div>
-        {{-- Chat bubble (lower right) for staff --}}
-        @hasanyrole('Admin|HR|Accounting|Employee')
-            @unless (request()->routeIs('messages.index'))
-                @include('partials.chat-widget')
-            @endunless
-        @endhasanyrole
 
         @auth @include('partials.form-autosave') @endauth
 
