@@ -1,0 +1,5 @@
+@extends('errors.layout')
+@section('code', '403')
+@section('title', 'This page is not for your account')
+@php($why = isset($exception) ? trim((string) $exception->getMessage()) : '')
+@section('message', ($why !== '' && ! str_starts_with($why, 'User does not have') && $why !== 'Forbidden') ? $why : 'Your role does not have access to this page. If you think it should, please ask HR.')

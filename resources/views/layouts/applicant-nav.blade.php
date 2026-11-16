@@ -49,7 +49,7 @@
                 alt="School Logo"
                 class="h-[45px] w-[45px] shrink-0 object-contain lg:h-[60px] lg:w-[60px]"
             >
-            <span class="min-w-0 truncate text-[clamp(15px,2.2vw,30px)] font-extrabold leading-tight text-[#b22222]">
+            <span class="hrms-brand-name min-w-0 truncate text-[clamp(15px,2.2vw,30px)] leading-tight">
                 St. Mary Magdalene School
             </span>
         </a>

@@ -13,6 +13,9 @@ class NotificationController extends Controller
      */
     public function index(Request $request)
     {
+        // The bell's "See all" window replaced this old standalone page.
+        return redirect()->route('dashboard');
+
         $notifications = $this->visibleNotifications($request->user())
             ->latest()
             ->paginate(20);

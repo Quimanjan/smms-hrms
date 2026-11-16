@@ -1338,5 +1338,31 @@ input:not([type="checkbox"]):not([type="radio"]):focus, select:focus, textarea:f
 /* Clear (x) button inside search boxes: brand red instead of browser blue */
 input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; height: 14px; width: 14px; cursor: pointer;
   background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23b22222' d='M18.3 5.7a1 1 0 0 0-1.4 0L12 10.6 7.1 5.7a1 1 0 1 0-1.4 1.4l4.9 4.9-4.9 4.9a1 1 0 1 0 1.4 1.4l4.9-4.9 4.9 4.9a1 1 0 0 0 1.4-1.4L13.4 12l4.9-4.9a1 1 0 0 0 0-1.4z'/></svg>") center / 14px no-repeat; }
+
+/* ---------- Headings: Marcellus like the landing page (client revision) ----------
+   Section, page and window titles use the display face. Names inside list rows,
+   cards and buttons keep the bold body face so they still read as labels. */
+:is(h1, h2, h3):not(:is(button, a, li, td, th, label, article, summary, .cx-agenda, .cx-legend) *):not([class*="uppercase"]):not(.text-xs):not(.text-sm):not(.text-base) {
+    font-family: 'Marcellus', 'Times New Roman', serif !important;
+    font-weight: 400 !important;
+    letter-spacing: 0 !important;
+}
+
+/* ---------- Pop-up windows: modern backdrop and a short open animation (client revision) ---------- */
+.fixed.inset-0:is([class*="bg-black/"], [class*="bg-gray-900/"], [class*="bg-slate-900/"], [class*="bg-black\/"]) {
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+}
+.fixed.inset-0 > [role="dialog"], .fixed.inset-0 > div > [role="dialog"], [role="dialog"].relative {
+    animation: hrms-pop .2s cubic-bezier(.2, .8, .2, 1);
+    box-shadow: 0 30px 80px rgba(36, 6, 11, .28), 0 2px 8px rgba(36, 6, 11, .08);
+}
+@keyframes hrms-pop { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .fixed.inset-0 > [role="dialog"], .fixed.inset-0 > div > [role="dialog"], [role="dialog"].relative { animation: none; } }
+
+/* ---------- Standard text box and the school name in the top bar (client revision) ---------- */
+.hrms-input { display: block; width: 100%; min-height: 46px; padding: 10px 14px; border: 1px solid #e5e7eb; border-radius: 12px;
+    background: #f9fafb; color: #111827; font: inherit; transition: border-color .15s, box-shadow .15s, background-color .15s; }
+.hrms-input:focus { outline: none; border-color: #b22222; background: #fff; box-shadow: 0 0 0 4px rgba(178, 34, 34, .12); }
+.hrms-brand-name { font-family: 'Marcellus', 'Times New Roman', serif; font-weight: 400; color: #3a0a10; }
 </style>
 @endverbatim

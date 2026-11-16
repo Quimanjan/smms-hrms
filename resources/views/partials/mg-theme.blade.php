@@ -352,4 +352,13 @@ input:not([type="checkbox"]):not([type="radio"]):focus, select:focus, textarea:f
 /* Clear (x) button inside search boxes: brand red instead of browser blue */
 input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; height: 14px; width: 14px; cursor: pointer;
   background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23b22222' d='M18.3 5.7a1 1 0 0 0-1.4 0L12 10.6 7.1 5.7a1 1 0 1 0-1.4 1.4l4.9 4.9-4.9 4.9a1 1 0 1 0 1.4 1.4l4.9-4.9 4.9 4.9a1 1 0 0 0 1.4-1.4L13.4 12l4.9-4.9a1 1 0 0 0 0-1.4z'/></svg>") center / 14px no-repeat; }
+
+/* ---------- Headings: Marcellus like the landing page (client revision) ----------
+   Section, page and window titles use the display face. Names inside list rows,
+   cards and buttons keep the bold body face so they still read as labels. */
+:is(h1, h2, h3):not(:is(button, a, li, td, th, label, article, summary, .cx-agenda, .cx-legend) *):not([class*="uppercase"]):not(.text-xs):not(.text-sm):not(.text-base) {
+    font-family: 'Marcellus', 'Times New Roman', serif !important;
+    font-weight: 400 !important;
+    letter-spacing: 0 !important;
+}
 </style>
