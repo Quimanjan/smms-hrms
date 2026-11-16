@@ -42,6 +42,12 @@
 
         {{-- Apply the remembered sidebar state before the page paints. --}}
         <script>try { if (localStorage.getItem('smms.sidebar') === 'collapsed') document.documentElement.classList.add('sb-collapsed'); } catch (e) {}</script>
+        {{-- The menu slides in once per sign-in, not on every page. --}}
+        <script>try { if (!sessionStorage.getItem('smms.intro')) { document.documentElement.classList.add('sb-intro'); sessionStorage.setItem('smms.intro', '1'); } } catch (e) {}</script>
+        {{-- Start loading a menu page while the pointer rests on its link, so the click opens it right away. --}}
+        <script type="speculationrules">
+        {"prefetch": [{"where": {"and": [{"selector_matches": "#sidebar a[href]"}, {"not": {"href_matches": "*/logout*"}}, {"not": {"href_matches": "*/export*"}}, {"not": {"href_matches": "*download*"}}]}, "eagerness": "moderate"}]}
+        </script>
 
         {{-- School colors and type for the signed-in pages --}}
         @include('partials.app-theme')
@@ -186,5 +192,14 @@
                 </main>
             </div>
         </div>
+        {{-- Keep the menu's scroll position when moving between pages. --}}
+        <script>
+            (() => {
+                const side = document.getElementById('sidebar');
+                if (!side) return;
+                try { const y = sessionStorage.getItem('smms.sideScroll'); if (y) side.scrollTop = +y; } catch (e) {}
+                addEventListener('pagehide', () => { try { sessionStorage.setItem('smms.sideScroll', String(side.scrollTop)); } catch (e) {} });
+            })();
+        </script>
     </body>
 </html>

@@ -1142,6 +1142,14 @@ button.cx-day:focus-visible { outline: 2px solid var(--mg-gold); outline-offset:
     .ed-foot .ed-btn { width: 100%; }
 }
 
+/* ---------- Page changes ----------
+   Moving between pages keeps the sidebar and top bar still and only fades the
+   content (browsers without view transitions simply load the page as before). */
+@view-transition { navigation: auto; }
+#sidebar { view-transition-name: smms-sidebar; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.18s; }
+@media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
+
 /* ---------- Motion ---------- */
 @media (prefers-reduced-motion: no-preference) {
     .dx-hero-copy > *, .dx-actions { animation: dx-rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
@@ -1151,16 +1159,16 @@ button.cx-day:focus-visible { outline: 2px solid var(--mg-gold); outline-offset:
     .dx-stat { animation: dx-rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; animation-delay: calc(0.2s + var(--i, 0) * 80ms); }
     .dx-hero::before { animation: dx-ring 9s ease-in-out infinite alternate; }
 
-    .app-side-link { animation: dx-slide 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
-    #sidebar nav > a:nth-child(2) { animation-delay: 0.03s; }
-    #sidebar nav > a:nth-child(3) { animation-delay: 0.06s; }
-    #sidebar nav > a:nth-child(4) { animation-delay: 0.09s; }
-    #sidebar nav > a:nth-child(5) { animation-delay: 0.12s; }
-    #sidebar nav > a:nth-child(6) { animation-delay: 0.15s; }
-    #sidebar nav > a:nth-child(7) { animation-delay: 0.18s; }
-    #sidebar nav > a:nth-child(8) { animation-delay: 0.21s; }
-    #sidebar nav > a:nth-child(9) { animation-delay: 0.24s; }
-    #sidebar nav > a:nth-child(n+10) { animation-delay: 0.27s; }
+    html.sb-intro .app-side-link { animation: dx-slide 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+    html.sb-intro #sidebar nav > a:nth-child(2) { animation-delay: 0.03s; }
+    html.sb-intro #sidebar nav > a:nth-child(3) { animation-delay: 0.06s; }
+    html.sb-intro #sidebar nav > a:nth-child(4) { animation-delay: 0.09s; }
+    html.sb-intro #sidebar nav > a:nth-child(5) { animation-delay: 0.12s; }
+    html.sb-intro #sidebar nav > a:nth-child(6) { animation-delay: 0.15s; }
+    html.sb-intro #sidebar nav > a:nth-child(7) { animation-delay: 0.18s; }
+    html.sb-intro #sidebar nav > a:nth-child(8) { animation-delay: 0.21s; }
+    html.sb-intro #sidebar nav > a:nth-child(9) { animation-delay: 0.24s; }
+    html.sb-intro #sidebar nav > a:nth-child(n+10) { animation-delay: 0.27s; }
 }
 
 @keyframes dx-rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
