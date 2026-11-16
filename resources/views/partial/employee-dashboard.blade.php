@@ -98,6 +98,7 @@
             'defaultStep' => $defaultStepNo,
             'old'         => $old,
             'reopen'      => $errors->any(),
+            'errorKeys'   => array_keys($errors->getMessages()),
             'editingId'   => old('_editing_id'),
             'storeUrl'    => route('employees.store'),
             'updateUrl'   => route('employees.update', '__ID__'),
@@ -333,13 +334,22 @@
         {{-- ============ Add / Edit modal ============ --}}
         <div x-show="formOpen" x-cloak x-transition.opacity
             class="fixed inset-0 z-[60] grid place-items-center bg-[rgba(3,7,18,0.5)] p-4">
-            <div role="dialog" aria-modal="true" class="relative max-h-[92vh] w-full max-w-[800px] overflow-y-auto [scrollbar-width:none] rounded-[14px] bg-white p-6 shadow-[0_20px_50px_rgba(15,23,42,0.14)] sm:p-8">
+            <div role="dialog" aria-modal="true" class="emp-form-dialog relative flex max-h-[92vh] w-full max-w-[800px] flex-col overflow-hidden rounded-[14px] bg-white shadow-[0_20px_50px_rgba(15,23,42,0.14)]">
+              <div class="emp-form-scroll overflow-y-auto p-6 sm:p-8">
                 <button type="button" @click="formOpen = false" aria-label="Close"
                     class="absolute right-3 top-2 cursor-pointer text-3xl leading-none text-gray-500 hover:text-gray-800">&times;</button>
 
                 <h3 class="mb-5 text-2xl font-extrabold text-[#b22222]" x-text="editingId ? 'Edit Employee' : 'Add Employee'"></h3>
 
-                <form method="POST" :action="formAction()" class="space-y-4">
+                {{-- Tabs keep the form short (client revision) --}}
+                <div class="emp-form-tabs" role="tablist" aria-label="Employee details">
+                    <button type="button" role="tab" :aria-selected="(ftab === 'personal').toString()" @click="ftab = 'personal'">Personal information</button>
+                    <button type="button" role="tab" :aria-selected="(ftab === 'education').toString()" @click="ftab = 'education'">Educational background</button>
+                    <button type="button" role="tab" :aria-selected="(ftab === 'ids').toString()" @click="ftab = 'ids'">Government IDs</button>
+                </div>
+
+                <form method="POST" :action="formAction()" class="space-y-4"
+                    @invalid.capture="showTabOf($event.target)">
                     @csrf
                     <input type="hidden" name="_method" value="PUT" :disabled="!editingId">
                     <input type="hidden" name="_editing_id" :value="editingId ?? ''">
@@ -383,6 +393,7 @@
                         <p class="{{ $errClass }}">{{ $errors->first('user_id') }}</p>
                     </div>
 
+                    <div class="space-y-4" data-ftab="personal" x-show="ftab === 'personal'" role="tabpanel">
                     <div>
                         <span class="{{ $labelClass }}">Full Name <span class="text-red-600">*</span></span>
                         <div class="grid grid-cols-[1fr_1fr_1fr_0.65fr] gap-2">
@@ -557,8 +568,22 @@
                         </div>
                     </div>
 
+                    <div class="grid gap-4 sm:grid-cols-2">
+                        <div>
+                            <label for="f_emergency_name" class="{{ $labelClass }}">Emergency Contact Name <span class="text-red-600">*</span></label>
+                            <input id="f_emergency_name" name="emergency_name" x-model="form.emergency_name" placeholder="e.g. Ana Santos" required class="{{ $inputClass }}">
+                            <p class="{{ $errClass }}">{{ $errors->first('emergency_name') }}</p>
+                        </div>
+                        <div>
+                            <label for="f_emergency_contact" class="{{ $labelClass }}">Emergency Contact Number <span class="text-red-600">*</span></label>
+                            <input id="f_emergency_contact" type="tel" name="emergency_contact" x-model="form.emergency_contact" placeholder="+639XXXXXXXXX" required class="{{ $inputClass }}">
+                            <p class="{{ $errClass }}">{{ $errors->first('emergency_contact') }}</p>
+                        </div>
+                    </div>
+                    </div>{{-- /personal --}}
+
                     {{-- Educational background (entered by HR only) --}}
-                    <fieldset class="emp-edu-fields">
+                    <fieldset class="emp-edu-fields" data-ftab="education" x-show="ftab === 'education'" x-cloak role="tabpanel">
                         <legend>Educational Background</legend>
                         <p class="emp-edu-hint">Fill in each level the employee finished, starting with the highest. The school name is needed for every level you fill in.</p>
                         @php($eduErrors = collect($errors->getMessages())->filter(fn ($m, $k) => str_starts_with($k, 'education'))->flatten()->unique())
@@ -581,16 +606,17 @@
                         @endforeach
                     </fieldset>
 
-                    <div class="grid gap-4 sm:grid-cols-2">
-                        <div>
-                            <label for="f_emergency_name" class="{{ $labelClass }}">Emergency Contact Name <span class="text-red-600">*</span></label>
-                            <input id="f_emergency_name" name="emergency_name" x-model="form.emergency_name" placeholder="e.g. Ana Santos" required class="{{ $inputClass }}">
-                            <p class="{{ $errClass }}">{{ $errors->first('emergency_name') }}</p>
-                        </div>
-                        <div>
-                            <label for="f_emergency_contact" class="{{ $labelClass }}">Emergency Contact Number <span class="text-red-600">*</span></label>
-                            <input id="f_emergency_contact" type="tel" name="emergency_contact" x-model="form.emergency_contact" placeholder="+639XXXXXXXXX" required class="{{ $inputClass }}">
-                            <p class="{{ $errClass }}">{{ $errors->first('emergency_contact') }}</p>
+                    {{-- Government IDs (entered by HR only; kept hidden elsewhere) --}}
+                    <div class="space-y-4" data-ftab="ids" x-show="ftab === 'ids'" x-cloak role="tabpanel">
+                        <p class="emp-edu-hint">These numbers are used for remittances. Leave a field blank if the employee has none yet.</p>
+                        <div class="grid gap-4 sm:grid-cols-2">
+                            @foreach (['sss_number' => 'SSS Number', 'philhealth_number' => 'PhilHealth Number', 'pagibig_number' => 'Pag-IBIG Number', 'tin' => 'TIN'] as $key => $label)
+                                <div>
+                                    <label for="f_{{ $key }}" class="{{ $labelClass }}">{{ $label }}</label>
+                                    <input id="f_{{ $key }}" name="{{ $key }}" x-model="form.{{ $key }}" maxlength="32" autocomplete="off" placeholder="{{ $label }}" class="{{ $inputClass }}">
+                                    <p class="{{ $errClass }}">{{ $errors->first($key) }}</p>
+                                </div>
+                            @endforeach
                         </div>
                     </div>
 
@@ -605,6 +631,7 @@
                         </button>
                     </div>
                 </form>
+              </div>
             </div>
         </div>
     </div>
@@ -632,6 +659,7 @@
                 address_line: '', address_landmark: '', barangay: '', city_municipality: '', province: '', zip_code: '',
                 emergency_name: '', emergency_contact: '',
                 education: blankEducation(),
+                sss_number: '', philhealth_number: '', pagibig_number: '', tin: '',
             });
 
             return {
@@ -640,6 +668,7 @@
                 statuses: cfg.statuses || {},       // { regular: 'Regular', ... }
                 detailId: null,
                 formOpen: false,
+                ftab: 'personal',
                 editingId: null,
                 form: blank(),
 
@@ -659,6 +688,10 @@
                         this.form.education = withEducation(cfg.old.education);
                         this.form.employee_source = this.form.employee_source === 'existing' ? 'existing' : 'applicant';
                         this.form.step_no = String(this.form.step_no ?? defaultStep);
+                        // Open the tab that holds the first error
+                        const keys = cfg.errorKeys || [];
+                        this.ftab = keys.some(k => k.startsWith('education')) && !keys.some(k => !k.startsWith('education') && !['sss_number','philhealth_number','pagibig_number','tin'].includes(k)) ? 'education'
+                            : keys.length && keys.every(k => ['sss_number','philhealth_number','pagibig_number','tin'].includes(k)) ? 'ids' : 'personal';
                         this.formOpen = true;
                     }
                 },
@@ -761,7 +794,16 @@
                     this.formOpen = false;
                 },
 
+                // A required field on a hidden tab failed: show that tab so the browser can point at it
+                showTabOf(el) {
+                    const panel = el.closest('[data-ftab]');
+                    if (!panel || panel.dataset.ftab === this.ftab) return;
+                    this.ftab = panel.dataset.ftab;
+                    panel.style.display = '';
+                },
+
                 openCreate() {
+                    this.ftab = 'personal';
                     this.editingId = null;
                     this.form = blank();
                     this.detailId = null;
@@ -797,7 +839,10 @@
                         ...this.splitAddress(e.address),
                         emergency_name: e.emergency_name, emergency_contact: e.emergency_contact,
                         education: withEducation(e.education_raw),
+                        ...Object.fromEntries(['sss_number', 'philhealth_number', 'pagibig_number', 'tin']
+                            .map((k, i) => [k, (e.gov_ids || [])[i]?.value || ''])),
                     };
+                    this.ftab = 'personal';
                     this.editingId = e.id;
                     this.detailId = null;
                     this.formOpen = true;

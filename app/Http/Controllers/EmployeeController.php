@@ -451,6 +451,12 @@ class EmployeeController extends Controller
                 'string',
                 'max:50',
             ],
+
+            // Government IDs are entered by HR only.
+            'sss_number' => ['nullable', 'string', 'max:32'],
+            'philhealth_number' => ['nullable', 'string', 'max:32'],
+            'pagibig_number' => ['nullable', 'string', 'max:32'],
+            'tin' => ['nullable', 'string', 'max:32'],
         ];
     }
 
@@ -511,6 +517,11 @@ class EmployeeController extends Controller
             'emergency_contact' => $d['emergency_contact'],
 
             'education' => $this->cleanEducation($d['education'] ?? []),
+
+            'sss_number' => $this->blankToNull($d['sss_number'] ?? null),
+            'philhealth_number' => $this->blankToNull($d['philhealth_number'] ?? null),
+            'pagibig_number' => $this->blankToNull($d['pagibig_number'] ?? null),
+            'tin' => $this->blankToNull($d['tin'] ?? null),
         ];
     }
 

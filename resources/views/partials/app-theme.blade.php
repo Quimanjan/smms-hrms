@@ -953,6 +953,23 @@ button.cx-day:focus-visible { outline: 2px solid var(--mg-gold); outline-offset:
 .al-action--deleted { background: #fde4e6; color: #8f1420; }
 .al-pages { padding: 14px 22px; }
 
+/* ---------- Add / Edit employee: tabs and a scrollbar inside the rounded window ---------- */
+.emp-form-tabs { display: flex; gap: 22px; overflow-x: auto; margin: -6px 0 22px; border-bottom: 1px solid var(--mg-line); scrollbar-width: none; }
+.emp-form-tabs button {
+    position: relative; flex: none; padding: 12px 4px 14px; border: 0; background: none; color: var(--mg-stone);
+    font: 600 0.95rem var(--mg-body); cursor: pointer;
+}
+.emp-form-tabs button:hover { color: var(--mg-ink); }
+.emp-form-tabs button[aria-selected="true"] { color: var(--mg-crimson); }
+.emp-form-tabs button[aria-selected="true"]::after { content: ""; position: absolute; left: 4px; right: 4px; bottom: -1px; height: 3px; border-radius: 3px 3px 0 0; background: var(--mg-crimson); }
+.emp-form-tabs button:focus-visible { outline: 2px solid var(--mg-gold); outline-offset: -2px; border-radius: 8px; }
+.emp-form-scroll { scrollbar-width: thin; scrollbar-color: #c9b8b6 transparent; scrollbar-gutter: stable; }
+.emp-form-scroll::-webkit-scrollbar { width: 10px; }
+.emp-form-scroll::-webkit-scrollbar-track { margin-block: 14px; background: transparent; }
+.emp-form-scroll::-webkit-scrollbar-thumb { border: 3px solid #fff; border-radius: 999px; background: #c9b8b6; }
+.emp-form-scroll::-webkit-scrollbar-thumb:hover { background: #a8918e; }
+@media (max-width: 560px) { .emp-form-tabs { gap: 16px; } .emp-form-tabs button { font-size: 0.88rem; } }
+
 /* ---------- Proctoring days (HR) ---------- */
 .proc-form { display: grid; grid-template-columns: 1fr; gap: 14px; }
 @media (min-width: 640px) { .proc-form { grid-template-columns: 1fr 1.4fr auto; align-items: end; } .proc-form [role="alert"] { grid-column: 1 / -1; } }
