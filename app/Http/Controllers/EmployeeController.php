@@ -35,6 +35,7 @@ class EmployeeController extends Controller
         'birthday.before_or_equal' => 'The employee must be at least 18 years old.',
         'date_hired.required' => 'Enter the date this employee was hired.',
         'date_hired.before_or_equal' => 'The date hired cannot be in the future.',
+        'education.*.school.required_with' => 'Enter the school name for each level you fill in.',
     ];
 
     public const EMPLOYMENT = [
@@ -145,6 +146,7 @@ class EmployeeController extends Controller
 
                     'attainment' => $e->user_id ? ($attainment[$e->user_id] ?? null) : null,
                     'education' => $this->educationRows($e->education),
+                    'education_raw' => $e->education ?: new \stdClass,
 
                     // HR and Admin need these for deductions. Shown hidden by default.
                     'gov_ids' => [
@@ -249,13 +251,13 @@ class EmployeeController extends Controller
             Employee::query()->lockForUpdate()->get(['id']);
             $employeeId = Employee::generateEmployeeId();
 
-            Employee::create(
-                $this->payload($data, $user?->id) + [
-                    'employee_id' => $employeeId,
-                    'zkteco_user_id' => $employeeId,
-                    'education' => $this->educationFromApplication($user?->id),
-                ]
-            );
+            $payload = $this->payload($data, $user?->id);
+            $payload['education'] ??= $this->educationFromApplication($user?->id);
+
+            Employee::create($payload + [
+                'employee_id' => $employeeId,
+                'zkteco_user_id' => $employeeId,
+            ]);
         });
 
         return redirect()
@@ -377,6 +379,10 @@ class EmployeeController extends Controller
                 Rule::unique('employees', 'email')
                     ->ignore($employee?->id),
             ],
+
+            // Educational background is entered by HR only.
+            'education' => ['nullable', 'array'],
+            ...$this->educationRules(),
 
             // Used for length of service (separation and retirement pay).
             'date_hired' => ['required', 'date', 'before_or_equal:today'],
@@ -502,7 +508,45 @@ class EmployeeController extends Controller
 
             'emergency_name' => $d['emergency_name'],
             'emergency_contact' => $d['emergency_contact'],
+
+            'education' => $this->cleanEducation($d['education'] ?? []),
         ];
+    }
+
+    /** education.tertiary.course, education.senior_high.school, ... (school is needed once a level is filled in) */
+    private function educationRules(): array
+    {
+        $rules = [];
+        foreach (Employee::EDUCATION_LEVELS as $level => $config) {
+            foreach ($config['fields'] as $field => [$label, $placeholder, $max]) {
+                $others = collect(array_keys($config['fields']))->reject(fn ($f) => $f === $field)->map(fn ($f) => "education.$level.$f")->implode(',');
+                $rules["education.$level.$field"] = $field === 'school'
+                    ? ['nullable', "required_with:$others", 'string', "max:$max"]
+                    : ['nullable', 'string', "max:$max"];
+            }
+        }
+
+        return $rules;
+    }
+
+    /** Keeps only the levels that have something written, trimmed. Null when nothing is filled in. */
+    private function cleanEducation($education): ?array
+    {
+        $clean = [];
+        foreach (Employee::EDUCATION_LEVELS as $level => $config) {
+            $entry = [];
+            foreach (array_keys($config['fields']) as $field) {
+                $value = trim((string) ($education[$level][$field] ?? ''));
+                if ($value !== '') {
+                    $entry[$field] = $value;
+                }
+            }
+            if ($entry) {
+                $clean[$level] = $entry;
+            }
+        }
+
+        return $clean ?: null;
     }
 
     /**

@@ -425,6 +425,17 @@ body.app-body .calendar-day:not(.empty):hover { transform: translateY(-2px); bor
 
 /* ---------- Employee cards (compact) ---------- */
 .ed-edu-school { display: block; margin-top: 2px; font-size: 0.82rem; color: var(--mg-stone); }
+.acc-readonly-note { display: flex; gap: 10px; align-items: flex-start; margin: 0 0 20px; padding: 12px 16px; border-radius: 12px; background: #f8f1ef; color: var(--mg-oxblood); font-size: 0.9rem; }
+.acc-readonly-note i { margin-top: 3px; }
+.emp-edu-fields { display: grid; gap: 14px; margin: 0; padding: 18px; border: 1px solid #e5e7eb; border-radius: 14px; }
+.emp-edu-fields legend { padding: 0 8px; font-weight: 800; color: #b22222; }
+.emp-edu-hint { margin: 0; font-size: 0.85rem; color: #6b7280; }
+.emp-edu-grid { display: grid; gap: 12px; }
+@media (min-width: 640px) {
+    .emp-edu-grid--2 { grid-template-columns: 2fr 1fr; }
+    .emp-edu-grid--3 { grid-template-columns: 1.4fr 1.4fr 1fr; }
+}
+.emp-edu-level h4 { margin: 0 0 8px; font-size: 0.92rem; font-weight: 700; color: var(--mg-oxblood); }
 .emp-hire-alert { display: flex; gap: 12px; align-items: flex-start; margin: 0 0 12px; padding: 12px 16px; border-radius: 14px; background: #fff6e6; border: 1px solid #f1d7a6; color: #6b4a12; font-size: 0.88rem; line-height: 1.5; }
 .emp-hire-alert i { color: #b7791f; margin-top: 3px; }
 .emp-hire-alert p { margin: 0; }

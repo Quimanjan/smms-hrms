@@ -282,7 +282,7 @@
                                         </li>
                                     </template>
                                 </ol>
-                                <p class="ed-note" x-show="!(detail.education || []).length">The employee has not filled in their schooling yet. They can add it under My Account.</p>
+                                <p class="ed-note" x-show="!(detail.education || []).length">No schooling recorded yet. Choose Edit employee to add it.</p>
                             </div>
 
                             <dl class="ed-grid" x-show="tab === 'emergency'" x-cloak role="tabpanel">
@@ -557,6 +557,30 @@
                         </div>
                     </div>
 
+                    {{-- Educational background (entered by HR only) --}}
+                    <fieldset class="emp-edu-fields">
+                        <legend>Educational Background</legend>
+                        <p class="emp-edu-hint">Fill in each level the employee finished, starting with the highest. The school name is needed for every level you fill in.</p>
+                        @php($eduErrors = collect($errors->getMessages())->filter(fn ($m, $k) => str_starts_with($k, 'education'))->flatten()->unique())
+                        @if ($eduErrors->isNotEmpty())
+                            <p class="{{ $errClass }}">{{ $eduErrors->first() }}</p>
+                        @endif
+                        @foreach (\App\Models\Employee::EDUCATION_LEVELS as $level => $config)
+                            <div class="emp-edu-level">
+                                <h4>{{ $config['label'] }}</h4>
+                                <div class="emp-edu-grid emp-edu-grid--{{ count($config['fields']) }}">
+                                    @foreach ($config['fields'] as $field => [$label, $hint, $max])
+                                        <div>
+                                            <label for="f_edu_{{ $level }}_{{ $field }}" class="{{ $labelClass }}">{{ $label }}</label>
+                                            <input id="f_edu_{{ $level }}_{{ $field }}" name="education[{{ $level }}][{{ $field }}]" maxlength="{{ $max }}"
+                                                x-model="form.education.{{ $level }}.{{ $field }}" placeholder="{{ $hint }}" class="{{ $inputClass }}">
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endforeach
+                    </fieldset>
+
                     <div class="grid gap-4 sm:grid-cols-2">
                         <div>
                             <label for="f_emergency_name" class="{{ $labelClass }}">Emergency Contact Name <span class="text-red-600">*</span></label>
@@ -589,6 +613,14 @@
         function employeeDirectory(cfg) {
             const defaultStep = String(cfg.defaultStep ?? '');
 
+            // { tertiary: { course: '', school: '', years: '' }, ... }
+            const blankEducation = () => JSON.parse(@js(json_encode(collect(\App\Models\Employee::EDUCATION_LEVELS)->map(fn ($c) => array_fill_keys(array_keys($c['fields']), '')))));
+            const withEducation = (saved) => {
+                const edu = blankEducation();
+                for (const level in edu) for (const field in edu[level]) edu[level][field] = (saved && saved[level] && saved[level][field]) || '';
+                return edu;
+            };
+
             const blank = () => ({
                 employee_source: 'applicant',
                 user_id: '',
@@ -599,6 +631,7 @@
                 email: '', birthday: '', date_hired: '', civil_status: '', gender: '',
                 address_line: '', address_landmark: '', barangay: '', city_municipality: '', province: '', zip_code: '',
                 emergency_name: '', emergency_contact: '',
+                education: blankEducation(),
             });
 
             return {
@@ -623,6 +656,7 @@
                     if (cfg.reopen) {
                         this.editingId = cfg.editingId || null;
                         this.form = Object.assign(blank(), cfg.old);
+                        this.form.education = withEducation(cfg.old.education);
                         this.form.employee_source = this.form.employee_source === 'existing' ? 'existing' : 'applicant';
                         this.form.step_no = String(this.form.step_no ?? defaultStep);
                         this.formOpen = true;
@@ -762,6 +796,7 @@
                         birthday: e.birthday, date_hired: e.date_hired || '', civil_status: e.civil_status || '', gender: e.gender || '',
                         ...this.splitAddress(e.address),
                         emergency_name: e.emergency_name, emergency_contact: e.emergency_contact,
+                        education: withEducation(e.education_raw),
                     };
                     this.editingId = e.id;
                     this.detailId = null;

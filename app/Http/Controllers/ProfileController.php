@@ -82,6 +82,8 @@ class ProfileController extends Controller
         $employee = $user->employee;
 
         abort_if($employee === null, 403);
+        // Only HR changes an employee's details (panel revision).
+        abort_if($user->hasRole('Employee'), 403, 'Only HR can change your details.');
 
         $data = $request->validate(
             $this->accountRules($user, $employee),

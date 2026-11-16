@@ -34,6 +34,9 @@
 
     $education = $employee->education ?? [];
 
+    // Only HR changes an employee's details; employees can view them here.
+    $canEdit = ! $currentUser->hasRole('Employee');
+
     $genders       = \App\Http\Controllers\ProfileController::GENDERS;
     $civilStatuses = \App\Http\Controllers\ProfileController::CIVIL_STATUSES;
 @endphp
@@ -90,12 +93,18 @@
                 class="min-h-[44px] cursor-pointer whitespace-nowrap rounded-md px-3 py-2 font-bold text-[#b22222] transition hover:bg-red-50">
                 <i class="fa-solid fa-key mr-1" aria-hidden="true"></i> Change Password
             </button>
+            @if ($canEdit)
             <button type="button" @click="editing = true"
                 class="min-h-[44px] cursor-pointer whitespace-nowrap rounded-md px-2.5 py-2 font-bold text-[#b22222] transition hover:bg-gray-50 hover:text-[#8d1111]">
                 <i class="fa-solid fa-pen" aria-hidden="true"></i> Edit
             </button>
+            @endif
         </div>
     </div>
+
+    @unless ($canEdit)
+        <p class="acc-readonly-note" role="note"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Only HR can change your details. If something is wrong or missing, message HR with the chat button.</p>
+    @endunless
 
     <form method="POST" action="{{ route('profile.updateAccount') }}" x-ref="form" novalidate>
         @csrf
@@ -115,7 +124,7 @@
 
         {{-- Personal information --}}
         <section x-show="tab === 'profile'" role="tabpanel" class="min-h-[200px] py-2">
-            <p class="mb-[22px] text-[0.9rem] text-gray-500">Review and update your personal details.</p>
+            <p class="mb-[22px] text-[0.9rem] text-gray-500">{{ $canEdit ? 'Review and update your personal details.' : 'Your personal details on file.' }}</p>
             <div class="grid grid-cols-1 gap-[18px] sm:grid-cols-2">
                 @include('profile.partials.account-field', ['key' => 'name', 'label' => 'Full Name', 'value' => $employee->name, 'wide' => true, 'attrs' => 'required maxlength="120" autocomplete="name"'])
 
@@ -132,7 +141,7 @@
 
         {{-- Educational background --}}
         <section x-show="tab === 'education'" x-cloak role="tabpanel" class="min-h-[200px] py-2">
-            <p class="mb-[22px] text-[0.9rem] text-gray-500">Add your education history, starting with your highest level.</p>
+            <p class="mb-[22px] text-[0.9rem] text-gray-500">{{ $canEdit ? 'Add your education history, starting with your highest level.' : 'Your educational background as recorded by HR.' }}</p>
             <div class="grid gap-4">
                 @foreach (\App\Models\Employee::EDUCATION_LEVELS as $level => $config)
                     <fieldset class="min-w-0 rounded-[10px] border border-gray-200 p-4 sm:p-[18px]">
@@ -156,7 +165,7 @@
 
         {{-- Emergency contact --}}
         <section x-show="tab === 'contact'" x-cloak role="tabpanel" class="min-h-[200px] py-2">
-            <p class="mb-[22px] text-[0.9rem] text-gray-500">Provide someone the school can contact in case of an emergency.</p>
+            <p class="mb-[22px] text-[0.9rem] text-gray-500">{{ $canEdit ? 'Provide someone the school can contact in case of an emergency.' : 'The person the school will contact in case of an emergency.' }}</p>
             <div class="grid grid-cols-1 gap-[18px] sm:grid-cols-2">
                 @include('profile.partials.account-field', ['key' => 'emergency_name', 'label' => 'Emergency Contact Name', 'value' => $employee->emergency_name, 'attrs' => 'maxlength="120" autocomplete="off"'])
                 @include('profile.partials.account-field', ['key' => 'emergency_contact', 'label' => 'Emergency Contact Number', 'value' => $employee->emergency_contact, 'type' => 'tel', 'attrs' => 'inputmode="tel" maxlength="20" autocomplete="off"'])

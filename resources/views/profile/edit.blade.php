@@ -6,7 +6,7 @@
                 {{ __('My Account') }}
             </h2>
             <p class="mt-2 text-sm text-gray-600">
-                {{ __('View and update your personal information.') }}
+                {{ auth()->user()->hasRole('Employee') ? 'View your personal information. Only HR can change it.' : 'View and update your personal information.' }}
             </p>
         </div>
     </x-slot>
