@@ -96,7 +96,7 @@
                 </div>
                 @if (auth()->user()->hasRole('HR'))
                     <button type="button" @click="openLeaveBalances()"
-                        class="mb-1 inline-flex min-h-[44px] cursor-pointer items-center justify-center gap-2 rounded-[14px] bg-[#b22222] px-5 py-2.5 font-extrabold text-white transition hover:bg-[#951717] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#b22222] focus-visible:ring-offset-2">
+                        class="mb-1 inline-flex min-h-[44px] cursor-pointer items-center justify-center gap-2 rounded-[14px] bg-[#b22222] px-5 py-2.5 font-extrabold text-white transition hover:bg-[#8f1c1c] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#b22222] focus-visible:ring-offset-2">
                         <i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i>
                         Leave balances
                     </button>
@@ -194,20 +194,20 @@
 
                         {{-- Approve / Reject (only while the request is Pending) --}}
                         <template x-if="detail.can_decide">
-                            <form method="POST" :action="detail.status_url" class="mt-6 flex justify-between gap-4">
+                            <form method="POST" :action="detail.status_url" class="mt-6 hb-row">
                                 @csrf
                                 @method('PATCH')
                                 <input type="hidden" name="decision" :value="decision">
                                 <input type="hidden" name="rejection_reason" :value="rejectionReason">
 
                                 <button type="button" @click="submitDecision($event.currentTarget.closest('form'), 'approved')"
-                                    class="cursor-pointer rounded-[10px] bg-[#15803d] px-[18px] py-[11px] font-extrabold text-white transition hover:-translate-y-px hover:brightness-95 hover:shadow-[0_8px_18px_rgba(15,23,42,0.12)]">
-                                    Approve
+                                    class="hb hb--approve">
+                                    <i class="fa-solid fa-check" aria-hidden="true"></i> Approve
                                 </button>
 
                                 <button type="button" @click="openRejectionModal()"
-                                    class="cursor-pointer rounded-[10px] bg-[#b22222] px-[18px] py-[11px] font-extrabold text-white transition hover:-translate-y-px hover:brightness-95 hover:shadow-[0_8px_18px_rgba(15,23,42,0.12)]">
-                                    Reject
+                                    class="hb hb--reject">
+                                    <i class="fa-solid fa-xmark" aria-hidden="true"></i> Reject
                                 </button>
 
                                 <div x-show="rejectionModalOpen" x-cloak x-transition.opacity
@@ -227,11 +227,11 @@
                                         <p x-show="rejectionError" x-text="rejectionError" class="mt-1 text-sm font-semibold text-red-600" role="alert"></p>
                                         <div class="mt-5 flex justify-end gap-3">
                                             <button type="button" @click="rejectionModalOpen = false"
-                                                class="rounded-lg bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-200">
+                                                class="hb hb--ghost">
                                                 Cancel
                                             </button>
                                             <button type="button" @click="confirmRejection($event.currentTarget.closest('form'))"
-                                                class="rounded-lg bg-[#b22222] px-4 py-2 text-sm font-semibold text-white hover:bg-[#951717]">
+                                                class="hb hb--reject">
                                                 Confirm rejection
                                             </button>
                                         </div>
@@ -274,7 +274,7 @@
                             class="mb-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
                             <p x-text="leaveBalancesError"></p>
                             <button type="button" @click="loadLeaveBalances()"
-                                class="mt-3 rounded-lg bg-[#b22222] px-4 py-2 font-bold text-white hover:bg-[#951717]">
+                                class="mt-3 rounded-lg bg-[#b22222] px-4 py-2 font-bold text-white hover:bg-[#8f1c1c]">
                                 Try again
                             </button>
                         </div>
@@ -297,7 +297,7 @@
                                     <template x-for="employee in leaveBalances" :key="employee.id">
                                         <tr class="bg-white transition-colors hover:bg-red-50/30">
                                             <td class="break-words px-4 py-4 sm:px-5">
-                                                <span class="block font-extrabold text-[#9f2926]" x-text="employee.name"></span>
+                                                <span class="block font-extrabold text-[#8f1c1c]" x-text="employee.name"></span>
                                                 <span class="mt-1 block text-sm font-semibold text-gray-500" x-text="employee.employeeId || 'No employee ID'"></span>
                                             </td>
                                             <td class="px-4 py-4 text-gray-600 sm:px-5">
@@ -316,7 +316,7 @@
                             class="text-sm font-semibold text-green-700" x-text="leaveBalanceResetMessage"></p>
                         <button type="button" @click="resetLeaveBalances()"
                             :disabled="leaveBalancesLoading || leaveBalancesResetting || leaveBalances.length === 0"
-                            class="inline-flex min-h-[50px] cursor-pointer items-center justify-center gap-2 self-end rounded-[14px] bg-[#b22222] px-5 py-3 font-extrabold text-white transition hover:bg-[#951717] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#b22222] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:min-w-[250px]">
+                            class="inline-flex min-h-[50px] cursor-pointer items-center justify-center gap-2 self-end rounded-[14px] bg-[#b22222] px-5 py-3 font-extrabold text-white transition hover:bg-[#8f1c1c] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#b22222] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:min-w-[250px]">
                             <i class="fa-solid fa-arrows-rotate" :class="{ 'animate-spin': leaveBalancesResetting }" aria-hidden="true"></i>
                             <span x-text="leaveBalancesResetting ? 'Resetting balances...' : 'Reset all balances'"></span>
                         </button>

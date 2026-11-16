@@ -72,7 +72,7 @@ body {
 }
 
 .brand-link:hover .brand {
-    color: #8b1a1a;
+    color: #8f1c1c;
 }
 
 .top-actions {
@@ -321,8 +321,8 @@ body {
 }
 
 .btn.primary:hover {
-    background: #8b1a1a;
-    border-color: #8b1a1a;
+    background: #8f1c1c;
+    border-color: #8f1c1c;
     box-shadow: 0 10px 25px rgba(139, 26, 26, 0.4);
     transform: scale(1.08);
 }
@@ -559,7 +559,7 @@ body {
 }
 
 .error-text {
-    color: #b30000;
+    color: #b22222;
     display: none;
     margin-top: 8px;
     font-size: 0.85rem;
@@ -1031,7 +1031,7 @@ button.modal-btn { font-family: inherit; font-size: inherit; cursor: pointer; }
 }
 
 .login-submit:hover {
-    background: #8b1a1a;
+    background: #8f1c1c;
     box-shadow: 0 4px 12px rgba(178, 34, 34, 0.3);
 }
 
@@ -1407,7 +1407,7 @@ button, input, select, textarea, optgroup { font-family: inherit; } /* every con
 :root {
     --mg-oxblood: #4a0a12;
     --mg-oxblood-deep: #33060c;
-    --mg-crimson: #a5121e;
+    --mg-crimson: #b22222;
     --mg-gold: #c9a24b;
     --mg-gold-soft: #e6cf9a;
     --mg-ink: #21171a;

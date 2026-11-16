@@ -112,7 +112,7 @@
                     </div>
 
                     <p class="mt-5 flex items-center gap-2 text-[0.84rem] text-[#7a8492]">
-                        <a href="{{ route('attendance.index') }}" class="ml-auto inline-flex items-center gap-1.5 font-bold text-[#8f241f] hover:underline">
+                        <a href="{{ route('attendance.index') }}" class="ml-auto inline-flex items-center gap-1.5 font-bold text-[#8f1c1c] hover:underline">
                             Open attendance records <i class="fa-solid fa-arrow-up-right-from-square"></i>
                         </a>
                     </p>

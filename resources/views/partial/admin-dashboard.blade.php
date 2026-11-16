@@ -76,11 +76,11 @@
                             <button type="button" id="adminBannerTab" role="tab" aria-selected="true" aria-controls="bannerEditorPanel"
                                 class="hrms-tab banner-tab text-sm font-bold">Dashboard Banner</button>
                         </div>
-                        <button id="closeBannerModal" aria-label="Close" class="close-btn h-10 w-10 shrink-0 cursor-pointer rounded-full border-0 bg-transparent text-[1.4rem] text-[#b22222] transition-transform hover:scale-[1.08] hover:text-[#dc2626] active:scale-[0.94] sm:h-[38px] sm:w-[38px]">&times;</button>
+                        <button id="closeBannerModal" aria-label="Close" class="close-btn h-10 w-10 shrink-0 cursor-pointer rounded-full border-0 bg-transparent text-[1.4rem] text-[#b22222] transition-transform hover:scale-[1.08] hover:text-[#b22222] active:scale-[0.94] sm:h-[38px] sm:w-[38px]">&times;</button>
                     </div>
                     <div id="bannerEditorPanel" class="modal-body min-h-0 flex-1 overflow-y-auto px-4 pb-5 pt-4 sm:px-7 sm:pb-7 sm:pt-5" role="tabpanel">
                         <div class="upload-section grid gap-3">
-                            <div class="upload-area relative cursor-pointer overflow-hidden rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50 px-4 py-6 text-center transition duration-200 hover:-translate-y-px hover:border-[#dc2626] hover:bg-[#fef2f2] sm:rounded-[22px] sm:px-5 sm:py-[34px]" id="uploadArea">
+                            <div class="upload-area relative cursor-pointer overflow-hidden rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50 px-4 py-6 text-center transition duration-200 hover:-translate-y-px hover:border-[#b22222] hover:bg-[#fef2f2] sm:rounded-[22px] sm:px-5 sm:py-[34px]" id="uploadArea">
                                 <div class="upload-placeholder">
                                     <i class="fas fa-cloud-upload-alt mb-2 block text-4xl text-gray-400 sm:mb-3 sm:text-[2.8rem]"></i>
                                     <p class="m-0 mb-1.5 text-sm font-bold text-gray-700 sm:mb-2 sm:text-base">Tap to upload images<span class="hidden sm:inline"> or drag and drop</span></p>
@@ -98,7 +98,7 @@
                         </div>
                         <div class="modal-footer mt-3 flex flex-col gap-2.5 pt-1.5 sm:mt-1 sm:flex-row sm:items-center sm:gap-3">
                             <button type="button" id="resetToDefaults" class="white-btn w-full cursor-pointer rounded-[14px] border border-gray-300 bg-white px-4 py-3 font-bold text-[#b22222] transition duration-200 hover:-translate-y-px hover:border-[rgba(143,36,31,0.28)] active:translate-y-px active:scale-[0.98] sm:w-auto">Reset to Defaults</button>
-                            <button type="button" id="saveBannerImages" class="red-btn order-first w-full cursor-pointer rounded-[14px] border border-transparent bg-[#dc2626] px-4 py-3 font-bold text-white transition duration-200 hover:-translate-y-px active:translate-y-px active:scale-[0.98] sm:order-none sm:ml-auto sm:w-auto">Save Changes</button>
+                            <button type="button" id="saveBannerImages" class="red-btn order-first w-full cursor-pointer rounded-[14px] border border-transparent bg-[#b22222] px-4 py-3 font-bold text-white transition duration-200 hover:-translate-y-px active:translate-y-px active:scale-[0.98] sm:order-none sm:ml-auto sm:w-auto">Save Changes</button>
                             <button type="button" id="cancelBannerEdit" class="white-btn w-full cursor-pointer rounded-[14px] border border-gray-300 bg-white px-4 py-3 font-bold text-[#b22222] transition duration-200 hover:-translate-y-px hover:border-[rgba(143,36,31,0.28)] active:translate-y-px active:scale-[0.98] sm:w-auto">Cancel</button>
                         </div>
                     </div>
@@ -115,7 +115,7 @@
 <script>
     // ---------- Tailwind class strings used by the dynamically-rendered markup (mobile-first) ----------
     const TW = {
-        redBtn: "red-btn rounded-[14px] border border-transparent bg-[#dc2626] text-white px-4 py-3 font-bold cursor-pointer transition duration-200 hover:-translate-y-px active:translate-y-px active:scale-[0.98]",
+        redBtn: "red-btn rounded-[14px] border border-transparent bg-[#b22222] text-white px-4 py-3 font-bold cursor-pointer transition duration-200 hover:-translate-y-px active:translate-y-px active:scale-[0.98]",
         clearBtn: "clear-btn shrink-0 rounded-[14px] border border-gray-300 bg-white text-[#b22222] px-3 py-2 text-sm font-bold cursor-pointer transition duration-200 hover:-translate-y-px hover:border-[rgba(143,36,31,0.28)] active:translate-y-px active:scale-[0.98] sm:px-4 sm:py-3 sm:text-base",
         promoDot: "h-2.5 w-2.5 cursor-pointer rounded-full border-0 bg-white sm:h-[11px] sm:w-[11px] [&.active]:w-[15px] [&.active]:bg-[#b22222]",
         promoSlideImage: "promo-slide-image relative aspect-[4/3] min-h-[200px] overflow-hidden rounded-xl bg-white sm:aspect-[16/9] sm:min-h-[260px] sm:rounded-[20px] lg:aspect-[16/6.4] lg:min-h-[300px]",
@@ -133,7 +133,7 @@
         taskModalContent: "task-modal-content flex max-h-[90dvh] w-full flex-col overflow-hidden rounded-t-3xl bg-white shadow-[0_28px_70px_rgba(15,23,42,0.2)] sm:max-h-[calc(100dvh-40px)] sm:max-w-[520px] sm:rounded-3xl",
         taskModalHeader: "task-modal-header flex shrink-0 items-center justify-between gap-3 border-b border-[#ecebea] px-4 py-4 sm:gap-4 sm:px-6 sm:py-[22px]",
         taskModalTitle: "m-0 min-w-0 break-words text-base font-bold text-gray-900 sm:text-[1.17rem]",
-        taskClose: "close-btn h-10 w-10 shrink-0 cursor-pointer rounded-full border-0 bg-white/90 text-[1.4rem] text-[#b22222] transition-transform hover:scale-[1.08] hover:text-[#dc2626] sm:h-[38px] sm:w-[38px]",
+        taskClose: "close-btn h-10 w-10 shrink-0 cursor-pointer rounded-full border-0 bg-white/90 text-[1.4rem] text-[#b22222] transition-transform hover:scale-[1.08] hover:text-[#b22222] sm:h-[38px] sm:w-[38px]",
         taskModalBody: "task-modal-body min-h-0 flex-1 overflow-y-auto p-4 sm:p-6",
         taskInputRow: "task-input-row mb-4 grid grid-cols-1 gap-2.5 sm:mb-[18px] sm:grid-cols-[1fr_auto]",
         taskAddBtn: "w-full sm:w-auto",
@@ -413,7 +413,7 @@
         const cancelButton = document.getElementById("cancelBannerEdit");
         const resetButton = document.getElementById("resetToDefaults");
         const saveButton = document.getElementById("saveBannerImages");
-        const dragClasses = ["border-[#dc2626]", "bg-[#fef2f2]"];
+        const dragClasses = ["border-[#b22222]", "bg-[#fef2f2]"];
 
         // Disable every control that could interrupt an in-flight request.
         const setBusy = (busy) => {

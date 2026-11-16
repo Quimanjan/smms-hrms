@@ -2,7 +2,7 @@
 @php
     $team = \App\Support\DashboardOverview::team();
     $peopleUrl = auth()->user()->hasAnyRole(['Admin', 'HR']) && Route::has('employees.index') ? route('employees.index') : null;
-    $palette = ['#a5121e', '#c9a24b', '#4a0a12', '#d98f6f', '#6d6164'];
+    $palette = ['#b22222', '#c9a24b', '#4a0a12', '#d98f6f', '#6d6164'];
     $circumference = 2 * M_PI * 46;
     $offset = 0;
 @endphp

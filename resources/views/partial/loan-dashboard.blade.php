@@ -220,16 +220,16 @@
 
                     <div x-show="!rejecting" class="mt-6 flex flex-wrap items-center justify-between gap-3">
                         <template x-if="detail.canReview">
-                            <div class="flex flex-1 flex-wrap items-center justify-between gap-3">
+                            <div class="hb-row flex-1">
                                 <form method="POST" :action="detail.url" class="m-0"
                                       data-confirm="Approve this loan request?" data-confirm-button="Approve">
                                     @csrf
                                     @method('PATCH')
                                     <input type="hidden" name="decision" value="approved">
-                                    <button type="submit" class="min-w-[9rem] rounded-lg bg-green-600 px-6 py-3 font-bold text-white transition hover:bg-green-700">Approve</button>
+                                    <button type="submit" class="hb hb--approve"><i class="fa-solid fa-check" aria-hidden="true"></i> Approve</button>
                                 </form>
                                 <button type="button" @click="rejecting = true"
-                                        class="min-w-[9rem] rounded-lg bg-red-600 px-6 py-3 font-bold text-white transition hover:bg-red-700">Reject</button>
+                                        class="hb hb--reject"><i class="fa-solid fa-xmark" aria-hidden="true"></i> Reject</button>
                             </div>
                         </template>
                         <template x-if="detail.canArchive">
@@ -282,9 +282,9 @@
                     <small class="text-xs text-gray-500">Maximum 1,000 characters.</small>
                     <div class="mt-2 flex justify-end gap-2">
                         <button type="button" @click="cancelRejection()"
-                                class="min-h-[40px] rounded-lg border border-gray-200 px-4 text-sm font-bold text-gray-600 hover:bg-gray-50">Cancel</button>
+                                class="hb hb--ghost">Cancel</button>
                         <button type="submit"
-                                class="min-h-[40px] rounded-lg bg-red-600 px-4 text-sm font-bold text-white hover:bg-red-700">Confirm rejection</button>
+                                class="hb hb--reject">Confirm rejection</button>
                     </div>
                 </form>
             </section>

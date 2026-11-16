@@ -127,7 +127,7 @@
                                     Cancel
                                 </button>
                                 <button type="submit" form="bulkForm" :disabled="!selected.length"
-                                    class="inline-flex cursor-pointer items-center gap-2 rounded-[10px] bg-[#b22222] px-3.5 py-2.5 font-bold text-white transition hover:bg-[#941b1b] disabled:cursor-not-allowed disabled:opacity-50">
+                                    class="inline-flex cursor-pointer items-center gap-2 rounded-[10px] bg-[#b22222] px-3.5 py-2.5 font-bold text-white transition hover:bg-[#8f1c1c] disabled:cursor-not-allowed disabled:opacity-50">
                                     <i class="fa-solid {{ $isArchive ? 'fa-trash' : 'fa-box-archive' }}" aria-hidden="true"></i>
                                     {{ $isArchive ? 'Delete' : 'Archive' }} selected (<span x-text="selected.length"></span>)
                                 </button>

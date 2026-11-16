@@ -4,7 +4,7 @@
 :root {
     --mg-oxblood: #4a0a12;
     --mg-oxblood-deep: #33060c;
-    --mg-crimson: #a5121e;
+    --mg-crimson: #b22222;
     --mg-gold: #c9a24b;
     --mg-gold-soft: #e6cf9a;
     --mg-ink: #21171a;
@@ -305,4 +305,37 @@ document.addEventListener('DOMContentLoaded', function () {
 /* ---------- Fonts: every control uses the page font (client revision) ---------- */
 button, input, select, textarea, optgroup { font-family: inherit; }
 .font-sans { font-family: var(--mg-body); }
+
+/* ---------- One brand red everywhere (client revision) ---------- */
+:root { --brand-red: #b22222; --brand-red-dark: #8f1c1c; --brand-green: #15803d; --brand-green-dark: #166534; }
+.bg-red-500, .bg-red-600, .bg-red-700, .bg-red-800 { background-color: var(--brand-red) !important; }
+.hover\:bg-red-500:hover, .hover\:bg-red-600:hover, .hover\:bg-red-700:hover, .hover\:bg-red-800:hover, .active\:bg-red-700:active, .active\:bg-red-900:active { background-color: var(--brand-red-dark) !important; }
+.text-red-500, .text-red-600, .text-red-700 { color: var(--brand-red) !important; }
+.hover\:text-red-700:hover, .hover\:text-red-800:hover, .text-\[\#8f1c1c\], .hover\:text-\[\#8f1c1c\]:hover { color: var(--brand-red-dark) !important; }
+.border-red-500, .border-red-600, .border-red-700, .focus\:border-red-500:focus, .focus\:border-red-600:focus { border-color: var(--brand-red) !important; }
+.border-l-\[\#b22222\] { border-left-color: var(--brand-red); }
+.bg-\[\#8f1c1c\] { background-color: var(--brand-red-dark); }
+.border-\[\#8f1c1c\] { border-color: var(--brand-red-dark); }
+.hover\:border-\[\#8f1c1c\]\/30:hover { border-color: rgba(143, 28, 28, .3); }
+.ring-red-700, .focus-visible\:ring-red-700:focus-visible, .focus\:ring-red-700:focus { --tw-ring-color: var(--brand-red) !important; }
+
+/* ---------- Decision buttons: one look, grouped together (client revision) ---------- */
+.hb-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 10px; }
+.hb { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 42px; padding: 0 18px;
+      border: 1px solid transparent; border-radius: 10px; font-family: inherit; font-size: 0.9rem; font-weight: 700; line-height: 1;
+      white-space: nowrap; cursor: pointer; text-decoration: none;
+      transition: background-color .15s ease, border-color .15s ease, box-shadow .15s ease, transform .15s ease; }
+.hb i { font-size: 0.85em; }
+.hb:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(15, 23, 42, .12); }
+.hb:focus-visible { outline: 2px solid var(--brand-red); outline-offset: 2px; }
+.hb:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
+.hb--approve { background: var(--brand-green); border-color: var(--brand-green); color: #fff; }
+.hb--approve:hover:not(:disabled) { background: var(--brand-green-dark); border-color: var(--brand-green-dark); }
+.hb--approve:focus-visible { outline-color: var(--brand-green); }
+.hb--reject, .hb--primary { background: var(--brand-red); border-color: var(--brand-red); color: #fff; }
+.hb--reject:hover:not(:disabled), .hb--primary:hover:not(:disabled) { background: var(--brand-red-dark); border-color: var(--brand-red-dark); }
+.hb--ghost { background: #fff; border-color: #e5e7eb; color: #374151; }
+.hb--ghost:hover:not(:disabled) { background: #f9fafb; border-color: #d1d5db; }
+.hb--muted, .hb--muted:disabled { background: #e5e7eb; border-color: #e5e7eb; color: #4b5563; opacity: 1; }
+.hb--sm { min-height: 34px; padding: 0 12px; gap: 6px; border-radius: 8px; font-size: 0.78rem; }
 </style>

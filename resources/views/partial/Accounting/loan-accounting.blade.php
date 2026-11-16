@@ -198,15 +198,15 @@
                             </p>
                         </template>
 
-                        <div x-show="detail.canReview && !rejecting" class="mt-6 flex flex-wrap items-center justify-between gap-2">
+                        <div x-show="detail.canReview && !rejecting" class="mt-6 hb-row">
                             <form method="POST" :action="detail.url">
                                 @csrf
                                 @method('PATCH')
                                 <input type="hidden" name="decision" value="approved">
-                                <button type="submit" class="min-h-[40px] rounded-lg bg-[#16803c] px-4 text-sm font-bold text-white hover:bg-[#126b32]">Approve and forward to Admin</button>
+                                <button type="submit" class="hb hb--approve"><i class="fa-solid fa-check" aria-hidden="true"></i> Approve and forward to Admin</button>
                             </form>
                             <button type="button" @click="rejecting = true"
-                                class="min-h-[40px] rounded-lg bg-[#b22222] px-4 text-sm font-bold text-white hover:bg-[#941b1b]">Reject</button>
+                                class="hb hb--reject"><i class="fa-solid fa-xmark" aria-hidden="true"></i> Reject</button>
                         </div>
                     </div>
                 </template>
@@ -236,9 +236,9 @@
                             <small class="text-xs text-[#818a99]">Maximum 1,000 characters.</small>
                             <div class="mt-2 flex justify-end gap-2">
                                 <button type="button" @click="rejecting = false; reason = ''"
-                                    class="min-h-[40px] rounded-lg border border-gray-200 px-4 text-sm font-bold text-gray-600 hover:bg-gray-50">Cancel</button>
+                                    class="hb hb--ghost">Cancel</button>
                                 <button type="submit"
-                                    class="min-h-[40px] rounded-lg bg-[#b22222] px-4 text-sm font-bold text-white hover:bg-[#941b1b]">Confirm rejection</button>
+                                    class="hb hb--reject">Confirm rejection</button>
                             </div>
                         </form>
                     </section>

@@ -55,7 +55,7 @@
                 'admin_review' => 'Awaiting Admin Review',
             ];
 
-        $fieldClass = 'rounded-md border border-gray-200 px-3 py-2.5 text-sm font-normal outline-none focus:border-[#dc2626] focus:ring-2 focus:ring-[#dc2626]/10';
+        $fieldClass = 'rounded-md border border-gray-200 px-3 py-2.5 text-sm font-normal outline-none focus:border-[#b22222] focus:ring-2 focus:ring-[#b22222]/10';
     @endphp
 
     <div
@@ -122,7 +122,7 @@
             <div class="mb-6">
                 <p class="mb-1.5 text-xs font-extrabold uppercase tracking-[0.08em] text-[#b22222]">Applicants</p>
                 <h2 id="applicantQueueTitle" class="flex items-center gap-3 text-2xl font-bold text-gray-900">
-                    <i class="fas fa-address-book text-[#dc2626]" aria-hidden="true"></i>
+                    <i class="fas fa-address-book text-[#b22222]" aria-hidden="true"></i>
                     {{ $tab === 'archive' ? 'Archived applications' : 'Submitted applications' }}
                 </h2>
                 <p class="mt-2 text-gray-500">
@@ -159,7 +159,7 @@
             {{-- Search + status filter --}}
             <form method="GET" action="{{ route('onboarding.index') }}" class="mb-5 flex flex-col gap-3 sm:flex-row">
                 <input type="hidden" name="tab" value="{{ $tab }}">
-                <label class="flex flex-1 items-center gap-3 rounded-lg border border-gray-200 bg-white px-5 py-3 shadow-sm focus-within:border-[#dc2626] focus-within:ring-2 focus-within:ring-[#dc2626]/10">
+                <label class="flex flex-1 items-center gap-3 rounded-lg border border-gray-200 bg-white px-5 py-3 shadow-sm focus-within:border-[#b22222] focus-within:ring-2 focus-within:ring-[#b22222]/10">
                     <i class="fas fa-search text-gray-400" aria-hidden="true"></i>
                     <input type="text" name="q" value="{{ $search }}" placeholder="Search by name..."
                         aria-label="Search applicants"
@@ -167,7 +167,7 @@
                 </label>
 
                 <select name="status" aria-label="Filter by application status" onchange="this.form.submit()"
-                    class="cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-3 text-[15px] text-gray-800 shadow-sm outline-none focus:border-[#dc2626] focus:ring-2 focus:ring-[#dc2626]/10 sm:w-52">
+                    class="cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-3 text-[15px] text-gray-800 shadow-sm outline-none focus:border-[#b22222] focus:ring-2 focus:ring-[#b22222]/10 sm:w-52">
                     @foreach ($statusOptions as $value => $label)
                         <option value="{{ $value }}" @selected($status === $value)>{{ $label }}</option>
                     @endforeach
@@ -352,7 +352,7 @@
                                 <template x-for="doc in detail.documents" :key="doc.label">
                                     <div class="min-w-0">
                                         <a x-show="doc.url" :href="doc.url" target="_blank" rel="noopener"
-                                            class="inline-flex w-full min-w-0 items-center gap-3 break-words rounded-[10px] border border-[#dc2626] bg-[#fef2f2] px-4 py-3 text-sm font-extrabold text-[#dc2626] transition hover:bg-[#fdecea]">
+                                            class="inline-flex w-full min-w-0 items-center gap-3 break-words rounded-[10px] border border-[#b22222] bg-[#fef2f2] px-4 py-3 text-sm font-extrabold text-[#b22222] transition hover:bg-[#fdecea]">
                                             <i class="fas fa-file" aria-hidden="true"></i>
                                             <span class="min-w-0 break-all" x-text="doc.name || doc.label"></span>
                                         </a>
@@ -417,7 +417,7 @@
 
                             <div class="mt-1 flex justify-end">
                                 <button type="submit" form="interview-schedule-form"
-                                    class="cursor-pointer rounded-lg bg-[#dc2626] px-5 py-2.5 text-sm font-bold text-white transition hover:bg-[#b91c1c]"
+                                    class="hb hb--primary"
                                     x-text="detail.interview_date_value ? 'Update schedule' : 'Schedule interview'"></button>
                             </div>
                         </div>
@@ -431,7 +431,7 @@
                                     @csrf
                                     @method('PATCH')
                                     <button type="submit"
-                                        class="inline-flex min-h-[42px] cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#15803d] px-5 py-2.5 text-sm font-bold text-white transition hover:bg-[#166534] focus:outline-none focus-visible:ring-2 focus-visible:ring-green-700 focus-visible:ring-offset-2">
+                                        class="hb hb--approve">
                                         <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
                                         Done Interview
                                     </button>
@@ -442,7 +442,7 @@
 
                         {{-- HR approves/rejects first; Admin may decide only after HR approval. --}}
                         @if (auth()->user()->hasRole('HR'))
-                            <div x-show="detail.can_hr_decide" class="flex flex-wrap justify-between gap-4">
+                            <div x-show="detail.can_hr_decide" class="hb-row">
                                 <form method="POST" :action="detail.decide_url" class="m-0"
                                     data-confirm="Approve this applicant and send the application to Admin for final review?"
                                     data-confirm-button="Approve">
@@ -450,14 +450,14 @@
                                     @method('PATCH')
                                     <input type="hidden" name="decision" value="approved">
                                     <button type="submit"
-                                        class="cursor-pointer rounded-[10px] bg-[#15803d] px-[18px] py-[11px] font-extrabold text-white transition hover:-translate-y-px hover:brightness-95 hover:shadow-[0_8px_18px_rgba(15,23,42,0.12)]">
-                                        Approve application
+                                        class="hb hb--approve">
+                                        <i class="fa-solid fa-check" aria-hidden="true"></i> Approve application
                                     </button>
                                 </form>
 
                                 <button type="button" @click="rejecting = true"
-                                    class="cursor-pointer rounded-[10px] bg-[#b22222] px-[18px] py-[11px] font-extrabold text-white transition hover:-translate-y-px hover:brightness-95 hover:shadow-[0_8px_18px_rgba(15,23,42,0.12)]">
-                                    Reject application
+                                    class="hb hb--reject">
+                                    <i class="fa-solid fa-xmark" aria-hidden="true"></i> Reject application
                                 </button>
                             </div>
                             <p x-show="detail.status_key === 'scheduled' && !detail.interview_completed"
@@ -466,20 +466,20 @@
                                 Approved by HR. Waiting for Admin review.
                             </p>
                         @elseif (auth()->user()->hasRole('Admin'))
-                            <div x-show="detail.can_admin_decide" class="flex flex-wrap justify-between gap-4">
+                            <div x-show="detail.can_admin_decide" class="hb-row">
                                 <form method="POST" :action="detail.decide_url" class="m-0"
                                     data-confirm="Approve this application?" data-confirm-button="Approve">
                                     @csrf
                                     @method('PATCH')
                                     <input type="hidden" name="decision" value="approved">
                                     <button type="submit"
-                                        class="cursor-pointer rounded-[10px] bg-[#15803d] px-[18px] py-[11px] font-extrabold text-white transition hover:-translate-y-px hover:brightness-95 hover:shadow-[0_8px_18px_rgba(15,23,42,0.12)]">
-                                        Approve application
+                                        class="hb hb--approve">
+                                        <i class="fa-solid fa-check" aria-hidden="true"></i> Approve application
                                     </button>
                                 </form>
                                 <button type="button" @click="rejecting = true"
-                                    class="cursor-pointer rounded-[10px] bg-[#b22222] px-[18px] py-[11px] font-extrabold text-white transition hover:-translate-y-px hover:brightness-95 hover:shadow-[0_8px_18px_rgba(15,23,42,0.12)]">
-                                    Reject application
+                                    class="hb hb--reject">
+                                    <i class="fa-solid fa-xmark" aria-hidden="true"></i> Reject application
                                 </button>
                             </div>
                             <p x-show="detail.status_key !== 'admin_review' && detail.status_key !== 'rejected' && detail.status_key !== 'approved'"
@@ -518,16 +518,16 @@
                         placeholder="Enter the reason for rejecting this application"
                         x-ref="reason"
                         x-effect="if (rejecting) $nextTick(() => { $refs.reason.value = ''; $refs.reason.focus(); })"
-                        class="w-full resize-y rounded-md border border-gray-200 p-3 text-sm leading-normal outline-none focus:border-[#dc2626] focus:ring-2 focus:ring-[#dc2626]/10"></textarea>
+                        class="w-full resize-y rounded-md border border-gray-200 p-3 text-sm leading-normal outline-none focus:border-[#b22222] focus:ring-2 focus:ring-[#b22222]/10"></textarea>
 
                     <div class="mt-1 flex justify-end gap-3">
                         <button type="button" @click="rejecting = false"
-                            class="cursor-pointer rounded-lg bg-gray-100 px-5 py-3 font-bold text-gray-800 transition hover:bg-gray-200">
+                            class="hb hb--ghost">
                             Cancel
                         </button>
                         <button type="submit"
-                            class="cursor-pointer rounded-lg bg-[#ef4444] px-5 py-3 font-bold text-white transition hover:bg-[#dc2626]">
-                            Reject application
+                            class="hb hb--reject">
+                            <i class="fa-solid fa-xmark" aria-hidden="true"></i> Reject application
                         </button>
                     </div>
                 </form>

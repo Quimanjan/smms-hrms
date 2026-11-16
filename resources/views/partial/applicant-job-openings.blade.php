@@ -53,7 +53,7 @@
         justify-content: space-between;
         gap: 20px;
         border: 1px solid #dce3ed;
-        border-bottom: 2px solid #dc3c42;
+        border-bottom: 2px solid #b22222;
         border-radius: 9px;
         padding: 16px 18px;
         background: #fff;
@@ -62,7 +62,7 @@
     }
 
     .applicant-jobs__card:hover {
-        border-color: #dc3c42;
+        border-color: #b22222;
         box-shadow: 0 6px 16px rgba(15, 23, 42, .08);
         transform: translateY(-1px);
     }

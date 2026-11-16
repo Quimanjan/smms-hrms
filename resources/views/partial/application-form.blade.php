@@ -56,7 +56,7 @@
                         $n = $i + 1;
                         $stepCircleClass = match (true) {
                             $n === 4 && in_array($status, ['qualified', 'approved'], true) => 'bg-[#28a745] text-white shadow-[0_6px_20px_rgba(40,167,69,0.25)]',
-                            $n === 4 && in_array($status, ['hr_rejected', 'rejected'], true) => 'bg-[#dc3545] text-white shadow-[0_6px_20px_rgba(220,53,69,0.25)]',
+                            $n === 4 && in_array($status, ['hr_rejected', 'rejected'], true) => 'bg-[#b22222] text-white shadow-[0_6px_20px_rgba(220,53,69,0.25)]',
                             default => '',
                         };
                     @endphp
@@ -288,7 +288,7 @@
                                     <p class="mb-4 text-sm leading-relaxed text-gray-500">{{ $desc }}</p>
                                     <input type="file" id="{{ $name }}" name="{{ $name }}" accept=".pdf,application/pdf" required
                                         @change="checkFile($event)"
-                                        class="block w-full text-sm file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-[#b22222] file:px-4 file:py-2 file:font-semibold file:text-white hover:file:bg-[#8b1a1a]">
+                                        class="block w-full text-sm file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-[#b22222] file:px-4 file:py-2 file:font-semibold file:text-white hover:file:bg-[#8f1c1c]">
                                     <p class="mt-2 text-[13px] italic text-gray-400"><i class="fa-solid fa-circle-info"></i> PDF only • Max 5MB</p>
                                     <p class="mt-1 text-[13px] font-semibold text-red-600" x-text="fileErrors['{{ $name }}']"></p>
                                     <p class="mt-1 text-[13px] font-semibold text-red-600">{{ $errors->first($name) }}</p>
@@ -351,7 +351,7 @@
                                     @else
                                         <button type="submit" name="response" value="confirmed"
                                             formaction="{{ route('applications.interview-response') }}" formmethod="POST"
-                                            class="rounded-lg bg-[#b22222] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#8b1a1a]">
+                                            class="rounded-lg bg-[#b22222] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#8f1c1c]">
                                             Confirm Interview Schedule
                                         </button>
                                     @endif
@@ -374,7 +374,7 @@
                                             @enderror
                                             <button type="submit" name="response" value="reschedule_requested"
                                                 formaction="{{ route('applications.interview-response') }}" formmethod="POST"
-                                                class="rounded-lg bg-[#b22222] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#8b1a1a]">
+                                                class="rounded-lg bg-[#b22222] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#8f1c1c]">
                                                 Request Schedule Update
                                             </button>
                                         </div>
@@ -400,7 +400,7 @@
                             <p class="text-lg font-semibold">Congratulations! HR will contact you with the next steps.</p>
                         </div>
                     @elseif (in_array($status, ['hr_rejected', 'rejected'], true))
-                        <div class="flex min-h-[300px] flex-col items-center justify-center rounded-xl border-2 border-[#dc3545] bg-gradient-to-br from-[#f8d7da] to-[#f5c6cb] p-10 text-center text-[#721c24] shadow-[0_8px_25px_rgba(220,53,69,0.2)]">
+                        <div class="flex min-h-[300px] flex-col items-center justify-center rounded-xl border-2 border-[#b22222] bg-gradient-to-br from-[#f8d7da] to-[#f5c6cb] p-10 text-center text-[#721c24] shadow-[0_8px_25px_rgba(220,53,69,0.2)]">
                             <h3 class="mb-3 text-[28px] font-bold">Not Qualified</h3>
                             <p class="text-lg font-semibold">Thank you for applying. Unfortunately, your application was not successful.</p>
                             @if ($application->rejection_reason ?? null)
@@ -431,7 +431,7 @@
 
                     {{-- Step 1 -> 2 --}}
                     <button type="button" x-show="step === 1 && !submitted" @click="next()" :disabled="!hasOpenings"
-                        class="min-w-[140px] cursor-pointer rounded-lg bg-[#b22222] px-7 py-3.5 font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#8b1a1a] hover:shadow-[0_6px_20px_rgba(178,34,34,0.4)] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:shadow-none">
+                        class="min-w-[140px] cursor-pointer rounded-lg bg-[#b22222] px-7 py-3.5 font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#8f1c1c] hover:shadow-[0_6px_20px_rgba(178,34,34,0.4)] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:shadow-none">
                         Next
                     </button>
 

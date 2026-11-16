@@ -95,7 +95,7 @@
             </button>
             @if ($canEdit)
             <button type="button" @click="editing = true"
-                class="min-h-[44px] cursor-pointer whitespace-nowrap rounded-md px-2.5 py-2 font-bold text-[#b22222] transition hover:bg-gray-50 hover:text-[#8d1111]">
+                class="min-h-[44px] cursor-pointer whitespace-nowrap rounded-md px-2.5 py-2 font-bold text-[#b22222] transition hover:bg-gray-50 hover:text-[#8f1c1c]">
                 <i class="fa-solid fa-pen" aria-hidden="true"></i> Edit
             </button>
             @endif
@@ -187,9 +187,9 @@
         <div x-show="editing" x-cloak
             class="mt-[26px] flex flex-col-reverse items-stretch justify-end gap-2.5 border-t border-gray-200 pt-5 sm:flex-row sm:items-center">
             <button type="button" @click="cancel()"
-                class="min-h-[44px] cursor-pointer rounded-md px-2.5 py-2 font-bold text-gray-500 transition hover:bg-gray-50 hover:text-[#8d1111]">Cancel</button>
+                class="min-h-[44px] cursor-pointer rounded-md px-2.5 py-2 font-bold text-gray-500 transition hover:bg-gray-50 hover:text-[#8f1c1c]">Cancel</button>
             <button type="submit"
-                class="min-h-[44px] w-full cursor-pointer rounded-[9px] bg-[#b22222] px-5 py-2.5 font-extrabold text-white transition hover:bg-[#8d1111] sm:w-auto">Save changes</button>
+                class="min-h-[44px] w-full cursor-pointer rounded-[9px] bg-[#b22222] px-5 py-2.5 font-extrabold text-white transition hover:bg-[#8f1c1c] sm:w-auto">Save changes</button>
         </div>
     </form>
 

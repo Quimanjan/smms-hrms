@@ -162,7 +162,7 @@
 
                     <div class="mt-3 flex justify-end">
                         <button type="submit"
-                            class="rounded-lg bg-[#b22222] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#9a1d1d] focus:outline-none focus:ring-2 focus:ring-red-700/20">
+                            class="rounded-lg bg-[#b22222] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#8f1c1c] focus:outline-none focus:ring-2 focus:ring-red-700/20">
                             Send for validation <i class="fa-solid fa-arrow-right ml-1.5"></i>
                         </button>
                     </div>
@@ -227,7 +227,7 @@
                                     <button type="button" @click="selecting = false; selected = []"
                                         class="rounded-lg border border-gray-200 px-3 py-2 transition hover:bg-white">Cancel</button>
                                     <button type="submit" :disabled="selected.length === 0"
-                                        class="rounded-lg bg-[#b22222] px-3 py-2 text-white transition hover:bg-[#9a1d1d] disabled:cursor-not-allowed disabled:opacity-40">
+                                        class="rounded-lg bg-[#b22222] px-3 py-2 text-white transition hover:bg-[#8f1c1c] disabled:cursor-not-allowed disabled:opacity-40">
                                         Archive selected
                                     </button>
                                 </span>

@@ -12,8 +12,8 @@
         $statusUi = match ($status) {
             'qualified', 'approved' => ['label' => 'Qualified', 'icon' => 'fa-circle-check', 'badge' => 'bg-green-100 text-green-800', 'box' => 'border-[#28a745] from-[#d4edda] to-[#c3e6cb] text-[#155724]', 'msg' => 'Congratulations! HR will contact you with the next steps.'],
             'hr_approved' => ['label' => 'Pending Review', 'icon' => 'fa-hourglass-half', 'badge' => 'bg-yellow-100 text-yellow-800', 'box' => 'border-[#ffc107] from-[#fff3cd] to-[#ffeaa7] text-[#856404]', 'msg' => 'Your application is awaiting final review by Admin.'],
-            'hr_rejected' => ['label' => 'Not Qualified', 'icon' => 'fa-circle-xmark', 'badge' => 'bg-red-100 text-red-800', 'box' => 'border-[#dc3545] from-[#f8d7da] to-[#f5c6cb] text-[#721c24]', 'msg' => 'Thank you for applying. Unfortunately, your application was not successful.'],
-            'rejected' => ['label' => 'Not Qualified',   'icon' => 'fa-circle-xmark',  'badge' => 'bg-red-100 text-red-800',       'box' => 'border-[#dc3545] from-[#f8d7da] to-[#f5c6cb] text-[#721c24]', 'msg' => 'Thank you for applying. Unfortunately, your application was not successful.'],
+            'hr_rejected' => ['label' => 'Not Qualified', 'icon' => 'fa-circle-xmark', 'badge' => 'bg-red-100 text-red-800', 'box' => 'border-[#b22222] from-[#f8d7da] to-[#f5c6cb] text-[#721c24]', 'msg' => 'Thank you for applying. Unfortunately, your application was not successful.'],
+            'rejected' => ['label' => 'Not Qualified',   'icon' => 'fa-circle-xmark',  'badge' => 'bg-red-100 text-red-800',       'box' => 'border-[#b22222] from-[#f8d7da] to-[#f5c6cb] text-[#721c24]', 'msg' => 'Thank you for applying. Unfortunately, your application was not successful.'],
             'pending', 'scheduled' => $application?->interview_date && ! $application?->interview_completed_at
                 ? [
                     'label' => 'Interview Scheduled',
@@ -75,7 +75,7 @@
 
                             @unless ($application)
                                 <a href="{{ Route::has('applications.index') ? route('applications.index') : '#' }}"
-                                    class="mt-5 rounded-lg bg-[#b22222] px-6 py-3 font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#8b1a1a] hover:shadow-[0_6px_20px_rgba(178,34,34,0.4)]">
+                                    class="mt-5 rounded-lg bg-[#b22222] px-6 py-3 font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#8f1c1c] hover:shadow-[0_6px_20px_rgba(178,34,34,0.4)]">
                                     Start Application
                                 </a>
                             @endunless
@@ -94,12 +94,12 @@
                                     {{-- connecting line --}}
                                     @unless ($loop->last)
                                         <span class="absolute left-5 top-10 h-full w-[3px] -translate-x-1/2 {{ $t['done'] ? 'bg-[#28a745]' : 'bg-gray-200' }}"
-                                            @if ($i === 2 && $rejected) style="background-color: #dc3545;" @endif></span>
+                                            @if ($i === 2 && $rejected) style="background-color: #b22222;" @endif></span>
                                     @endunless
 
                                     <span class="z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-base font-bold
-                                        {{ $i === 3 && $rejected ? 'bg-[#dc3545] text-white shadow-[0_6px_20px_rgba(220,53,69,0.25)]' : ($t['done'] ? 'bg-[#28a745] text-white shadow-[0_6px_20px_rgba(40,167,69,0.25)]' : ($current ? 'scale-110 bg-[#b22222] text-white shadow-[0_6px_20px_rgba(178,34,34,0.35)]' : 'bg-gray-200 text-gray-400')) }}"
-                                        @if ($i === 3 && $rejected) style="background-color: #dc3545; color: #fff; box-shadow: 0 6px 20px rgba(220, 53, 69, 0.25);" @endif>
+                                        {{ $i === 3 && $rejected ? 'bg-[#b22222] text-white shadow-[0_6px_20px_rgba(220,53,69,0.25)]' : ($t['done'] ? 'bg-[#28a745] text-white shadow-[0_6px_20px_rgba(40,167,69,0.25)]' : ($current ? 'scale-110 bg-[#b22222] text-white shadow-[0_6px_20px_rgba(178,34,34,0.35)]' : 'bg-gray-200 text-gray-400')) }}"
+                                        @if ($i === 3 && $rejected) style="background-color: #b22222; color: #fff; box-shadow: 0 6px 20px rgba(220, 53, 69, 0.25);" @endif>
                                         @if ($i === 3 && $rejected)
                                             <i class="fa-solid fa-xmark"></i>
                                         @elseif ($t['done'])
@@ -110,8 +110,8 @@
                                     </span>
 
                                     <div class="pb-2">
-                                        <p class="font-bold {{ $i === 3 && $rejected ? 'text-[#dc3545]' : ($t['done'] ? 'text-[#28a745]' : ($current ? 'text-[#b22222]' : 'text-gray-400')) }}"
-                                            @if ($i === 3 && $rejected) style="color: #dc3545;" @endif>{{ $t['label'] }}</p>
+                                        <p class="font-bold {{ $i === 3 && $rejected ? 'text-[#b22222]' : ($t['done'] ? 'text-[#28a745]' : ($current ? 'text-[#b22222]' : 'text-gray-400')) }}"
+                                            @if ($i === 3 && $rejected) style="color: #b22222;" @endif>{{ $t['label'] }}</p>
                                         <p class="text-sm text-gray-500">{{ $t['desc'] }}</p>
                                     </div>
 
@@ -170,7 +170,7 @@
 
                         <div class="text-right">
                             <a href="{{ Route::has('applications.index') ? route('applications.index') : '#' }}"
-                                class="inline-block rounded-lg bg-[#b22222] px-7 py-3.5 font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#8b1a1a] hover:shadow-[0_6px_20px_rgba(178,34,34,0.4)]">
+                                class="inline-block rounded-lg bg-[#b22222] px-7 py-3.5 font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#8f1c1c] hover:shadow-[0_6px_20px_rgba(178,34,34,0.4)]">
                                 View Full Application
                             </a>
                         </div>

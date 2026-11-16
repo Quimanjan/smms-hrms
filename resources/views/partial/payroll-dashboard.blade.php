@@ -39,7 +39,7 @@
         // Approval badge look (Admin / HR)
         $badge = fn (string $state) => match ($state) {
             'Approved'     => 'bg-[#ecfdf5] text-[#166534]',
-            'Rejected'     => 'bg-[#fef2f2] text-[#b91c1c]',
+            'Rejected'     => 'bg-[#fef2f2] text-[#b22222]',
             'Not released' => 'bg-gray-100 text-gray-600',
             default        => 'bg-[#fff7ed] text-[#9a5b00]',
         };
@@ -169,20 +169,20 @@
                                         class="cursor-not-allowed rounded-[10px] border border-[#15803d] bg-[#15803d] px-3 py-[9px] text-[0.8rem] font-bold text-white opacity-70">Approved</button>
                                 @elseif ($myStatus === 'rejected')
                                     <button type="button" disabled
-                                        class="cursor-not-allowed rounded-[10px] border border-[#b91c1c] bg-[#b91c1c] px-3 py-[9px] text-[0.8rem] font-bold text-white opacity-70">Rejected</button>
+                                        class="hb hb--reject hb--sm">Rejected</button>
                                 @elseif (! $isHR && $hrState === 'Pending')
                                     <button type="button" disabled title="HR must approve or reject this payslip first"
-                                        class="cursor-not-allowed rounded-[10px] border border-gray-300 bg-gray-300 px-3 py-[9px] text-[0.8rem] font-bold text-gray-600">
+                                        class="hb hb--muted hb--sm">
                                         Awaiting HR review
                                     </button>
                                     <button type="button" disabled title="HR must approve or reject this payslip first"
-                                        class="cursor-not-allowed rounded-[10px] border border-gray-300 bg-gray-300 px-3 py-[9px] text-[0.8rem] font-bold text-gray-600">
-                                        Reject
+                                        class="hb hb--reject hb--sm">
+                                        <i class="fa-solid fa-xmark" aria-hidden="true"></i> Reject
                                     </button>
                                 @else
                                     @if (! $isHR && $hrState !== 'Approved')
                                         <button type="button" disabled title="HR approval is required first"
-                                            class="cursor-not-allowed rounded-[10px] border border-gray-300 bg-gray-300 px-3 py-[9px] text-[0.8rem] font-bold text-gray-600">
+                                            class="hb hb--muted hb--sm">
                                             Awaiting HR approval
                                         </button>
                                     @else
@@ -191,11 +191,11 @@
                                             @method('PATCH')
                                             <input type="hidden" name="payslip_id" value="{{ $slip->id }}">
                                             <button type="submit"
-                                                class="cursor-pointer rounded-[10px] border border-[#15803d] bg-[#15803d] px-3 py-[9px] text-[0.8rem] font-bold text-white transition hover:-translate-y-px">Approve</button>
+                                                class="hb hb--approve hb--sm"><i class="fa-solid fa-check" aria-hidden="true"></i> Approve</button>
                                         </form>
                                     @endif
                                     <button type="button" @click="openReject({{ $slip->id }})"
-                                        class="cursor-pointer rounded-[10px] border border-[#b91c1c] bg-[#b91c1c] px-3 py-[9px] text-[0.8rem] font-bold text-white transition hover:-translate-y-px">Reject</button>
+                                        class="cursor-pointer rounded-[10px] border border-[#b22222] bg-[#b22222] px-3 py-[9px] text-[0.8rem] font-bold text-white transition hover:-translate-y-px">Reject</button>
                                 @endif
 
                                 <button type="button" @click="viewId = {{ $slip->id }}"
@@ -335,14 +335,14 @@
 
                         <label for="payrollRejectionReason" class="text-[0.9rem] font-bold text-gray-700">Reason</label>
                         <textarea id="payrollRejectionReason" name="reason" rows="4" maxlength="1000" required x-model="reason"
-                            class="min-h-[110px] w-full resize-y rounded-[10px] border border-gray-300 px-3 py-[11px] text-gray-900 focus:border-[#b91c1c] focus:outline-none focus:ring-[3px] focus:ring-[#fecaca]"></textarea>
+                            class="min-h-[110px] w-full resize-y rounded-[10px] border border-gray-300 px-3 py-[11px] text-gray-900 focus:border-[#b22222] focus:outline-none focus:ring-[3px] focus:ring-[#fecaca]"></textarea>
                         <p class="text-xs font-semibold text-red-600">{{ $errors->first('reason') }}</p>
 
                         <div class="mt-2 flex justify-end gap-2.5">
                             <button type="button" @click="rejectId = null"
-                                class="cursor-pointer rounded-[10px] border border-[#b22222] bg-transparent px-3 py-[9px] text-[0.8rem] font-bold text-[#b22222] transition hover:-translate-y-px">Cancel</button>
+                                class="hb hb--ghost hb--sm">Cancel</button>
                             <button type="submit"
-                                class="cursor-pointer rounded-[10px] border border-[#b91c1c] bg-[#b91c1c] px-3 py-[9px] text-[0.8rem] font-bold text-white transition hover:-translate-y-px">Confirm rejection</button>
+                                class="hb hb--reject hb--sm">Confirm rejection</button>
                         </div>
                     </form>
                 </section>

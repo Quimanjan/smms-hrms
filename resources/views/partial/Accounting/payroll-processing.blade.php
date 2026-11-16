@@ -9,7 +9,7 @@
     </x-slot>
 
     @php
-        $btn   = 'inline-flex min-h-[42px] cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#f1caca] bg-[#b22222] px-4 text-sm font-bold text-white transition hover:-translate-y-px hover:bg-[#d93c3c] hover:shadow-[0_10px_18px_rgba(178,34,34,0.18)]';
+        $btn   = 'inline-flex min-h-[42px] cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#f1caca] bg-[#b22222] px-4 text-sm font-bold text-white transition hover:-translate-y-px hover:bg-[#8f1c1c] hover:shadow-[0_10px_18px_rgba(178,34,34,0.18)]';
         $input = 'w-full rounded-lg border border-gray-200 bg-white px-2 py-1.5 text-center text-xs font-bold text-gray-900 focus:border-[#e7b0b0] focus:outline-none focus:ring-[3px] focus:ring-red-700/10';
         // Fixed height so text rows and input rows are always equal; label may shrink/truncate to avoid x overflow
         $row   = 'flex h-[34px] items-center justify-between gap-3 border-b border-[#ecebea] text-[0.75rem] text-gray-500 [&>span:first-child]:min-w-0 [&>span:first-child]:truncate';
@@ -63,7 +63,7 @@
                             class="hrms-tab min-h-[38px] cursor-pointer text-[0.78rem] font-extrabold"
                             :class="cutoff === c[0]
                                 ? 'border-[#b22222] bg-[#b22222] text-white shadow-[0_10px_18px_rgba(178,34,34,0.18)]'
-                                : 'border-transparent bg-transparent text-gray-700 hover:bg-[#d93c3c] hover:text-white'"
+                                : 'border-transparent bg-transparent text-gray-700 hover:bg-[#8f1c1c] hover:text-white'"
                             :aria-selected="cutoff === c[0]" x-text="c[1]"></button>
                     </template>
                 </nav>
@@ -136,7 +136,7 @@
                 <input type="hidden" name="employee_ids[]" :value="id">
             </template>
             <button type="submit" :disabled="selected.length === 0"
-                class="inline-flex min-h-[44px] cursor-pointer items-center justify-center gap-2.5 rounded-xl border border-[#f1caca] bg-[#b22222] px-[18px] text-sm font-extrabold text-white transition hover:-translate-y-px hover:bg-[#d93c3c] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:bg-[#b22222]">
+                class="inline-flex min-h-[44px] cursor-pointer items-center justify-center gap-2.5 rounded-xl border border-[#f1caca] bg-[#b22222] px-[18px] text-sm font-extrabold text-white transition hover:-translate-y-px hover:bg-[#8f1c1c] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:bg-[#8f1c1c]">
                 <i class="fa-solid fa-arrow-right-arrow-left" aria-hidden="true"></i>
                 <span x-text="selected.length ? 'Transfer ' + selected.length + ' selected to Salary Monitoring' : 'Select employees to transfer'"></span>
             </button>

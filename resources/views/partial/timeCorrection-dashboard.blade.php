@@ -161,7 +161,7 @@
                         {{-- Decision form --}}
                         <template x-if="detail.can_decide">
                             <form method="POST" action="{{ route('decide') }}"
-                                class="mt-5 flex items-center justify-between gap-3 border-t border-gray-100 pt-4">
+                                class="mt-5 hb-row border-t border-gray-100 pt-4">
                                 @csrf
                                 @method('PATCH')
 
@@ -170,13 +170,13 @@
                                 <input type="hidden" name="rejection_reason" :value="rejectionReason">
 
                                 <button type="button" @click="submitDecision($event.currentTarget.closest('form'), 'Approved')"
-                                    class="cursor-pointer rounded-lg bg-[#15803d] px-4 py-2 text-sm font-semibold text-white transition hover:bg-green-800">
-                                    Approve
+                                    class="hb hb--approve">
+                                    <i class="fa-solid fa-check" aria-hidden="true"></i> Approve
                                 </button>
 
                                 <button type="button" @click="openRejectionModal()"
-                                    class="cursor-pointer rounded-lg bg-[#b22222] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#8f1c1c]">
-                                    Reject
+                                    class="hb hb--reject">
+                                    <i class="fa-solid fa-xmark" aria-hidden="true"></i> Reject
                                 </button>
 
                                 {{-- Rejection reason modal --}}
@@ -199,12 +199,12 @@
 
                                         <div class="mt-5 flex justify-end gap-3">
                                             <button type="button" @click="closeRejectionModal()"
-                                                class="rounded-lg bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-200">
+                                                class="hb hb--ghost">
                                                 Cancel
                                             </button>
                                             <button type="button"
                                                 @click="confirmRejection($event.currentTarget.closest('form'))"
-                                                class="rounded-lg bg-[#b22222] px-4 py-2 text-sm font-semibold text-white hover:bg-[#8f1c1c]">
+                                                class="hb hb--reject">
                                                 Confirm rejection
                                             </button>
                                         </div>

@@ -166,7 +166,7 @@
                         <input type="text" x-model="newTask" x-ref="taskInput" maxlength="255" placeholder="Add a new task"
                             class="w-full rounded-[14px] border border-gray-300 bg-gray-50 px-4 py-3.5 text-gray-900 focus:border-[#b22222] focus:outline-none focus:ring-4 focus:ring-red-700/10">
                         <button type="submit" :disabled="saving"
-                            class="cursor-pointer rounded-[14px] bg-[#dc2626] px-4 py-3 font-bold text-white transition hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-60">Add</button>
+                            class="cursor-pointer rounded-[14px] bg-[#b22222] px-4 py-3 font-bold text-white transition hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-60">Add</button>
                     </form>
                     <p class="-mt-3 mb-3 text-xs font-semibold text-red-600" x-text="error"></p>
 
@@ -181,7 +181,7 @@
                                     <span class="inline-block min-w-0 overflow-hidden text-ellipsis whitespace-nowrap font-semibold text-gray-900" x-text="t.title"></span>
                                 </label>
                                 <button type="button" @click="removeTask(t)"
-                                    class="cursor-pointer rounded-[14px] border border-gray-300 bg-white/95 px-4 py-3 font-bold text-[#b22222] transition hover:-translate-y-px hover:border-[#8f241f]/30 hover:bg-white">Remove</button>
+                                    class="cursor-pointer rounded-[14px] border border-gray-300 bg-white/95 px-4 py-3 font-bold text-[#b22222] transition hover:-translate-y-px hover:border-[#8f1c1c]/30 hover:bg-white">Remove</button>
                             </div>
                         </template>
                     </div>

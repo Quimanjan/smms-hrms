@@ -39,7 +39,7 @@
                                 :class="allSent(b.role) && !hasSelectedToSend(b.role)
                                     ? 'border-[#99d6aa] bg-[#2f9e44]'
                                     : canSend(b.role)
-                                        ? 'border-[#f1caca] bg-[#b22222] hover:bg-[#8d1111]'
+                                        ? 'border-[#f1caca] bg-[#b22222] hover:bg-[#8f1c1c]'
                                         : 'border-gray-300 bg-gray-300 text-gray-600'"
                                 x-text="label(b)"></button>
                         </template>
@@ -337,7 +337,7 @@
                     }
 
                     if (status === 'Approved') { css = 'border-[#a7d7b1] bg-[#f0faf2] text-[#217a38]'; dot = 'bg-[#2f9e44]'; }
-                    else if (status === 'Rejected') { css = 'border-[#fecaca] bg-[#fef2f2] text-[#b91c1c] hover:bg-[#fee2e2]'; dot = 'bg-[#b91c1c]'; }
+                    else if (status === 'Rejected') { css = 'border-[#fecaca] bg-[#fef2f2] text-[#b22222] hover:bg-[#fee2e2]'; dot = 'bg-[#b22222]'; }
                     else if (status === 'Pending') { css = 'border-[#f0cf72] bg-[#fff8df] text-[#8a6500]'; dot = 'bg-[#d49a00]'; }
                     else { css = 'border-dashed border-[#ecebea] bg-white text-gray-500'; dot = 'bg-gray-400'; }
 

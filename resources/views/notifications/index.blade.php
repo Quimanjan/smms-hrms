@@ -17,7 +17,7 @@
     .hn-count {
         position: absolute; top: 8px; right: 8px;
         min-width: 18px; height: 18px; padding: 0 6px;
-        border-radius: 999px; background: #dc2626; color: #ffffff;
+        border-radius: 999px; background: #b22222; color: #ffffff;
         font-size: .72rem; font-weight: 700; line-height: 18px; text-align: center;
     }
 
@@ -56,7 +56,7 @@
     .hn-item .hn-icon { font-size: 1rem; color: #9ca3af; margin-top: 2px; }
     .hn-item.type-success .hn-icon { color: #16a34a; }
     .hn-item.type-warning .hn-icon { color: #d97706; }
-    .hn-item.type-danger  .hn-icon { color: #dc2626; }
+    .hn-item.type-danger  .hn-icon { color: #b22222; }
     .hn-item.type-info    .hn-icon { color: #6b7280; }
     .hn-content { min-width: 0; flex: 1; display: grid; gap: 4px; }
     .hn-content h4 {

@@ -114,7 +114,7 @@
                             class="min-h-10 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 focus:border-[#b22222] focus:outline-none focus:ring-1 focus:ring-[#b22222]">
                     </div>
                     <button type="submit"
-                        class="min-h-10 cursor-pointer rounded-md bg-[#b22222] px-5 py-2 text-sm font-bold text-white transition hover:bg-[#921c1c]">
+                        class="min-h-10 cursor-pointer rounded-md bg-[#b22222] px-5 py-2 text-sm font-bold text-white transition hover:bg-[#8f1c1c]">
                         Filter
                     </button>
                     <a href="{{ route('offboarding.index', ['tab' => 'archive']) }}"
@@ -175,7 +175,7 @@
                                 @if ($isHr)
                                     <td class="px-4 py-6">
                                         <div class="relative mx-auto flex h-9 w-36 items-center rounded-full bg-gray-200 p-0.5">
-                                            <div class="h-8 rounded-full bg-[#c9232c] transition-[width]"
+                                            <div class="h-8 rounded-full bg-[#b22222] transition-[width]"
                                                 style="width: {{ min(100, max(0, (int) $case->progress)) }}%"></div>
                                             <span class="absolute inset-0 grid place-items-center text-sm font-extrabold text-gray-900">{{ min(100, max(0, (int) $case->progress)) }}%</span>
                                         </div>
@@ -271,7 +271,7 @@
                                     @csrf
                                     @method('PATCH')
                                     <button type="submit"
-                                        class="min-h-11 w-full cursor-pointer rounded-lg bg-[#b22222] px-4 py-2.5 text-sm font-extrabold text-white transition hover:bg-[#921c1c]">
+                                        class="min-h-11 w-full cursor-pointer rounded-lg bg-[#b22222] px-4 py-2.5 text-sm font-extrabold text-white transition hover:bg-[#8f1c1c]">
                                         Send requirements to employee
                                     </button>
                                 </form>
@@ -291,7 +291,7 @@
                                                 @method('PATCH')
                                                 <input type="hidden" name="label" :value="interview.label">
                                                 <button type="submit" :disabled="interview.done || !detail.requirements_sent || !detail.is_current"
-                                                    :class="interview.done ? 'bg-green-700' : (detail.requirements_sent && detail.is_current ? 'bg-[#b22222] hover:bg-[#921c1c]' : 'bg-gray-300')"
+                                                    :class="interview.done ? 'bg-green-700' : (detail.requirements_sent && detail.is_current ? 'bg-[#b22222] hover:bg-[#8f1c1c]' : 'bg-gray-300')"
                                                     class="min-h-8 cursor-pointer rounded-md px-3 py-1.5 text-xs font-bold text-white disabled:cursor-not-allowed"
                                                     x-text="interview.done ? 'Done' : 'Mark done'"></button>
                                             </form>
@@ -318,16 +318,16 @@
                                                     :class="doc.status === 'Approved' ? 'bg-[#e8f5ec] text-[#21683a]' : (doc.status === 'Rejected' ? 'bg-[#fdeaea] text-[#b22222]' : (doc.id ? 'bg-[#fff5d6] text-[#8a5a00]' : 'bg-gray-100 text-gray-500'))"
                                                     x-text="doc.status"></span>
                                             </div>
-                                            <div x-show="doc.id && detail.is_current && doc.status !== 'Approved'" class="flex flex-wrap justify-end gap-2">
+                                            <div x-show="doc.id && detail.is_current && doc.status !== 'Approved'" class="hb-row">
                                                 <form method="POST" :action="doc.review_url" class="m-0">
                                                     @csrf
                                                     @method('PATCH')
                                                     <input type="hidden" name="decision" value="approved">
-                                                    <button type="submit" class="min-h-8 cursor-pointer rounded-md bg-green-700 px-3 py-1.5 text-xs font-bold text-white transition hover:bg-green-800 active:bg-green-900">Approve</button>
+                                                    <button type="submit" class="hb hb--approve hb--sm"><i class="fa-solid fa-check" aria-hidden="true"></i> Approve</button>
                                                 </form>
                                                 <button type="button" @click.stop="openRejection(doc)"
-                                                    class="min-h-8 cursor-pointer rounded-md bg-red-700 px-3 py-1.5 text-xs font-bold text-white transition hover:bg-red-800 active:bg-red-900">
-                                                    Reject
+                                                    class="hb hb--reject hb--sm">
+                                                    <i class="fa-solid fa-xmark" aria-hidden="true"></i> Reject
                                                 </button>
                                             </div>
                                         </li>
@@ -337,17 +337,17 @@
 
                             <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                                 <p role="status" class="m-0 text-xs text-gray-500" x-text="detail.status_message"></p>
-                                <div class="flex shrink-0 flex-col gap-2 sm:flex-row">
+                                <div class="hb-row shrink-0">
                                     <button x-show="detail.can_hr_reject" type="button" @click.stop="openCaseRejection()"
-                                        class="min-h-9 cursor-pointer rounded-md bg-red-700 px-4 py-2 text-sm font-extrabold text-white transition hover:bg-red-800">
-                                        Reject request
+                                        class="hb hb--reject">
+                                        <i class="fa-solid fa-xmark" aria-hidden="true"></i> Reject request
                                     </button>
                                     <form method="POST" :action="detail.forward_url" class="m-0">
                                         @csrf
                                         @method('PATCH')
                                         <button type="submit" :disabled="!detail.can_forward"
-                                            class="min-h-9 w-full cursor-pointer rounded-md bg-[#b22222] px-4 py-2 text-sm font-extrabold text-white disabled:cursor-not-allowed disabled:bg-gray-300 sm:w-auto">
-                                            Send to Admin
+                                            class="hb hb--approve">
+                                            <i class="fa-solid fa-paper-plane" aria-hidden="true"></i> Send to Admin
                                         </button>
                                     </form>
                                 </div>
@@ -420,20 +420,20 @@
                             <div class="flex flex-col items-stretch justify-between gap-3.5 sm:flex-row sm:items-center">
                                 <p role="status" class="m-0 text-gray-500" x-text="detail.status_message"></p>
 
-                                <div x-show="detail.can_decide" class="flex w-full items-center justify-end gap-2 sm:w-auto">
+                                <div x-show="detail.can_decide" class="hb-row w-full sm:w-auto">
                                     <form method="POST" :action="detail.approve_url" class="m-0"
                                         data-confirm="Give final approval to this offboarding case?"
                                         data-confirm-button="Approve">
                                         @csrf
                                         @method('PATCH')
                                         <button type="submit" :disabled="!detail.can_approve"
-                                            class="min-h-[38px] cursor-pointer rounded-md bg-green-700 px-5 py-2 font-bold text-white transition hover:bg-green-800 disabled:cursor-not-allowed disabled:bg-gray-300"
+                                            class="hb hb--approve"
                                             x-text="detail.approved ? 'Final approved' : 'Approve'"></button>
                                     </form>
                                     <button type="button"
                                         @click.stop="openCaseRejection()"
-                                        class="min-h-[38px] cursor-pointer rounded-md bg-red-700 px-5 py-2 font-bold text-white transition hover:bg-red-800 active:bg-red-900">
-                                        Reject
+                                        class="hb hb--reject">
+                                        <i class="fa-solid fa-xmark" aria-hidden="true"></i> Reject
                                     </button>
                                 </div>
                             </div>
@@ -470,13 +470,13 @@
                         x-ref="rejectionReason" rows="4" maxlength="1000" required
                         :placeholder="rejection && rejection.type === 'case' ? 'Share the reason for rejecting this request.' : 'Describe what the employee needs to replace or correct.'"
                         class="w-full resize-y rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-100"></textarea>
-                    <div class="flex justify-end gap-2">
+                    <div class="hb-row">
                         <button type="button" @click="closeRejection()"
-                            class="min-h-9 cursor-pointer rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-bold text-gray-700 transition hover:bg-gray-50">
+                            class="hb hb--ghost">
                             Cancel
                         </button>
                         <button type="submit" :disabled="!rejectionReason.trim()"
-                            class="min-h-9 cursor-pointer rounded-md bg-red-700 px-4 py-2 text-sm font-bold text-white transition hover:bg-red-800 disabled:cursor-not-allowed disabled:bg-gray-300">
+                            class="hb hb--reject">
                             <span x-text="rejection && rejection.type === 'case' ? 'Reject request' : 'Reject document'"></span>
                         </button>
                     </div>

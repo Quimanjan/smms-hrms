@@ -56,7 +56,7 @@
     const taskStorageKey = @json($taskKey);
 
     const TW = {
-        redBtn: "red-btn rounded-[14px] border border-transparent bg-[#dc2626] text-white px-4 py-3 font-bold cursor-pointer transition duration-200 hover:-translate-y-px active:translate-y-px active:scale-[0.98]",
+        redBtn: "red-btn rounded-[14px] border border-transparent bg-[#b22222] text-white px-4 py-3 font-bold cursor-pointer transition duration-200 hover:-translate-y-px active:translate-y-px active:scale-[0.98]",
         clearBtn: "clear-btn rounded-[14px] border border-gray-300 bg-white text-[#b22222] px-4 py-3 font-bold cursor-pointer transition duration-200 hover:-translate-y-px hover:border-[rgba(143,36,31,0.28)] active:translate-y-px active:scale-[0.98]",
         promoDot: "w-[11px] h-[11px] border-0 rounded-full bg-white cursor-pointer [&.active]:w-[15px] [&.active]:bg-[#b22222]",
         dayBase: "calendar-day grid grid-rows-[auto_1fr] items-start relative overflow-hidden aspect-square p-2.5 rounded-[20px] border bg-white text-gray-900 cursor-pointer transition duration-200 hover:-translate-y-px hover:shadow-[0_12px_24px_rgba(15,23,42,0.08)] max-[720px]:p-[7px] max-[720px]:rounded-xl",
@@ -70,7 +70,7 @@
         taskModalContent: "task-modal-content w-full max-w-[520px] overflow-hidden bg-white rounded-3xl shadow-[0_28px_70px_rgba(15,23,42,0.2)]",
         taskModalHeader: "task-modal-header flex justify-between items-center gap-4 px-6 py-[22px] border-b border-[#ecebea]",
         taskModalTitle: "m-0 text-gray-900 text-[1.17em] font-bold",
-        taskClose: "close-btn w-[38px] h-[38px] border-0 rounded-full bg-white/90 text-[#b22222] text-[1.4rem] cursor-pointer transition-transform hover:text-[#dc2626] hover:scale-[1.08]",
+        taskClose: "close-btn w-[38px] h-[38px] border-0 rounded-full bg-white/90 text-[#b22222] text-[1.4rem] cursor-pointer transition-transform hover:text-[#b22222] hover:scale-[1.08]",
         taskModalBody: "task-modal-body p-6",
         taskInputRow: "task-input-row grid grid-cols-[1fr_auto] gap-2.5 mb-[18px]",
         taskInput: "w-full px-4 py-3.5 rounded-[14px] border border-gray-300 bg-gray-50",

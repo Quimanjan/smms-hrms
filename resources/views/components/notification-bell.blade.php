@@ -82,7 +82,7 @@
                     class="mx-5 mt-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 sm:mx-8"></p>
 
                 <div class="overflow-auto px-4 py-4 sm:px-8">
-                    <div class="grid min-w-[680px] grid-cols-[48px_minmax(120px,0.8fr)_minmax(220px,2fr)_minmax(135px,1fr)_90px] items-center gap-3 rounded-xl bg-[#fff5f5] px-4 py-4 text-xs font-extrabold uppercase tracking-wide text-[#a32020]">
+                    <div class="grid min-w-[680px] grid-cols-[48px_minmax(120px,0.8fr)_minmax(220px,2fr)_minmax(135px,1fr)_90px] items-center gap-3 rounded-xl bg-[#fff5f5] px-4 py-4 text-xs font-extrabold uppercase tracking-wide text-[#b22222]">
                         <input type="checkbox" aria-label="Select all notifications" :checked="allSelected"
                             @change="toggleAll($event.target.checked)"
                             class="h-5 w-5 rounded border-gray-300 text-red-700 focus:ring-red-600">
@@ -120,24 +120,24 @@
 
                 <footer class="flex flex-col gap-3 border-t border-gray-200 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-8">
                     <button type="button" @click="toggleArchived()"
-                        class="inline-flex items-center gap-2 self-start rounded-lg px-3 py-2 font-bold text-[#a32020] hover:bg-red-50">
+                        class="inline-flex items-center gap-2 self-start rounded-lg px-3 py-2 font-bold text-[#b22222] hover:bg-red-50">
                         <i class="fa-solid" :class="archivedView ? 'fa-inbox' : 'fa-box-archive'" aria-hidden="true"></i>
                         <span x-text="archivedView ? 'Back to notifications' : 'See archived'"></span>
                     </button>
                     <div class="flex flex-wrap justify-end gap-2">
                         <button x-show="!archivedView" type="button" @click="applySelection('read')"
                             :disabled="selected.length === 0 || busy"
-                            class="inline-flex min-h-11 items-center gap-2 rounded-xl border border-gray-200 px-4 font-bold text-[#a32020] hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-40">
+                            class="inline-flex min-h-11 items-center gap-2 rounded-xl border border-gray-200 px-4 font-bold text-[#b22222] hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-40">
                             <i class="fa-solid fa-check" aria-hidden="true"></i> Mark as read
                         </button>
                         <button x-show="!archivedView" type="button" @click="applySelection('archive')"
                             :disabled="selected.length === 0 || busy"
-                            class="inline-flex min-h-11 items-center gap-2 rounded-xl border border-gray-200 px-4 font-bold text-[#a32020] hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-40">
+                            class="inline-flex min-h-11 items-center gap-2 rounded-xl border border-gray-200 px-4 font-bold text-[#b22222] hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-40">
                             <i class="fa-solid fa-box-archive" aria-hidden="true"></i> Archive
                         </button>
                         <button x-show="archivedView" type="button" @click="applySelection('restore')"
                             :disabled="selected.length === 0 || busy"
-                            class="inline-flex min-h-11 items-center gap-2 rounded-xl border border-gray-200 px-4 font-bold text-[#a32020] hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-40">
+                            class="inline-flex min-h-11 items-center gap-2 rounded-xl border border-gray-200 px-4 font-bold text-[#b22222] hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-40">
                             <i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Restore
                         </button>
                     </div>

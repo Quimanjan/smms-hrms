@@ -130,7 +130,7 @@
                                                 @method('PATCH')
                                                 <input type="hidden" name="document_id" :value="s.id">
                                                 <input type="hidden" name="decision" value="{{ \App\Models\EmployeeDocument::APPROVED }}">
-                                                <button type="submit" class="rq-btn rq-btn--ok">Approve</button>
+                                                <button type="submit" class="hb hb--approve hb--sm"><i class="fa-solid fa-check" aria-hidden="true"></i> Approve</button>
                                             </form>
                                             <form method="POST" action="{{ route('hr.documents.decide') }}"
                                                 data-confirm="Reject this file? It will be deleted so the employee can upload a new one."
@@ -139,7 +139,7 @@
                                                 @method('PATCH')
                                                 <input type="hidden" name="document_id" :value="s.id">
                                                 <input type="hidden" name="decision" value="{{ \App\Models\EmployeeDocument::REJECTED }}">
-                                                <button type="submit" class="rq-btn rq-btn--no">Reject</button>
+                                                <button type="submit" class="hb hb--reject hb--sm"><i class="fa-solid fa-xmark" aria-hidden="true"></i> Reject</button>
                                             </form>
                                         </div>
                                     </template>

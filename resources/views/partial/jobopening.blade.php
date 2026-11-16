@@ -5,7 +5,7 @@
     <div class="mb-5 flex flex-wrap items-end justify-between gap-4">
         <div>
             <h2 id="openPositionsTitle" class="flex items-center gap-3 text-2xl font-extrabold tracking-wide text-slate-900">
-                <i class="fas fa-briefcase text-2xl text-[#dc2626]" aria-hidden="true"></i>
+                <i class="fas fa-briefcase text-2xl text-[#b22222]" aria-hidden="true"></i>
                 Job Openings
             </h2>
             <p class="mt-1.5 text-sm font-medium text-gray-500">
@@ -18,11 +18,11 @@
 
         <div class="flex flex-wrap gap-2">
             <button type="button" @click="managingJobs = true"
-                class="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-[#dc2626] px-[18px] py-2.5 text-sm font-semibold text-white shadow-[0_2px_6px_rgba(220,38,38,0.2)] transition hover:bg-[#b91c1c]">
+                class="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-[#b22222] px-[18px] py-2.5 text-sm font-semibold text-white shadow-[0_2px_6px_rgba(220,38,38,0.2)] transition hover:bg-[#b22222]">
                 <i class="fas fa-list" aria-hidden="true"></i> Job Openings
             </button>
             {{-- <button type="button" @click="addingJob = true"
-                class="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-[#dc2626] px-[18px] py-2.5 text-sm font-semibold text-white shadow-[0_2px_6px_rgba(220,38,38,0.2)] transition hover:bg-[#b91c1c]">
+                class="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-[#b22222] px-[18px] py-2.5 text-sm font-semibold text-white shadow-[0_2px_6px_rgba(220,38,38,0.2)] transition hover:bg-[#b22222]">
                 <i class="fas fa-plus-circle" aria-hidden="true"></i> Add Job Opening
             </button> --}}
         </div>
@@ -33,7 +33,7 @@
             @foreach ($jobOpenings as $job)
                 <div class="min-w-0 rounded-[10px] border border-gray-200 bg-white p-4">
                     <h3 class="text-sm font-semibold leading-snug text-slate-900">{{ $job['title'] }}</h3>
-                    <div class="mt-2 text-[22px] font-bold text-[#dc2626]">{{ $job['applicants'] }}</div>
+                    <div class="mt-2 text-[22px] font-bold text-[#b22222]">{{ $job['applicants'] }}</div>
                     <p class="mt-1 text-xs text-gray-500">
                         {{ $job['applicants'] !== 1 ? 'Applicants' : 'Applicant' }} applied ·
                         {{ $job['is_open'] ? 'Open' : 'Closed' }}
@@ -76,7 +76,7 @@
                 <label for="newJobTitle" class="text-sm font-bold text-gray-800">Position title</label>
                 <input type="text" id="newJobTitle" name="title" x-ref="newJobTitle" required maxlength="255"
                     value="{{ old('title') }}" placeholder="e.g. Math Teacher"
-                    class="w-full rounded-md border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-[#dc2626] focus:ring-2 focus:ring-[#dc2626]/10">
+                    class="w-full rounded-md border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-[#b22222] focus:ring-2 focus:ring-[#b22222]/10">
 
                 @error('title')
                     <p class="text-xs font-semibold text-red-600">{{ $message }}</p>
@@ -84,7 +84,7 @@
 
                 <label for="newJobType" class="mt-1 text-sm font-bold text-gray-800">Job type</label>
                 <select id="newJobType" name="job_type" required
-                    class="w-full rounded-md border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-[#dc2626] focus:ring-2 focus:ring-[#dc2626]/10">
+                    class="w-full rounded-md border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-[#b22222] focus:ring-2 focus:ring-[#b22222]/10">
                     <option value="teaching" @selected(old('job_type', 'teaching') === 'teaching')>Teaching</option>
                     <option value="non-teaching" @selected(old('job_type') === 'non-teaching')>Non-Teaching</option>
                     <option value="teaching-related" @selected(old('job_type') === 'teaching-related')>Teaching-Related</option>
@@ -96,7 +96,7 @@
                 <label for="newJobDescription" class="mt-1 text-sm font-bold text-gray-800">Job description</label>
                 <textarea id="newJobDescription" name="description" rows="4" maxlength="5000"
                     placeholder="Describe the role and its responsibilities"
-                    class="w-full resize-y rounded-md border border-gray-200 p-3 text-sm outline-none focus:border-[#dc2626] focus:ring-2 focus:ring-[#dc2626]/10">{{ old('description') }}</textarea>
+                    class="w-full resize-y rounded-md border border-gray-200 p-3 text-sm outline-none focus:border-[#b22222] focus:ring-2 focus:ring-[#b22222]/10">{{ old('description') }}</textarea>
                 @error('description')
                     <p class="text-xs font-semibold text-red-600">{{ $message }}</p>
                 @enderror
@@ -113,7 +113,7 @@
 
                 <label for="newJobStatus" class="mt-1 text-sm font-bold text-gray-800">Application status</label>
                 <select id="newJobStatus" name="is_open" required
-                    class="w-full rounded-md border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-[#dc2626] focus:ring-2 focus:ring-[#dc2626]/10">
+                    class="w-full rounded-md border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-[#b22222] focus:ring-2 focus:ring-[#b22222]/10">
                     <option value="1" @selected(old('is_open', '1') === '1')>Open - accepting applications</option>
                     <option value="0" @selected(old('is_open') === '0')>Closed - not accepting applications</option>
                 </select>
@@ -127,7 +127,7 @@
                         Cancel
                     </button>
                     <button type="submit"
-                        class="cursor-pointer rounded-lg bg-[#dc2626] px-5 py-2.5 font-bold text-white transition hover:bg-[#b91c1c]">
+                        class="cursor-pointer rounded-lg bg-[#b22222] px-5 py-2.5 font-bold text-white transition hover:bg-[#b22222]">
                         Add job opening
                     </button>
                 </div>
@@ -152,7 +152,7 @@
             </div>
 
             <button type="button" @click="addingJob = true"
-                class="mb-4 inline-flex cursor-pointer items-center gap-2 rounded-lg bg-[#dc2626] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#b91c1c]">
+                class="mb-4 inline-flex cursor-pointer items-center gap-2 rounded-lg bg-[#b22222] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#b22222]">
                 <i class="fas fa-plus" aria-hidden="true"></i> Add new
             </button>
 
@@ -184,7 +184,7 @@
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" aria-label="Remove {{ $job['title'] }}"
-                                            class="cursor-pointer rounded-md border border-gray-200 bg-white px-3 py-1.5 text-sm font-semibold text-[#dc2626] transition hover:border-red-300 hover:bg-red-50">
+                                            class="cursor-pointer rounded-md border border-gray-200 bg-white px-3 py-1.5 text-sm font-semibold text-[#b22222] transition hover:border-red-300 hover:bg-red-50">
                                             Delete
                                         </button>
                                     </form>
@@ -236,7 +236,7 @@
                         <label for="editJobTitle{{ $job['id'] }}" class="text-sm font-bold text-gray-800">Position title</label>
                         <input id="editJobTitle{{ $job['id'] }}" type="text" name="title" required maxlength="255"
                             value="{{ $editTitle }}"
-                            class="w-full rounded-md border border-gray-200 px-3 py-2 text-sm outline-none focus:border-[#dc2626] focus:ring-2 focus:ring-[#dc2626]/10">
+                            class="w-full rounded-md border border-gray-200 px-3 py-2 text-sm outline-none focus:border-[#b22222] focus:ring-2 focus:ring-[#b22222]/10">
                         @if ($reopeningEdit)
                             @error('title', 'jobOpening')
                                 <p class="text-xs font-semibold text-red-600">{{ $message }}</p>
@@ -247,7 +247,7 @@
                     <div class="grid gap-1">
                         <label for="editJobType{{ $job['id'] }}" class="text-sm font-bold text-gray-800">Job type</label>
                         <select id="editJobType{{ $job['id'] }}" name="job_type" required
-                            class="w-full rounded-md border border-gray-200 px-3 py-2 text-sm outline-none focus:border-[#dc2626] focus:ring-2 focus:ring-[#dc2626]/10">
+                            class="w-full rounded-md border border-gray-200 px-3 py-2 text-sm outline-none focus:border-[#b22222] focus:ring-2 focus:ring-[#b22222]/10">
                             <option value="teaching" @selected($editJobType === 'teaching')>Teaching</option>
                             <option value="non-teaching" @selected($editJobType === 'non-teaching')>Non-Teaching</option>
                             <option value="teaching-related" @selected($editJobType === 'teaching-related')>Teaching-Related</option>
@@ -262,7 +262,7 @@
                     <div class="grid gap-1">
                         <label for="editJobDescription{{ $job['id'] }}" class="text-sm font-bold text-gray-800">Job description</label>
                         <textarea id="editJobDescription{{ $job['id'] }}" name="description" rows="4" maxlength="5000"
-                            class="w-full resize-y rounded-md border border-gray-200 p-3 text-sm outline-none focus:border-[#dc2626] focus:ring-2 focus:ring-[#dc2626]/10">{{ $editDescription }}</textarea>
+                            class="w-full resize-y rounded-md border border-gray-200 p-3 text-sm outline-none focus:border-[#b22222] focus:ring-2 focus:ring-[#b22222]/10">{{ $editDescription }}</textarea>
                         @if ($reopeningEdit)
                             @error('description', 'jobOpening')
                                 <p class="text-xs font-semibold text-red-600">{{ $message }}</p>
@@ -283,7 +283,7 @@
                     <div class="grid gap-1">
                         <label for="editJobStatus{{ $job['id'] }}" class="text-sm font-bold text-gray-800">Application status</label>
                         <select id="editJobStatus{{ $job['id'] }}" name="is_open" required
-                            class="w-full rounded-md border border-gray-200 px-3 py-2 text-sm outline-none focus:border-[#dc2626] focus:ring-2 focus:ring-[#dc2626]/10">
+                            class="w-full rounded-md border border-gray-200 px-3 py-2 text-sm outline-none focus:border-[#b22222] focus:ring-2 focus:ring-[#b22222]/10">
                             <option value="1" @selected($editIsOpen)>Open - accepting applications</option>
                             <option value="0" @selected(! $editIsOpen)>Closed - not accepting applications</option>
                         </select>
@@ -300,7 +300,7 @@
                             Cancel
                         </button>
                         <button type="submit"
-                            class="cursor-pointer rounded-lg bg-[#dc2626] px-5 py-2.5 font-bold text-white transition hover:bg-[#b91c1c]">
+                            class="cursor-pointer rounded-lg bg-[#b22222] px-5 py-2.5 font-bold text-white transition hover:bg-[#b22222]">
                             Save changes
                         </button>
                     </div>

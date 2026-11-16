@@ -218,8 +218,8 @@
 
                                             @unless ($locked)
                                                 <label
-                                                    :class="files[@js($label)] ? 'bg-[#fef2f2] text-[#921c1c]' : 'text-[#b22222]'"
-                                                    class="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm font-semibold transition duration-150 hover:bg-[#fef2f2] hover:text-[#921c1c] active:scale-[0.98] focus-within:outline-none focus-within:ring-2 focus-within:ring-[#b22222] focus-within:ring-offset-2 motion-reduce:transition-none">
+                                                    :class="files[@js($label)] ? 'bg-[#fef2f2] text-[#8f1c1c]' : 'text-[#b22222]'"
+                                                    class="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm font-semibold transition duration-150 hover:bg-[#fef2f2] hover:text-[#8f1c1c] active:scale-[0.98] focus-within:outline-none focus-within:ring-2 focus-within:ring-[#b22222] focus-within:ring-offset-2 motion-reduce:transition-none">
                                                     <i class="fa-solid fa-arrow-up-from-bracket text-xs" aria-hidden="true"></i>
                                                     <span x-text="files[@js($label)]
                                                         ? 'Change file'

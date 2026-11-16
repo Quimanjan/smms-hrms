@@ -192,7 +192,7 @@
                                     Cancel
                                 </button>
                                 <button type="submit" :disabled="!selected.length"
-                                    class="inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded-[10px] bg-[#b22222] px-4 text-sm font-bold text-white transition hover:bg-[#d93c3c] disabled:cursor-not-allowed disabled:opacity-50">
+                                    class="inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded-[10px] bg-[#b22222] px-4 text-sm font-bold text-white transition hover:bg-[#b22222] disabled:cursor-not-allowed disabled:opacity-50">
                                     <i class="fa-solid" :class="selectAction === 'archive' ? 'fa-box-archive' : 'fa-trash'"></i>
                                     <span><span x-text="selectAction === 'archive' ? 'Archive' : 'Delete'"></span> (<span x-text="selected.length"></span>)</span>
                                 </button>
@@ -323,7 +323,7 @@
         {{-- Floating Add Attendance button (current month only) --}}
         @unless ($isArchive)
             <button type="button" @click="openAdd()"
-                class="cw-avoid fixed bottom-6 right-6 z-40 inline-flex cursor-pointer items-center gap-2 rounded-[10px] border border-[#8f241f] bg-[#8f241f] px-4 py-2.5 font-bold text-white shadow-[0_10px_24px_rgba(143,36,31,0.25)] transition hover:-translate-y-px hover:bg-[#741c19]">
+                class="cw-avoid fixed bottom-6 right-6 z-40 inline-flex cursor-pointer items-center gap-2 rounded-[10px] border border-[#8f1c1c] bg-[#8f1c1c] px-4 py-2.5 font-bold text-white shadow-[0_10px_24px_rgba(143,36,31,0.25)] transition hover:-translate-y-px hover:bg-[#8f1c1c]">
                 <i class="fa-solid fa-plus"></i> Add Attendance
             </button>
         @endunless
@@ -393,7 +393,7 @@
 
                 <div class="mt-4 flex justify-end">
                     <button type="submit"
-                        class="cursor-pointer rounded-[10px] border border-[#8f241f] bg-[#8f241f] px-4 py-2.5 font-bold text-white transition hover:bg-[#741c19]">
+                        class="cursor-pointer rounded-[10px] border border-[#8f1c1c] bg-[#8f1c1c] px-4 py-2.5 font-bold text-white transition hover:bg-[#8f1c1c]">
                         Save attendance
                     </button>
                 </div>
@@ -457,7 +457,7 @@
 
                     <div class="flex justify-end sm:col-span-2">
                         <button type="submit"
-                            class="cursor-pointer rounded-[10px] border border-[#8f241f] bg-[#8f241f] px-4 py-2.5 font-bold text-white transition hover:bg-[#741c19]">
+                            class="cursor-pointer rounded-[10px] border border-[#8f1c1c] bg-[#8f1c1c] px-4 py-2.5 font-bold text-white transition hover:bg-[#8f1c1c]">
                             Save non-working day
                         </button>
                     </div>

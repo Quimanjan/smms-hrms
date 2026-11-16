@@ -232,7 +232,7 @@
     .password-requirements .requirement.met .dot::after { position: absolute; top: 50%; left: 50%; color: #fff; content: '\2713'; font-size: 11px; transform: translate(-50%, -52%); }
     .password-requirements .pr-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
     .password-requirements .requirement.met .text { color: #2ecc71; font-weight: 600; }
-    .error-text { display: none; margin-top: 8px; color: #b30000; font-size: .85rem; }
+    .error-text { display: none; margin-top: 8px; color: #b22222; font-size: .85rem; }
     #registration-success-modal {
         z-index: 120;
         align-items: center;
