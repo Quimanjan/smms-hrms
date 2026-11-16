@@ -4,7 +4,9 @@
         <h2 class="text-2xl font-extrabold leading-tight text-red-700 sm:text-3xl md:text-4xl">Audit Trail</h2>
     </x-slot>
 
-    <div class="mx-auto max-w-[1920px] px-4 pb-12 pt-2 sm:px-6 lg:px-10">
+    <div class="pb-12 ml-4 -mt-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="p-6 text-gray-900">
         <div class="rm">
             <form method="GET" action="{{ route('activity-log.index') }}" class="rm-bar">
                 <label for="al-q">Search</label>
@@ -41,7 +43,6 @@
                                     <th>User</th>
                                     <th>Action</th>
                                     <th>Record</th>
-                                    <th>Details</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -51,7 +52,6 @@
                                         <td><strong>{{ $log->user_name ?? 'Unknown' }}</strong><small>{{ $log->role }}</small></td>
                                         <td><span class="al-action al-action--{{ str_replace(' ', '-', $log->action) }}">{{ ucfirst($log->action) }}</span></td>
                                         <td>{{ $log->description }}</td>
-                                        <td class="al-changes">{{ \App\Http\Controllers\ActivityLogController::changesText($log->changes) }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -60,6 +60,8 @@
                     <div class="al-pages">{{ $logs->links() }}</div>
                 @endif
             </div>
+        </div>
+    </div>
         </div>
     </div>
 </x-app-layout>

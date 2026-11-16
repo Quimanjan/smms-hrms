@@ -4,7 +4,9 @@
         <h2 class="text-2xl font-extrabold leading-tight text-red-700 sm:text-3xl md:text-4xl">Homepage</h2>
     </x-slot>
 
-    <div class="mx-auto max-w-[1100px] px-4 pb-12 pt-2 sm:px-6 lg:px-10">
+    <div class="pb-12 ml-4 -mt-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="p-6 text-gray-900">
         <div class="cms">
             <div class="cms-intro">
                 <p>Change what visitors see on the public homepage. Every change shows on the site right away.</p>
@@ -188,6 +190,8 @@
                 <button type="submit">Save page text</button>
             </div>
         </form>
+        </div>
+    </div>
         </div>
     </div>
 </x-app-layout>

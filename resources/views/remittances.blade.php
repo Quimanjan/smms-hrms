@@ -13,7 +13,9 @@
         ])->values();
     @endphp
 
-    <div class="mx-auto max-w-[1920px] px-4 pb-12 pt-2 sm:px-6 lg:px-10">
+    <div class="pb-12 ml-4 -mt-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="p-6 text-gray-900">
         <section class="rm" x-data="remittances(@js($exportRows), @js($month->format('F Y')), @js('remittances-'.$month->format('Y-m').'.xlsx'))">
 
             <form method="GET" action="{{ route('remittances.index') }}" class="rm-bar">
@@ -101,6 +103,8 @@
                 @endif
             </div>
         </section>
+    </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>

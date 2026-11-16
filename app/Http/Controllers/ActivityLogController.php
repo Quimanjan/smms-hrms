@@ -41,9 +41,9 @@ class ActivityLogController extends Controller
 
         return response()->streamDownload(function () use ($rows) {
             $out = fopen('php://output', 'w');
-            fputcsv($out, ['Date and time', 'User', 'Role', 'Action', 'Record', 'Details', 'IP address']);
+            fputcsv($out, ['Date and time', 'User', 'Role', 'Action', 'Record', 'IP address']);
             foreach ($rows as $r) {
-                fputcsv($out, [\Carbon\Carbon::parse($r->created_at)->timezone(config('app.display_timezone'))->format('Y-m-d H:i:s'), $r->user_name, $r->role, $r->action, $r->description, $this->changesText($r->changes), $r->ip]);
+                fputcsv($out, [\Carbon\Carbon::parse($r->created_at)->timezone(config('app.display_timezone'))->format('Y-m-d H:i:s'), $r->user_name, $r->role, $r->action, $r->description, $r->ip]);
             }
             fclose($out);
         }, 'audit-trail-'.now(config('app.display_timezone'))->format('Y-m-d').'.csv', ['Content-Type' => 'text/csv']);

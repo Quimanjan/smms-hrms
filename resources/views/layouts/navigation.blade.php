@@ -292,7 +292,9 @@
             'loans',
             'documents',
             'offboarding',
+            'remittances',
             'homepage',
+            'audit-trail',
             'reports',
         ],
 

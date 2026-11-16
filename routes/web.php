@@ -491,19 +491,19 @@ Route::middleware(['auth', 'verified', TrackSystemDataUpdates::class])->group(fu
         Route::get('/reports', [ReportController::class, 'index'])
             ->name('reports.index');
 
-        // Audit trail (Admin)
+        // Audit trail (Admin and HR)
         Route::get('/audit-trail', [\App\Http\Controllers\ActivityLogController::class, 'index'])
-            ->middleware('role:Admin')->name('activity-log.index');
+            ->middleware('role:Admin|HR')->name('activity-log.index');
         Route::get('/audit-trail/export', [\App\Http\Controllers\ActivityLogController::class, 'export'])
-            ->middleware('role:Admin')->name('activity-log.export');
+            ->middleware('role:Admin|HR')->name('activity-log.export');
 
         // Government remittances (SSS, PhilHealth, Pag-IBIG, BIR) for a month
         Route::get('/remittances', [\App\Http\Controllers\RemittanceController::class, 'index'])
-            ->middleware('role:Admin|Accounting')
+            ->middleware('role:Admin|HR|Accounting')
             ->name('remittances.index');
 
         Route::get('/reports/accounting/employees/export', [ReportController::class, 'exportPaidEmployees'])
-            ->middleware('role:Admin|Accounting')
+            ->middleware('role:Admin|HR|Accounting')
             ->name('reports.accounting.employees.export');
 
         // Payroll Approval

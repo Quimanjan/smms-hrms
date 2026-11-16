@@ -1251,5 +1251,31 @@ button.cx-day:focus-visible { outline: 2px solid var(--mg-gold); outline-offset:
     .dx-stat-icon { width: 36px; height: 36px; border-radius: 12px; font-size: 0.95rem; }
     .dx-action { flex: 1 1 100%; justify-content: space-between; }
 }
+
+/* ---------- New modules match the older ones (client revision): same cards, headings, tables ---------- */
+.rm-bar, .rm-card, .rm-total, .cms-group, .cms-intro { border: 0; border-radius: 20px; background: #fff; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05); }
+.cms-intro { border-left: 0; }
+.rm-bar { padding: 18px 20px; }
+.rm-bar label, .cms-field span { color: #4b5563; font-weight: 700; }
+.rm-bar input, .rm-bar select, .cms-field input, .cms-field textarea { border-color: #e5e7eb; background-color: #f9fafb; border-radius: 12px; }
+.rm-card-head { padding: 22px 24px 16px; }
+.rm-card-head h3, .cms-h, .cms-group legend { font-family: var(--mg-body); font-weight: 800; font-size: 1.5rem; line-height: 1.25; color: #111827; }
+.rm-card-head p, .cms-help { color: #6b7280; }
+.rm-total { padding: 18px 20px; }
+.rm-total span { color: #111827; font-weight: 700; font-size: 0.9rem; }
+.rm-total strong { font-family: var(--mg-body); font-weight: 800; font-size: 1.6rem; color: #111827; }
+.rm-wrap { margin: 0 16px 16px; border: 1px solid #f3f4f6; border-radius: 14px; }
+.rm-table th { padding: 14px 10px; background: #f8fafc; color: #111827; font-weight: 700; }
+.rm-table thead tr:first-child th { border-bottom: 1px solid #eef0f4; }
+.rm-table td { padding: 14px 10px; border-bottom: 1px solid #f3f4f6; font-weight: 600; color: #111827; }
+.rm-table tbody tr:hover td { background: rgba(254, 242, 242, 0.4); }
+.rm-sum { color: #111827; }
+.rm-table tfoot td { background: #fef2f2; color: #7f1d1d; border-top: 1px solid #fecaca; }
+.rm-export, .cms-btn { border-radius: 10px; background: #b22222; }
+.rm-export:hover, .cms-btn:hover { background: #8b1a1a; }
+.al-dl { background: #fff; color: #b22222; border: 1px solid #e5e7eb; }
+.al-dl:hover { background: #fef2f2; }
+.al-table td small { font-weight: 500; }
+.rm-table.al-table th, .rm-table.al-table thead tr:first-child th { text-align: left; }
 </style>
 @endverbatim
