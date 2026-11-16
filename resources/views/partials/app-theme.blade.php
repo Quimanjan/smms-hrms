@@ -1287,5 +1287,9 @@ button.cx-day:focus-visible { outline: 2px solid var(--mg-gold); outline-offset:
 .break-words, .whitespace-pre-line, .whitespace-pre-wrap { overflow-wrap: anywhere; word-break: normal; }
 [role="dialog"] { min-width: 0; }
 [role="dialog"] dl > div, [role="dialog"] .grid > * { min-width: 0; }
+
+/* ---------- Fonts: every control uses the page font (client revision) ---------- */
+button, input, select, textarea, optgroup { font-family: inherit; }
+.font-sans { font-family: var(--mg-body); }
 </style>
 @endverbatim

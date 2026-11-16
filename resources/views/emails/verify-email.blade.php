@@ -6,7 +6,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>Verify your email address</title>
 </head>
-<body style="margin:0; padding:0; background-color:#f3f4f6; color:#1f2937; font-family:Arial,Helvetica,sans-serif;">
+<body style="margin:0; padding:0; background-color:#f3f4f6; color:#1f2937; font-family:'Instrument Sans',Arial,Helvetica,sans-serif;">
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color:#f3f4f6; padding:32px 12px;">
         <tr>
             <td align="center">

@@ -19,7 +19,7 @@
         padding-top: 90px;
         color: var(--text);
         background: var(--page);
-        font-family: Inter, system-ui, Segoe UI, Roboto, Arial, sans-serif;
+        font-family: var(--mg-body, 'Instrument Sans', system-ui, sans-serif);
     }
 
     .jobs-topbar {

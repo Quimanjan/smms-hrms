@@ -301,4 +301,8 @@ document.addEventListener('DOMContentLoaded', function () {
 #signup-modal .modal-card::-webkit-scrollbar-track, .login-modal-content::-webkit-scrollbar-track, .modal-card::-webkit-scrollbar-track { margin-block: 18px; background: transparent; }
 #signup-modal .modal-card::-webkit-scrollbar-thumb, .login-modal-content::-webkit-scrollbar-thumb, .modal-card::-webkit-scrollbar-thumb { border: 3px solid transparent; border-radius: 999px; background: #d6c4c1 padding-box; }
 #signup-modal .modal-card::-webkit-scrollbar-thumb:hover, .modal-card::-webkit-scrollbar-thumb:hover { background: #b89c98 padding-box; }
+
+/* ---------- Fonts: every control uses the page font (client revision) ---------- */
+button, input, select, textarea, optgroup { font-family: inherit; }
+.font-sans { font-family: var(--mg-body); }
 </style>

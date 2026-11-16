@@ -1,5 +1,6 @@
 {{-- resources/views/components/notification-bell.blade.php
      Styled to match the HR Reports design (.icon-button, .notification-popup, .notification-item) --}}
+@include('partials.brand-fonts')
 <style>
     .hn-wrap { position: relative; }
 

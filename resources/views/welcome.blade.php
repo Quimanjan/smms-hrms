@@ -21,7 +21,7 @@
 html, body {
     height: 100%;
     margin: 0;
-    font-family: Inter, system-ui, Segoe UI, Roboto, 'Helvetica Neue', Arial;
+    font-family: var(--mg-body, 'Instrument Sans', system-ui, sans-serif);
     color: #222;
     background: var(--muted);
 }
@@ -563,7 +563,7 @@ body {
     display: none;
     margin-top: 8px;
     font-size: 0.85rem;
-    font-family: sans-serif;
+    font-family: var(--mg-body, 'Instrument Sans', sans-serif);
 }
 
 /* ---------- Footer ---------- */
@@ -1005,7 +1005,7 @@ button.modal-btn { font-family: inherit; font-size: inherit; cursor: pointer; }
     border: 1px solid #ddd;
     border-radius: 8px;
     font-size: 13px;
-    font-family: Inter, system-ui, Segoe UI, Roboto, 'Helvetica Neue', Arial;
+    font-family: var(--mg-body, 'Instrument Sans', system-ui, sans-serif);
     transition: border-color 0.3s ease;
 }
 
@@ -1393,6 +1393,7 @@ button.modal-btn { font-family: inherit; font-size: inherit; cursor: pointer; }
     width: 100%;
     margin-top: 24px;
 }
+button, input, select, textarea, optgroup { font-family: inherit; } /* every control uses the page font */
 </style>
 @endverbatim
 

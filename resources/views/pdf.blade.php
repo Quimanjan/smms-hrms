@@ -1,5 +1,7 @@
 @php
-    $peso = fn ($v) => '₱' . number_format((float) $v, 2);
+    $peso = fn ($v) => new \Illuminate\Support\HtmlString('<span class="peso">₱</span>' . number_format((float) $v, 2));
+    \Illuminate\Support\Facades\File::ensureDirectoryExists(storage_path('fonts')); // font cache for the PDF generator
+    $pdfFont = fn ($f) => 'file://' . str_replace('\\', '/', resource_path('fonts/pdf/' . $f));
 
     // Monthly wage = daily wage x 26
     $monthlyWage = (float) $card['daily_wage'] * 26;
@@ -37,8 +39,12 @@
 <meta charset="UTF-8">
 <title>Payslip</title>
 <style>
-    body { font-family: 'DejaVu Sans', sans-serif; font-size: 11px; color: #1f2937; }
-    h1 { font-size: 16px; margin: 0; color: #b22222; }
+    @font-face { font-family: 'Instrument Sans'; font-weight: normal; src: url('{{ $pdfFont('InstrumentSans-Regular.ttf') }}') format('truetype'); }
+    @font-face { font-family: 'Instrument Sans'; font-weight: bold; src: url('{{ $pdfFont('InstrumentSans-Bold.ttf') }}') format('truetype'); }
+    @font-face { font-family: 'Marcellus'; font-weight: normal; src: url('{{ $pdfFont('Marcellus-Regular.ttf') }}') format('truetype'); }
+    body { font-family: 'Instrument Sans', 'DejaVu Sans', sans-serif; font-size: 11px; color: #1f2937; }
+    h1 { font-family: 'Marcellus', 'DejaVu Sans', serif; font-weight: normal; font-size: 18px; margin: 0; color: #b22222; }
+    .peso { font-family: 'DejaVu Sans', sans-serif; }
     .muted { color: #6b7280; }
     .head { border-bottom: 2px solid #b22222; padding-bottom: 8px; margin-bottom: 12px; }
     table { width: 100%; border-collapse: collapse; }
