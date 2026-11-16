@@ -217,7 +217,7 @@
             <div class="absolute inset-0 bg-[rgba(17,24,39,0.55)]" @click="detailId = null"></div>
 
             <section role="dialog" aria-modal="true" aria-labelledby="adminReviewTitle"
-                class="relative max-h-[94vh] w-full max-w-[1040px] overflow-auto rounded-[20px] bg-white p-5 shadow-[0_30px_80px_rgba(15,23,42,0.25)] sm:p-7 lg:p-8">
+                class="ofb-modal relative max-h-[94vh] w-full max-w-[1040px] overflow-auto rounded-[20px] bg-white p-5 shadow-[0_30px_80px_rgba(15,23,42,0.25)] sm:p-7 lg:p-9">
 
                 <div class="mb-5 flex items-start justify-between gap-3">
                     <div>
@@ -264,20 +264,19 @@
                             <section class="rounded-xl border border-[#f0dada] bg-gray-50 p-4">
                                 <div class="mb-3">
                                     <h4 class="text-base font-extrabold text-gray-900">Required documents and clearances</h4>
-                                    <p class="mt-1 text-xs text-gray-500">Enter one requirement per line. These instructions appear in the employee tracker.</p>
+                                    <p class="mt-1 text-xs text-gray-500">The school's fixed clearance list. Every resigning employee gets the same requirements.</p>
                                 </div>
-                                <form x-show="!detail.requirements_sent && detail.is_current" method="POST" :action="detail.requirements_url" class="grid gap-1.5">
+                                @include('partials.offboarding-requirements')
+                                <form x-show="!detail.requirements_sent && detail.is_current" method="POST" :action="detail.requirements_url" class="mt-3">
                                     @csrf
                                     @method('PATCH')
-                                    <textarea name="requirements_text" rows="4" required x-model="detail.requirements_text"
-                                        class="w-full rounded-md border border-gray-300 bg-white px-3 py-2.5 text-sm leading-5 text-gray-800 focus:border-[#b22222] focus:outline-none focus:ring-1 focus:ring-[#b22222]"></textarea>
                                     <button type="submit"
-                                        class="min-h-10 w-full cursor-pointer rounded-md bg-[#b22222] px-4 py-2 text-sm font-extrabold text-white transition hover:bg-[#921c1c]">
+                                        class="min-h-11 w-full cursor-pointer rounded-lg bg-[#b22222] px-4 py-2.5 text-sm font-extrabold text-white transition hover:bg-[#921c1c]">
                                         Send requirements to employee
                                     </button>
                                 </form>
-                                <p x-show="detail.requirements_sent" class="rounded-md border border-[#f0dada] bg-white px-3 py-2.5 text-sm text-gray-600">
-                                    Requirements sent to employee.
+                                <p x-show="detail.requirements_sent" class="mt-3 rounded-md border border-[#f0dada] bg-white px-3 py-2.5 text-sm text-gray-600">
+                                    Requirements sent to the employee.
                                 </p>
                             </section>
 
@@ -375,10 +374,9 @@
                             <section class="rounded-xl border border-[#f0dada] bg-gray-50 p-4">
                                 <div class="mb-3">
                                     <h4 class="text-base font-extrabold text-gray-900">Required documents and clearances</h4>
-                                    <p class="mt-1 text-xs text-gray-500">Requirements sent to employee.</p>
+                                    <p class="mt-1 text-xs text-gray-500">The school's fixed clearance list.</p>
                                 </div>
-                                <p class="rounded-md border border-[#f0dada] bg-white px-3 py-2.5 text-sm text-gray-600"
-                                    x-text="detail.requirements_text.split('\n').join(', ')"></p>
+                                @include('partials.offboarding-requirements')
                             </section>
 
                             <section x-show="detail.interviews.length" class="rounded-xl border border-[#f0dada] bg-gray-50 p-4">

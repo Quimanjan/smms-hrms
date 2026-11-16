@@ -991,6 +991,24 @@ button.cx-day:focus-visible { outline: 2px solid var(--mg-gold); outline-offset:
 .att-table td:not(:first-child):not(:last-child) { white-space: nowrap; }
 .att-table tr > :first-child:not([x-show]) { padding-left: 18px !important; }
 
+/* ---------- Offboarding case window: roomier layout, fixed requirement list ---------- */
+.ofb-modal > .mb-5 { margin-bottom: 26px; }
+.ofb-modal h2 { font-size: 1.6rem; }
+.ofb-modal .grid.gap-4.text-sm { gap: 22px; font-size: 0.95rem; }
+.ofb-modal section.rounded-xl { padding: 22px 24px !important; border-radius: 16px; }
+.ofb-modal section.rounded-xl h4 { font-size: 1.1rem; margin-bottom: 4px; }
+.ofb-modal section.rounded-xl ul.grid { gap: 10px; }
+.ofb-modal section.rounded-xl li.rounded-md { padding: 14px 16px; }
+.ofb-modal section.rounded-xl li strong, .ofb-modal section.rounded-xl li > span { font-size: 0.95rem; }
+.ofb-modal section.rounded-xl .text-xs { font-size: 0.82rem; }
+.ofb-modal .fp { padding: 22px 24px; }
+.ofb-reqs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; counter-reset: req; }
+.ofb-reqs li { position: relative; display: grid; gap: 2px; padding: 12px 14px 12px 50px; border: 1px solid #f0dada; border-radius: 12px; background: #fff; counter-increment: req; }
+.ofb-reqs li::before { content: counter(req); position: absolute; left: 14px; top: 12px; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: #fbeeee; color: #8f1d1d; font-size: 0.8rem; font-weight: 800; }
+.ofb-reqs span { color: #1f2937; font-weight: 700; font-size: 0.92rem; line-height: 1.35; }
+.ofb-reqs small { color: #6b7280; font-size: 0.78rem; }
+@media (max-width: 640px) { .ofb-reqs { grid-template-columns: 1fr; } .ofb-modal section.rounded-xl { padding: 16px !important; } }
+
 /* ---------- Proctoring days (HR) ---------- */
 .proc-form { display: grid; grid-template-columns: 1fr; gap: 14px; }
 @media (min-width: 640px) { .proc-form { grid-template-columns: 1fr 1.4fr auto; align-items: end; } .proc-form [role="alert"] { grid-column: 1 / -1; } }

@@ -292,21 +292,8 @@ class OffboardingController extends Controller
             return back()->withErrors(['requirements' => 'Requirements have already been sent to this employee.']);
         }
 
-        $data = $request->validate([
-            'requirements_text' => ['required', 'string', 'max:2000'],
-        ]);
-        $labels = array_values(array_unique(array_filter(array_map(
-            'trim',
-            preg_split('/\r\n|\r|\n/', $data['requirements_text']) ?: []
-        ))));
-
-        if (! $labels || array_diff($labels, OffboardingCase::REQUIRED_DOCUMENTS)) {
-            return back()->withErrors(['requirements' => 'Choose valid offboarding requirements, one per line.']);
-        }
-
-        if (array_diff($labels, OffboardingCase::INTERVIEW_LABELS) === []) {
-            return back()->withErrors(['requirements' => 'At least one document upload requirement is needed.']);
-        }
+        // The clearance list is fixed (client revision); HR no longer types it.
+        $labels = OffboardingCase::REQUIRED_DOCUMENTS;
 
         $offboardingCase->update([
             'required_documents' => $labels,
