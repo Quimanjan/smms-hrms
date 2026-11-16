@@ -200,13 +200,6 @@
         |--------------------------------------------------------------------------
         */
 
-        'school-employees' => [
-            'label' => 'School Employees',
-            'icon'  => 'fa-users',
-            'route' => 'employee.school-employees',
-            'match' => 'employee.school-employees',
-        ],
-
         'attendance-employee' => [
             'label' => 'Attendance',
             'icon'  => 'fa-calendar-check',

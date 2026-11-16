@@ -27,7 +27,6 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SalaryMonitoringController;
 use App\Http\Controllers\SalaryRecordController;
-use App\Http\Controllers\SchoolEmployeeController;
 use App\Http\Controllers\SystemUpdatesController;
 use App\Http\Controllers\TimeCorrectionController;
 use App\Http\Controllers\TimeCorrectionReviewController;
@@ -269,8 +268,6 @@ Route::middleware(['auth', 'verified', TrackSystemDataUpdates::class])->group(fu
         ])->name('attendance.attendance-employee.confirm');
 
         // School Employees
-        Route::get('/school-employees', [SchoolEmployeeController::class, 'index'])
-            ->name('employee.school-employees');
 
         // Employee Dashboard
         Route::get('/employee-dashboard', [

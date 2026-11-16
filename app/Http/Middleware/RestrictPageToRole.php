@@ -16,7 +16,6 @@ class RestrictPageToRole
     /** Route name => roles that actually have a screen for it. */
     private const PAGES = [
         'attendance.attendance-employee.index' => ['Employee'],
-        'employee.school-employees' => ['Employee'],
         'employee-dashboard' => ['Employee'],
         'time-corrections.employee.index' => ['Employee'],
         'leaves.employee.index' => ['Employee'],
