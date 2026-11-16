@@ -684,18 +684,17 @@ body {
     text-align: center;
 }
 
+/* Same two-column Create your account window as the job pages */
 #signup-modal .modal-card {
-    max-height: calc(100vh - 40px);
+    width: min(100%, 680px);
+    max-height: min(850px, calc(100vh - 32px));
+    max-height: min(850px, calc(100dvh - 32px));
     overflow-y: auto;
     overscroll-behavior: contain;
 }
-
-@media (min-width: 769px) and (max-height: 850px) {
-    #signup-modal .modal-card {
-        max-height: min(82vh, 640px);
-        max-height: min(82dvh, 640px);
-    }
-}
+.signup-name-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 16px; }
+.signup-name-grid .form-group { min-width: 0; }
+@media (max-width: 540px) { .signup-name-grid { grid-template-columns: 1fr; } }
 
 .modal-close {
     position: absolute;
@@ -3027,8 +3026,10 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // Opened from another page (?signup=1): wait until the whole script has set up the
+    // password checks and the close button, otherwise the window opens half-wired.
     if (document.getElementById('signup-state')?.dataset.open === 'true') {
-        openSignupModal();
+        setTimeout(openSignupModal, 0);
     }
 
     if (applyLoginBtn && applyLoginModal) {
@@ -3058,7 +3059,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     if (signupForm?.dataset.hasErrors === 'true' && !isLoginErrorActive()) {
-        openSignupModal();
+        setTimeout(openSignupModal, 0);
     }
 
     if (registrationSuccessModal) {
@@ -3356,7 +3357,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (!signupModal) return;
 
-        window.location.reload();
+        // Reload without ?signup=1, otherwise the window opens again right away and can never be closed.
+        const url = new URL(window.location.href);
+        url.searchParams.delete('signup');
+        window.location.replace(url.toString());
 
     }
 

@@ -103,12 +103,13 @@
         default => 'image/announce-faculty.jpg',
     };
 
+    // Applicants go straight to the form; visitors get the Create your account modal on this page.
     $applyUrl = auth()->check()
         ? (auth()->user()->hasRole('Applicant') ? route('applications.index', ['position' => $jobOpening->title]) : null)
-        : route('home', ['signup' => 1]);
+        : '#signup';
 @endphp
 
-@include('partials.mg-header')
+@include('partials.mg-header', ['accountButtons' => true])
 
 <main class="mg-main">
     <section class="mg-pagehead">
@@ -126,7 +127,11 @@
             </div>
             @if ($jobOpening->is_open && $applyUrl)
                 <div class="detail-cta">
-                    <a class="mg-btn mg-btn-gold" href="{{ $applyUrl }}">Apply for this position</a>
+                    @guest
+                        <button class="mg-btn mg-btn-gold" type="button" data-open-signup>Apply for this position</button>
+                    @else
+                        <a class="mg-btn mg-btn-gold" href="{{ $applyUrl }}">Apply for this position</a>
+                    @endguest
                 </div>
             @endif
         </div>
@@ -186,7 +191,11 @@
                             Create an account first, then send your application online.
                         @endauth
                     </p>
-                    <a class="mg-btn mg-btn-gold" href="{{ $applyUrl }}">Apply for this position</a>
+                    @guest
+                        <button class="mg-btn mg-btn-gold" type="button" data-open-signup>Apply for this position</button>
+                    @else
+                        <a class="mg-btn mg-btn-gold" href="{{ $applyUrl }}">Apply for this position</a>
+                    @endguest
                 </section>
             @endif
         </aside>
@@ -194,4 +203,8 @@
 </main>
 
 @include('partials.mg-footer')
+
+@guest
+    @include('partials.public-account-modals', ['context' => 'job-openings'])
+@endguest
 @endsection
