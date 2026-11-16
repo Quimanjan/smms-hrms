@@ -1213,6 +1213,9 @@ button.cx-day:focus-visible { outline: 2px solid var(--mg-gold); outline-offset:
     .cw-panel { height: calc(100vh - 110px); }
 }
 @media (prefers-reduced-motion: reduce) { .cw-anim { transition: none; } }
+/* Page buttons that sit in the lower right move left of the chat bubble. */
+body:has(.cw) .cw-avoid { right: 100px !important; bottom: 30px !important; }
+@media (max-width: 560px) { body:has(.cw) .cw-avoid { right: 88px !important; bottom: 22px !important; } }
 
 /* ---------- Page changes ----------
    Moving between pages keeps the sidebar and top bar still and only fades the

@@ -127,7 +127,7 @@
 
         {{-- Transfer --}}
         <form method="POST" action="{{ route('payroll-accounting.transfer') }}"
-            class="fixed bottom-4 right-4 z-50 flex justify-end sm:bottom-6 sm:right-6 lg:right-10"
+            class="cw-avoid fixed bottom-4 right-4 z-50 flex justify-end sm:bottom-6 sm:right-6 lg:right-10"
             @submit.prevent="transfer($event)">
             @csrf
             <input type="hidden" name="cutoff" :value="cutoff">

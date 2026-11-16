@@ -110,7 +110,7 @@
         @if ($canManage && request()->routeIs('employees.index'))
             <button type="button" @click="openCreate()"
                 x-show="!formOpen && !detail" x-transition.opacity
-                class="fixed bottom-6 right-6 z-50 inline-flex cursor-pointer items-center gap-2 rounded-lg bg-[#b22222] px-4 py-3 font-bold text-white shadow-[0_6px_20px_rgba(178,34,34,0.4)] transition hover:-translate-y-0.5 hover:bg-[#8b1a1a] hover:shadow-[0_8px_24px_rgba(178,34,34,0.5)]">
+                class="cw-avoid fixed bottom-6 right-6 z-50 inline-flex cursor-pointer items-center gap-2 rounded-lg bg-[#b22222] px-4 py-3 font-bold text-white shadow-[0_6px_20px_rgba(178,34,34,0.4)] transition hover:-translate-y-0.5 hover:bg-[#8b1a1a] hover:shadow-[0_8px_24px_rgba(178,34,34,0.5)]">
                 <i class="fa-solid fa-user-plus"></i> Add Employee
             </button>
         @endif

@@ -325,7 +325,7 @@
         {{-- Floating Add Attendance button (current month only) --}}
         @unless ($isArchive)
             <button type="button" @click="openAdd()"
-                class="fixed bottom-6 right-6 z-40 inline-flex cursor-pointer items-center gap-2 rounded-[10px] border border-[#8f241f] bg-[#8f241f] px-4 py-2.5 font-bold text-white shadow-[0_10px_24px_rgba(143,36,31,0.25)] transition hover:-translate-y-px hover:bg-[#741c19]">
+                class="cw-avoid fixed bottom-6 right-6 z-40 inline-flex cursor-pointer items-center gap-2 rounded-[10px] border border-[#8f241f] bg-[#8f241f] px-4 py-2.5 font-bold text-white shadow-[0_10px_24px_rgba(143,36,31,0.25)] transition hover:-translate-y-px hover:bg-[#741c19]">
                 <i class="fa-solid fa-plus"></i> Add Attendance
             </button>
         @endunless
