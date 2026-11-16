@@ -291,7 +291,6 @@
             'offboarding',
             'remittances',
             'homepage',
-            'messages',
             'audit-trail',
             'reports',
         ],
@@ -308,7 +307,6 @@
             'documents',
             'offboarding',
             'homepage',
-            'messages',
             'reports',
         ],
 
@@ -319,7 +317,6 @@
             'salary-records',
             'loans-accounting',
             'remittances',
-            'messages',
             'accounting-reports',
         ],
 
@@ -332,7 +329,6 @@
             'my-offboarding',
             'my-payslips',
             'my-documents',
-            'messages',
         ],
 
         'Applicant' => [

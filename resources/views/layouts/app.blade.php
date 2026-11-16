@@ -192,6 +192,13 @@
                 </main>
             </div>
         </div>
+        {{-- Chat bubble (lower right) for staff --}}
+        @hasanyrole('Admin|HR|Accounting|Employee')
+            @unless (request()->routeIs('messages.index'))
+                @include('partials.chat-widget')
+            @endunless
+        @endhasanyrole
+
         {{-- Keep the menu's scroll position when moving between pages. --}}
         <script>
             (() => {

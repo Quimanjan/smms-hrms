@@ -21,9 +21,15 @@ class MessageController extends Controller
     public function index(Request $request): View
     {
         return view('messages', [
-            'people' => $this->people($request->user()),
+            'people' => $this->peopleFor($request->user()),
             'startWith' => $request->integer('to') ?: null,
         ]);
+    }
+
+    /** Everyone the signed-in person can message (for the chat window's search). */
+    public function people(Request $request): JsonResponse
+    {
+        return response()->json(['people' => $this->peopleFor($request->user())]);
     }
 
     /** Conversation list with the last message and unread count. */
@@ -131,7 +137,7 @@ class MessageController extends Controller
         }
     }
 
-    private function people(User $me): array
+    private function peopleFor(User $me): array
     {
         return User::role(self::STAFF_ROLES)
             ->where('id', '!=', $me->id)
