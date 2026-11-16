@@ -101,6 +101,13 @@ php artisan up
 trap - ERR
 rm -rf "$SRC"
 
+# Keep only the newest backups. Each one is a full copy of the site (about
+# 15,000 files), and the hosting plan limits the total number of files.
+KEEP_BACKUPS="${KEEP_BACKUPS:-3}"
+ls -1d "$SITE/backups"/[0-9]*-[0-9]* 2>/dev/null | sort | head -n -"$KEEP_BACKUPS" | while read -r old; do
+    rm -rf "$old"
+done
+
 echo
 echo "Done. Deployed $BRANCH at $(date)."
 echo "To roll back to the version from before this update:"
