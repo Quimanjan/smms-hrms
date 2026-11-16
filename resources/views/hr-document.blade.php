@@ -8,6 +8,7 @@
 
 @if (in_array($role, ['Admin', 'HR', 'Accounting','Employee']))
 <x-app-layout>
+    <x-slot name="title">{{ $role === 'Employee' ? 'Employee Documents' : $role.' Document Management' }}</x-slot>
 
 
     {{-- Page heading --}}
