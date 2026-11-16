@@ -1688,6 +1688,11 @@ body {
 }
 
 /* ---------- Announcements (banner slider) ---------- */
+.mg-notices { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; margin: 0 0 28px; padding: 0; list-style: none; }
+.mg-notice { padding: 22px 24px; border: 1px solid rgba(122, 20, 32, 0.14); border-top: 4px solid var(--mg-gold, #c9a24b); border-radius: 16px; background: #fff; }
+.mg-notice time { font-size: 0.82rem; font-weight: 600; letter-spacing: 0.02em; color: #8a6d3b; }
+.mg-notice h3 { margin: 6px 0 8px; font-family: 'Marcellus', serif; font-weight: 400; font-size: 1.3rem; line-height: 1.25; color: #4a0a12; }
+.mg-notice p { margin: 0; color: #3b2a2c; line-height: 1.6; white-space: pre-line; }
 .mg-news-head {
     display: flex;
     align-items: end;
@@ -1864,6 +1869,11 @@ body {
 }
 
 .mg-campus-item:first-child { grid-row: 1 / span 2; }
+
+/* Any number of photos other than three: first photo full width, the rest in a row grid. */
+.mg-campus-grid--flex { display: flex; flex-wrap: wrap; aspect-ratio: auto; }
+.mg-campus-grid--flex .mg-campus-item { flex: 1 1 240px; aspect-ratio: 3 / 2; }
+.mg-campus-grid--flex .mg-campus-item:first-child { flex-basis: 100%; aspect-ratio: 21 / 9; }
 
 .mg-campus-item img {
     display: block;
@@ -2647,6 +2657,18 @@ body {
                     </div>
                 </div>
 
+                @if (($homeAnnouncements ?? collect())->isNotEmpty())
+                    <ul class="mg-notices">
+                        @foreach ($homeAnnouncements as $note)
+                            <li class="mg-notice" data-reveal style="--i: {{ $loop->index }}">
+                                <time datetime="{{ $note->posted_on->toDateString() }}">{{ $note->posted_on->format('F j, Y') }}</time>
+                                <h3>{{ $note->title }}</h3>
+                                <p>{{ $note->body }}</p>
+                            </li>
+                        @endforeach
+                    </ul>
+                @endif
+
                 <div class="mg-slider-frame" data-reveal>
                     <div class="mg-slider" id="slider">
                         @foreach ($homepageBannerSlides as $index => $slide)
@@ -2762,23 +2784,25 @@ body {
             </div>
         </section>
 
+        @if (($campusPhotos ?? collect())->isNotEmpty())
         <section class="mg-section" id="campus" aria-labelledby="campus-title">
             <div class="mg-wrap">
                 <h2 class="mg-h2" id="campus-title">The campus</h2>
                 <p class="mg-sub">Select a photo to view it larger.</p>
 
-                <div class="mg-campus-grid">
-                    @foreach ([1 => 'Classroom buildings around the school court', 2 => 'The main school building', 3 => 'A classroom building seen through the trees'] as $n => $caption)
+                <div class="mg-campus-grid {{ $campusPhotos->count() === 3 ? '' : 'mg-campus-grid--flex' }}">
+                    @foreach ($campusPhotos as $photo)
                         <button class="mg-campus-item" type="button" data-reveal style="--i: {{ $loop->index }}"
-                            onclick="openFacilitiesModal('{{ asset('image/facility'.$n.'.jpg') }}', @js($caption))"
-                            aria-label="View larger: {{ $caption }}">
-                            <img src="{{ asset('image/campus-'.$n.'.webp') }}" alt="{{ $caption }}" loading="lazy"
+                            onclick="openFacilitiesModal(@js($photo->full_url), @js($photo->caption))"
+                            aria-label="View larger: {{ $photo->caption }}">
+                            <img src="{{ $photo->url }}" alt="{{ $photo->caption }}" loading="lazy"
                                 width="1400" height="933">
                         </button>
                     @endforeach
                 </div>
             </div>
         </section>
+        @endif
 
         <section class="mg-careers" aria-labelledby="careers-title">
             <canvas class="mg-motes" aria-hidden="true"></canvas>

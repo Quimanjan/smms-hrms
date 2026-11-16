@@ -183,6 +183,13 @@ Route::middleware(['auth', 'verified', TrackSystemDataUpdates::class])->group(fu
         // Homepage text (CMS)
         Route::get('/homepage-content', [\App\Http\Controllers\SiteContentController::class, 'edit'])->name('site-content.edit');
         Route::put('/homepage-content', [\App\Http\Controllers\SiteContentController::class, 'update'])->name('site-content.update');
+        Route::post('/homepage-content/announcements', [\App\Http\Controllers\SiteContentController::class, 'storeAnnouncement'])->name('site-content.announcements.store');
+        Route::put('/homepage-content/announcements/{announcement}', [\App\Http\Controllers\SiteContentController::class, 'updateAnnouncement'])->name('site-content.announcements.update');
+        Route::delete('/homepage-content/announcements/{announcement}', [\App\Http\Controllers\SiteContentController::class, 'destroyAnnouncement'])->name('site-content.announcements.destroy');
+        Route::post('/homepage-content/campus', [\App\Http\Controllers\SiteContentController::class, 'storePhoto'])->name('site-content.photos.store');
+        Route::put('/homepage-content/campus/{photo}', [\App\Http\Controllers\SiteContentController::class, 'updatePhoto'])->name('site-content.photos.update');
+        Route::post('/homepage-content/campus/{photo}/move', [\App\Http\Controllers\SiteContentController::class, 'movePhoto'])->name('site-content.photos.move');
+        Route::delete('/homepage-content/campus/{photo}', [\App\Http\Controllers\SiteContentController::class, 'destroyPhoto'])->name('site-content.photos.destroy');
 
         // Cause of separation (decides separation pay in the final pay breakdown)
         Route::patch('/offboarding/{offboardingCase}/cause', [OffboardingController::class, 'cause'])

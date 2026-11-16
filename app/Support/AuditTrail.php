@@ -39,6 +39,8 @@ final class AuditTrail
         \App\Models\OffboardingCase::class => 'Offboarding case',
         \App\Models\OffboardingDocument::class => 'Offboarding document',
         \App\Models\Banner::class => 'Banner',
+        \App\Models\Announcement::class => 'Announcement',
+        \App\Models\CampusPhoto::class => 'Campus photo',
     ];
 
     private const SECRET = [

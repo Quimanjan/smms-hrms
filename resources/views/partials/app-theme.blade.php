@@ -900,6 +900,42 @@ button.cx-day:focus-visible { outline: 2px solid var(--mg-gold); outline-offset:
 .cms-field textarea { resize: vertical; }
 .cms-field input:focus, .cms-field textarea:focus { outline: 2px solid var(--mg-gold); outline-offset: 1px; border-color: transparent; box-shadow: none; background: #fff; }
 .cms-error { color: #8f1420; font-weight: 600; }
+.cms-h { margin: 0; font-family: var(--mg-display); font-weight: 400; font-size: 1.35rem; color: var(--mg-oxblood); }
+.cms-h--outside { margin-top: 8px; }
+.cms-help { margin: -6px 0 0; font-size: 0.88rem; color: var(--mg-stone); }
+.cms-group[id] { scroll-margin-top: 20px; }
+.cms-new { border: 1px dashed var(--mg-line); border-radius: 14px; padding: 4px 16px; background: #fbf8f7; }
+.cms-new[open] { padding-bottom: 16px; }
+.cms-new summary { padding: 12px 0; font-weight: 700; color: var(--mg-crimson); cursor: pointer; }
+.cms-ann-form { display: grid; gap: 12px; }
+.cms-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px 22px; }
+.cms-row .cms-field { flex: 0 1 220px; }
+.cms-row-end { display: flex; justify-content: flex-end; align-items: center; gap: 14px; }
+.cms-check { display: inline-flex; align-items: center; gap: 8px; padding-bottom: 10px; font-weight: 600; color: var(--mg-ink); }
+.cms-check input { width: 18px; height: 18px; accent-color: var(--mg-crimson); }
+.cms-btn { height: 44px; padding: 0 20px; border: 0; border-radius: 11px; background: var(--mg-crimson); color: #fff; font: 700 0.95rem var(--mg-body); cursor: pointer; }
+.cms-btn:hover { background: var(--mg-oxblood); }
+.cms-link { border: 0; background: none; padding: 4px 0; color: var(--mg-crimson); font: 600 0.9rem var(--mg-body); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.cms-link:disabled { color: #c9bfbd; text-decoration: none; cursor: default; }
+.cms-link--danger { color: #8f1420; }
+.cms-ann-list { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.cms-ann-list > li { padding: 16px 18px; border: 1px solid var(--mg-line); border-radius: 14px; }
+.cms-ann-view strong { display: block; margin-top: 4px; font-size: 1.05rem; color: var(--mg-ink); }
+.cms-ann-view p { margin: 6px 0 0; color: var(--mg-ink); white-space: pre-line; }
+.cms-ann-meta { display: flex; align-items: center; gap: 10px; font-size: 0.82rem; color: var(--mg-stone); }
+.cms-tag { padding: 2px 9px; border-radius: 999px; background: #f3ece9; color: var(--mg-oxblood); font-weight: 700; font-size: 0.74rem; }
+.cms-ann-actions, .cms-photo-actions { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 10px; }
+.cms-empty { padding: 18px; border: 1px dashed var(--mg-line); border-radius: 14px; color: var(--mg-stone); text-align: center; list-style: none; }
+.cms-photo-add { display: grid; grid-template-columns: 1fr 1.4fr auto; align-items: end; gap: 12px; }
+@media (max-width: 760px) { .cms-photo-add { grid-template-columns: 1fr; } }
+.cms-photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; margin: 0; padding: 0; list-style: none; counter-reset: photo; }
+.cms-photos > li:not(.cms-empty) { display: grid; gap: 10px; padding: 12px; border: 1px solid var(--mg-line); border-radius: 14px; counter-increment: photo; position: relative; }
+.cms-photos > li:not(.cms-empty)::before { content: counter(photo); position: absolute; top: 20px; left: 20px; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: rgba(51, 6, 12, 0.85); color: #fff; font-weight: 700; font-size: 0.85rem; }
+.cms-photos img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 10px; }
+.cms-photo-caption { display: grid; gap: 6px; }
+.cms-photo-caption input { width: 100%; padding: 8px 10px; border: 1px solid var(--mg-line); border-radius: 9px; font-size: 0.9rem; }
+.cms-photo-caption .cms-link { justify-self: start; }
+.cms-photo-actions { margin-top: 0; gap: 14px; }
 .cms-actions { position: sticky; bottom: 12px; display: flex; justify-content: flex-end; }
 .cms-actions button { height: 48px; padding: 0 24px; border: 0; border-radius: 12px; background: var(--mg-crimson); color: #fff; font: 700 1rem var(--mg-body); cursor: pointer; box-shadow: 0 14px 28px -16px rgba(74, 10, 18, 0.7); }
 .cms-actions button:hover { background: var(--mg-oxblood); }

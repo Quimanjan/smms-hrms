@@ -32,3 +32,4 @@ Thumbs.db
 *.sql
 .env.vince-original
 !/database/schema/*.sql
+/public/campus

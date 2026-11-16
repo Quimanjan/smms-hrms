@@ -39,6 +39,8 @@ class AppServiceProvider extends ServiceProvider
                 'homeYearsOfService' => max(0, (int) now()->year - 1961),
                 // Homepage text edited by HR and Admin (Homepage page).
                 'cms' => \App\Support\SiteContent::all(),
+                'homeAnnouncements' => rescue(fn () => \App\Models\Announcement::published()->orderByDesc('posted_on')->orderByDesc('id')->limit(6)->get(), collect(), false),
+                'campusPhotos' => rescue(fn () => \App\Models\CampusPhoto::orderBy('sort_order')->orderBy('id')->get(), collect(), false),
             ]);
         });
     }
