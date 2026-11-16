@@ -974,6 +974,23 @@ button.cx-day:focus-visible { outline: 2px solid var(--mg-gold); outline-offset:
 .emp-form-scroll::-webkit-scrollbar-thumb:hover { background: #a8918e; }
 @media (max-width: 560px) { .emp-form-tabs { gap: 16px; } .emp-form-tabs button { font-size: 0.88rem; } }
 
+/* ---------- Attendance tables (HR Attendance Management, Admin Attendance Monitoring) ---------- */
+.att-table { min-width: 820px; font-size: 0.85rem; }
+.att-table th { padding: 14px 8px !important; font-size: 0.78rem; line-height: 1.25; color: #3b2a2c; vertical-align: bottom; word-break: normal !important; overflow-wrap: normal !important; }
+.att-table td { padding: 14px 8px !important; vertical-align: middle; }
+.att-table th.att-c-emp { width: 21%; }
+.att-table th.att-c-date { width: 13%; }
+.att-table th.att-c-shift { width: 12%; }
+.att-table th.att-c-time { width: 7%; }
+.att-table th.att-c-num { width: 8.5%; }
+.att-table th.att-c-sm { width: 6%; }
+.att-table th.att-c-status { width: 13%; }
+.att-table td:nth-last-child(-n+7), .att-table th:nth-last-child(-n+7) { text-align: center; }
+.att-table td span.block.font-bold { font-size: 0.92rem; line-height: 1.3; }
+.att-table td small { font-size: 0.76rem !important; }
+.att-table td:not(:first-child):not(:last-child) { white-space: nowrap; }
+.att-table tr > :first-child:not([x-show]) { padding-left: 18px !important; }
+
 /* ---------- Proctoring days (HR) ---------- */
 .proc-form { display: grid; grid-template-columns: 1fr; gap: 14px; }
 @media (min-width: 640px) { .proc-form { grid-template-columns: 1fr 1.4fr auto; align-items: end; } .proc-form [role="alert"] { grid-column: 1 / -1; } }

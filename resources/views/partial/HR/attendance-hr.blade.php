@@ -96,7 +96,7 @@
                     <input type="hidden" name="folder" value="{{ $folderDate }}">
                 @endif
 
-                <label for="attendanceSearch" class="relative flex min-w-[240px] flex-[1_1_280px] flex-col gap-2 text-sm font-bold text-gray-600">
+                <label for="attendanceSearch" class="relative flex min-w-0 flex-col gap-2 text-sm font-bold text-gray-600" style="flex: 1 1 200px; min-width: 190px;">
                     <i class="fa-solid fa-magnifying-glass absolute bottom-[14px] left-[14px] text-gray-400"></i>
                     <input type="search" id="attendanceSearch" name="search" value="{{ request('search') }}"
                         placeholder="Search by name or ID..."
@@ -106,14 +106,14 @@
                 </label>
 
                 @unless ($isArchive)
-                    <label for="dateFilter" class="{{ $labelClass }} min-w-[170px]">
+                    <label for="dateFilter" class="{{ $labelClass }}" style="flex: 0 1 165px; min-width: 150px;">
                         <span>Date</span>
                         <input type="date" id="dateFilter" name="date" value="{{ request('date') }}"
                             @change="$refs.filters.submit()" class="{{ $inputClass }}">
                     </label>
                 @endunless
 
-                <label for="departmentFilter" class="{{ $labelClass }} min-w-[180px]">
+                <label for="departmentFilter" class="{{ $labelClass }}" style="flex: 0 1 175px; min-width: 150px;">
                     <span>Department</span>
                     <select id="departmentFilter" name="department" @change="$refs.filters.submit()" class="{{ $inputClass }}">
                         <option value="">All Departments</option>
@@ -123,7 +123,7 @@
                     </select>
                 </label>
 
-                <label for="statusFilter" class="{{ $labelClass }} min-w-[180px]">
+                <label for="statusFilter" class="{{ $labelClass }}" style="flex: 0 1 165px; min-width: 140px;">
                     <span>Status</span>
                     <select id="statusFilter" name="status" @change="$refs.filters.submit()" class="{{ $inputClass }}">
                         <option value="">All Status</option>
@@ -257,7 +257,7 @@
                         </div>
                     @else
                         <div class="overflow-x-auto rounded-xl border border-gray-100">
-                            <table class="w-full min-w-[1000px] table-fixed border-collapse text-xs">
+                            <table class="att-table w-full table-fixed border-collapse">
                                 <thead class="bg-slate-50">
                                     <tr class="text-left font-bold text-gray-900">
                                         <th x-show="selectMode" x-cloak class="w-10 px-2 py-3 text-center">
@@ -266,17 +266,16 @@
                                                 @change="selected = $event.target.checked ? [...pageIds] : []"
                                                 class="h-4 w-4 cursor-pointer accent-[#b22222]">
                                         </th>
-                                        <th class="w-[18%] break-words px-1.5 py-3">Employee</th>
-                                        <th class="w-[8%] break-words px-1.5 py-3">Date</th>
-                                        <th class="w-[7%] break-words px-1.5 py-3">Day</th>
-                                        <th class="w-[13%] break-words px-1.5 py-3">Shift Type</th>
-                                        <th class="w-[7%] break-words px-1.5 py-3 text-center">Time In</th>
-                                        <th class="w-[7%] break-words px-1.5 py-3 text-center">Time Out</th>
-                                        <th class="w-[9%] break-words px-1.5 py-3 text-center">Required Hours</th>
-                                        <th class="w-[8%] break-words px-1.5 py-3 text-center">Hours Worked</th>
-                                        <th class="w-[6%] break-words px-1.5 py-3 text-center">Lates</th>
-                                        <th class="w-[7%] break-words px-1.5 py-3 text-center">Undertime</th>
-                                        <th class="w-[10%] break-words px-1.5 py-3 text-center">Status</th>
+                                        <th class="att-c-emp break-words px-1.5 py-3">Employee</th>
+                                        <th class="att-c-date break-words px-1.5 py-3">Date</th>
+                                        <th class="att-c-shift break-words px-1.5 py-3">Shift Type</th>
+                                        <th class="att-c-time break-words px-1.5 py-3 text-center">Time In</th>
+                                        <th class="att-c-time break-words px-1.5 py-3 text-center">Time Out</th>
+                                        <th class="att-c-num break-words px-1.5 py-3 text-center">Required Hours</th>
+                                        <th class="att-c-num break-words px-1.5 py-3 text-center">Hours Worked</th>
+                                        <th class="att-c-sm break-words px-1.5 py-3 text-center">Lates</th>
+                                        <th class="att-c-num break-words px-1.5 py-3 text-center">Undertime</th>
+                                        <th class="att-c-status break-words px-1.5 py-3 text-center">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -291,8 +290,7 @@
                                                 <span class="block font-bold text-gray-900">{{ $r['name'] }}</span>
                                                 <small class="mt-0.5 block text-[0.7rem] font-medium text-gray-500">{{ $r['employee_code'] }}</small>
                                             </td>
-                                            <td class="break-words px-1.5 py-2">{{ \Carbon\Carbon::parse($r['date'])->format('M d, Y') }}</td>
-                                            <td class="break-words px-1.5 py-2">{{ $r['day'] }}</td>
+                                            <td class="break-words px-1.5 py-2"><span class="block">{{ \Carbon\Carbon::parse($r['date'])->format('M d, Y') }}</span><small class="mt-0.5 block font-medium text-gray-500">{{ $r['day'] }}</small></td>
                                             <td class="break-words px-1.5 py-2">{{ $r['shift_type'] }}</td>
                                             <td class="whitespace-nowrap px-1.5 py-2 text-center">{{ $r['time_in'] }}</td>
                                             <td class="whitespace-nowrap px-1.5 py-2 text-center">{{ $r['time_out'] }}</td>

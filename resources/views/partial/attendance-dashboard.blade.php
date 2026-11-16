@@ -201,7 +201,7 @@
 
                 {{-- Attendance table --}}
                 <div class="overflow-x-auto rounded-2xl border border-gray-100 bg-white">
-                    <table class="w-full min-w-[1000px] table-fixed border-collapse text-xs">
+                    <table class="att-table w-full table-fixed border-collapse">
                         <thead class="bg-slate-50">
                             <tr class="text-left font-bold text-gray-900">
                                 <th x-show="selectMode" x-cloak class="w-10 border-b border-gray-100 px-2 py-3 text-center">
@@ -209,17 +209,16 @@
                                         :checked="selected.length && selected.length === pageIds.length"
                                         class="h-[18px] w-[18px] cursor-pointer accent-[#b22222]">
                                 </th>
-                                <th class="w-[18%] break-words border-b border-gray-100 px-1.5 py-3">Employee</th>
-                                <th class="w-[8%] break-words border-b border-gray-100 px-1.5 py-3">Date</th>
-                                <th class="w-[7%] break-words border-b border-gray-100 px-1.5 py-3">Day</th>
-                                <th class="w-[13%] break-words border-b border-gray-100 px-1.5 py-3">Shift Type</th>
-                                <th class="w-[7%] break-words border-b border-gray-100 px-1.5 py-3 text-center">Time In</th>
-                                <th class="w-[7%] break-words border-b border-gray-100 px-1.5 py-3 text-center">Time Out</th>
-                                <th class="w-[9%] break-words border-b border-gray-100 px-1.5 py-3 text-center">Required Hours</th>
-                                <th class="w-[8%] break-words border-b border-gray-100 px-1.5 py-3 text-center">Hours Worked</th>
-                                <th class="w-[6%] break-words border-b border-gray-100 px-1.5 py-3 text-center">Lates</th>
-                                <th class="w-[7%] break-words border-b border-gray-100 px-1.5 py-3 text-center">Undertime</th>
-                                <th class="w-[10%] break-words border-b border-gray-100 px-1.5 py-3 text-center">Status</th>
+                                <th class="att-c-emp break-words border-b border-gray-100 px-1.5 py-3">Employee</th>
+                                <th class="att-c-date break-words border-b border-gray-100 px-1.5 py-3">Date</th>
+                                <th class="att-c-shift break-words border-b border-gray-100 px-1.5 py-3">Shift Type</th>
+                                <th class="att-c-time break-words border-b border-gray-100 px-1.5 py-3 text-center">Time In</th>
+                                <th class="att-c-time break-words border-b border-gray-100 px-1.5 py-3 text-center">Time Out</th>
+                                <th class="att-c-num break-words border-b border-gray-100 px-1.5 py-3 text-center">Required Hours</th>
+                                <th class="att-c-num break-words border-b border-gray-100 px-1.5 py-3 text-center">Hours Worked</th>
+                                <th class="att-c-sm break-words border-b border-gray-100 px-1.5 py-3 text-center">Lates</th>
+                                <th class="att-c-num break-words border-b border-gray-100 px-1.5 py-3 text-center">Undertime</th>
+                                <th class="att-c-status break-words border-b border-gray-100 px-1.5 py-3 text-center">Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -234,8 +233,7 @@
                                         <span class="block font-bold text-gray-900">{{ $record['name'] ?? 'Unknown employee' }}</span>
                                         <small class="mt-0.5 block text-[0.7rem] font-medium text-gray-500">{{ $record['employee_code'] ?? 'N/A' }}</small>
                                     </td>
-                                    <td class="break-words border-b border-gray-100 px-1.5 py-2">{{ \Illuminate\Support\Carbon::parse($record['date'])->format('M d, Y') }}</td>
-                                    <td class="break-words border-b border-gray-100 px-1.5 py-2">{{ $record['day'] }}</td>
+                                    <td class="break-words border-b border-gray-100 px-1.5 py-2"><span class="block">{{ \Illuminate\Support\Carbon::parse($record['date'])->format('M d, Y') }}</span><small class="mt-0.5 block font-medium text-gray-500">{{ $record['day'] }}</small></td>
                                     <td class="break-words border-b border-gray-100 px-1.5 py-2">{{ $record['shift_type'] }}</td>
                                     <td class="whitespace-nowrap border-b border-gray-100 px-1.5 py-2 text-center">{{ $record['time_in'] }}</td>
                                     <td class="whitespace-nowrap border-b border-gray-100 px-1.5 py-2 text-center">{{ $record['time_out'] }}</td>
@@ -249,7 +247,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td :colspan="selectMode ? 12 : 11" class="px-4 py-[26px] text-center text-gray-400">No records found</td>
+                                    <td :colspan="selectMode ? 11 : 10" class="px-4 py-[26px] text-center text-gray-400">No records found</td>
                                 </tr>
                             @endforelse
                         </tbody>
