@@ -33,6 +33,8 @@ class EmployeeController extends Controller
 
     private const MESSAGES = [
         'birthday.before_or_equal' => 'The employee must be at least 18 years old.',
+        'date_hired.required' => 'Enter the date this employee was hired.',
+        'date_hired.before_or_equal' => 'The date hired cannot be in the future.',
     ];
 
     public const EMPLOYMENT = [
@@ -373,7 +375,7 @@ class EmployeeController extends Controller
             ],
 
             // Used for length of service (separation and retirement pay).
-            'date_hired' => ['nullable', 'date', 'before_or_equal:today'],
+            'date_hired' => ['required', 'date', 'before_or_equal:today'],
 
             'birthday' => [
                 'required',

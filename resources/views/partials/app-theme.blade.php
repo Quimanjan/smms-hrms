@@ -424,6 +424,9 @@ body.app-body .calendar-day:not(.empty):hover { transform: translateY(-2px); bor
 }
 
 /* ---------- Employee cards (compact) ---------- */
+.emp-hire-alert { display: flex; gap: 12px; align-items: flex-start; margin: 0 0 12px; padding: 12px 16px; border-radius: 14px; background: #fff6e6; border: 1px solid #f1d7a6; color: #6b4a12; font-size: 0.88rem; line-height: 1.5; }
+.emp-hire-alert i { color: #b7791f; margin-top: 3px; }
+.emp-hire-alert p { margin: 0; }
 .emp-archived-note { margin: 0 0 12px; font-size: 0.85rem; color: var(--mg-stone); }
 .emp-archived-note a { color: var(--mg-crimson); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 .emp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }

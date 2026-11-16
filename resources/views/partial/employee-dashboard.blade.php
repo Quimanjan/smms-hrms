@@ -184,6 +184,17 @@
                     <p class="font-semibold">No employees found.</p>
                 </div>
             @else
+                @php
+                    $noHireDate = \App\Models\Employee::excludeInternalStaff()->current()->whereNull('date_hired')->orderBy('last_name')->get(['first_name','last_name']);
+                @endphp
+                @if ($noHireDate->isNotEmpty())
+                    <div class="emp-hire-alert" role="status">
+                        <i class="fa-solid fa-calendar-xmark"></i>
+                        <p><strong>{{ $noHireDate->count() }} {{ \Illuminate\Support\Str::plural('employee', $noHireDate->count()) }} without a date hired:</strong>
+                        {{ $noHireDate->map(fn ($e) => trim($e->first_name.' '.$e->last_name))->join(', ') }}.
+                        Open each one and choose Edit to add it. Final pay and length of service need it.</p>
+                    </div>
+                @endif
                 <p class="emp-archived-note">Employees who resigned or separated are archived after their last working day. Find them in <a href="{{ route('offboarding.index', ['tab' => 'archive']) }}">Offboarding, Archive</a>.</p>
                 <div class="emp-grid">
                     @foreach ($employees as $employee)
@@ -471,8 +482,8 @@
 
                     {{-- Date hired: used for length of service in final pay --}}
                     <div>
-                        <label for="f_date_hired" class="{{ $labelClass }}">Date hired</label>
-                        <input id="f_date_hired" type="date" name="date_hired" x-model="form.date_hired" max="{{ now()->toDateString() }}" class="{{ $inputClass }}">
+                        <label for="f_date_hired" class="{{ $labelClass }}">Date hired <span class="text-red-600">*</span></label>
+                        <input id="f_date_hired" type="date" name="date_hired" x-model="form.date_hired" required max="{{ now()->toDateString() }}" class="{{ $inputClass }}">
                         <p class="{{ $errClass }}">{{ $errors->first('date_hired') }}</p>
                     </div>
 
@@ -704,7 +715,7 @@
                     Object.assign(this.form, this.splitName(''));
                     this.form.email = '';
                     this.form.birthday = '';
-                    this.form.date_hired = '';
+                    this.form.date_hired = new Date().toISOString().slice(0, 10);
                     this.form.civil_status = '';
                     this.form.gender = '';
                 },

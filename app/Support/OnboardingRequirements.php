@@ -34,7 +34,7 @@ final class OnboardingRequirements
             ['name' => 'Service Record, if previously employed and applicable (photocopy)', 'optional' => true],
             ['name' => 'Marriage Certificate, if married (photocopy)', 'optional' => true],
             ['name' => 'Certificate of Completion, Certificate of Grades, MA/MS TOR, and/or MA/MS Diploma', 'optional' => true],
-            ['name' => 'Seminar and Training Certificates (photocopy)', 'optional' => false],
+            ['name' => 'Seminar and Training Certificates (photocopy)', 'optional' => true],
             ['name' => 'Acknowledgment of Receipts and Reviews of Guidelines, Policies, and Forms', 'optional' => false],
             ['name' => 'Data Privacy Policy', 'optional' => false],
             ['name' => 'Learning Material Policy', 'optional' => false],
