@@ -22,6 +22,9 @@ final class SiteContent
         'history_p2' => ['History, second paragraph', "The name St. Mary Magdalene School was adopted in honor of the town's patroness. March 11, 1966 was designated as the school's Foundation Day, coinciding with the celebration of Msgr. Eulogio San Juan's birthday. On this day, we are reminded of how the school was formed and how far we have come as a school community.", 6, 'Our history'],
         'timeline' => ['Key dates (one per line, as: year | what happened)', "1961 | A kindergarten class opens in the parish convent with fifteen pupils.\n1963 | The Department of Education grants the class its permit to operate.\n1966 | March 11 is designated as the school's Foundation Day.", 5, 'Our history'],
 
+        'apply_intro' => ['How to apply: short line under the title', 'The whole application is done here, online.', 1, 'How to apply'],
+        'apply_steps' => ['Steps (one per line, as: step title | what to do)', "Create your account | Sign up with your name and email address.\nVerify your email | Enter the code the school sends to your inbox.\nSend your application | Choose a position, fill in your details, and upload your resume.\nTrack your status | Log in any time to see where your application stands.", 5, 'How to apply'],
+
         'careers_title' => ['Call to action headline', 'Be a Magdalenean', 1, 'Careers banner'],
         'careers_text' => ['Call to action text', 'See which teaching and non-teaching positions are open, then apply online.', 2, 'Careers banner'],
 
@@ -59,6 +62,16 @@ final class SiteContent
     public static function timeline(): array
     {
         return collect(preg_split('/\r\n|\r|\n/', self::get('timeline')))
+            ->map(fn ($line) => array_map('trim', explode('|', $line, 2)))
+            ->filter(fn ($p) => count($p) === 2 && $p[0] !== '' && $p[1] !== '')
+            ->values()
+            ->all();
+    }
+
+    /** "How to apply" steps as [title, text] pairs. */
+    public static function applySteps(): array
+    {
+        return collect(preg_split('/\r\n|\r|\n/', self::get('apply_steps')))
             ->map(fn ($line) => array_map('trim', explode('|', $line, 2)))
             ->filter(fn ($p) => count($p) === 2 && $p[0] !== '' && $p[1] !== '')
             ->values()

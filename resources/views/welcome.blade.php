@@ -2742,25 +2742,14 @@ body {
         <section class="mg-section" aria-labelledby="apply-title">
             <div class="mg-wrap">
                 <h2 class="mg-h2" id="apply-title">How to apply</h2>
-                <p class="mg-sub">The whole application is done here, online.</p>
-
+                <p class="mg-sub">{{ $cms['apply_intro'] }}</p>
                 <ol class="mg-steps">
-                    <li class="mg-step">
-                        <h3>Create your account</h3>
-                        <p>Sign up with your name and email address.</p>
-                    </li>
-                    <li class="mg-step">
-                        <h3>Verify your email</h3>
-                        <p>Enter the code the school sends to your inbox.</p>
-                    </li>
-                    <li class="mg-step">
-                        <h3>Send your application</h3>
-                        <p>Choose a position, fill in your details, and upload your resume.</p>
-                    </li>
-                    <li class="mg-step">
-                        <h3>Track your status</h3>
-                        <p>Log in any time to see where your application stands.</p>
-                    </li>
+                    @foreach (\App\Support\SiteContent::applySteps() as [$stepTitle, $stepText])
+                        <li class="mg-step">
+                            <h3>{{ $stepTitle }}</h3>
+                            <p>{{ $stepText }}</p>
+                        </li>
+                    @endforeach
                 </ol>
             </div>
         </section>
