@@ -247,7 +247,7 @@
                                       data-confirm="Restore this loan request to Active?" data-confirm-button="Restore">
                                     @csrf
                                     @method('PATCH')
-                                    <button type="submit" class="rounded-lg bg-blue-600 px-5 py-3 font-bold text-white transition hover:bg-blue-700">Restore</button>
+                                    <button type="submit" class="hb hb--primary">Restore</button>
                                 </form>
                             </div>
                         </template>
