@@ -20,14 +20,14 @@
         ['Late',            'late',            false],
         ['Undertime',       'undertime',       false],
         ['SSS',             'sss',             true],
-        ['PhilHealth',      'philhealth',      true],
-        ['HDMF',            'hdmf',            true],
-        ['PERAA/CEAP',      'peraa_ceap',      true],
-        ['Withholding tax', 'withholding_tax', true],
         ['SSS Loan',        'sss_loan',        true],
+        ['PhilHealth',      'philhealth',      true],
         ['PhilHealth Loan', 'philhealth_loan', true],
+        ['PERAA/CEAP',      'peraa_ceap',      true],
         ['PERAA/CEAP Loan', 'peraa_ceap_loan', true],
+        ['HDMF',            'hdmf',            true],
         ['HDMF Loan',       'hdmf_loan',       true],
+        ['Withholding tax', 'withholding_tax', true],
         ['Cash advance',    'cash_advance',    false],
     ];
 @endphp

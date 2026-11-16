@@ -205,10 +205,11 @@
                             <span class="max-w-full break-words text-xs text-gray-500" x-text="draft.department + ' | ' + draft.position + ' | ' + preview.step.name"></span>
                         </div>
 
-                        <div class="grid grid-cols-2 border-y border-[#ecebea] sm:grid-cols-[repeat(5,minmax(0,1fr))]">
+                        <div class="pp-strip grid grid-cols-2 border-y border-[#ecebea]">
                             <template x-for="(m, k) in [
                                 ['Date', formatCutoffDate(cutoff)],
                                 ['Days worked', draft.daysWorked],
+                                ['Hours worked', draft.hoursWorked],
                                 ['Late (mins)', draft.lateMinutes],
                                 ['Undertime (mins)', draft.undertimeMinutes],
                                 ['Monthly wage', money(preview.monthlyWage)]
@@ -240,7 +241,12 @@
                                 {{-- Read-only computed deductions; contributions are withheld on the 30th only --}}
                                 <template x-for="r in computedFields" :key="r[1]">
                                     <div class="{{ $row }}">
-                                        <span x-text="r[0]"></span>
+                                        <span>
+                                            <span x-text="r[0]"></span>
+                                            {{-- Last month's cash advance: half on the 15th, half on the 30th --}}
+                                            <small x-show="r[1] === 'cash_advance' && preview.wanted.cash_advance > 0" class="pp-due"
+                                                x-text="'Due this pay period: ' + money(preview.wanted.cash_advance)"></small>
+                                        </span>
                                         <span class="w-[120px] shrink-0 text-center font-bold text-gray-900"
                                             x-text="(r[2] && cutoff !== '30th') ? '-' : money(preview.deductions[r[1]])"></span>
                                     </div>
@@ -401,7 +407,7 @@
                     return {
                         step, monthlyWage: p.monthlyWage,
                         basicPay: p.basicPay, leavePay: p.leavePay, holidayPay: p.holidayPay, honorarium: p.honorarium,
-                        grossPay: p.grossPay, deductions, totalDeductions, notDeducted,
+                        grossPay: p.grossPay, deductions, totalDeductions, notDeducted, wanted,
                         netPay: r2(p.grossPay - totalDeductions),
                     };
                 },

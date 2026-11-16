@@ -245,10 +245,10 @@
 
                 deductionRows: [
                     ['MALASAKITAN', 'malasakitan'], ['Late', 'late'], ['Undertime', 'undertime'],
-                    ['Withholding tax', 'withholding_tax'],
                     ['SSS', 'sss'], ['SSS LOAN', 'sss_loan'], ['PhilHealth', 'philhealth'],
                     ['PERAA/CEAP', 'peraa_ceap'], ['PERAA/CEAP LOAN', 'peraa_ceap_loan'],
-                    ['HDMF', 'hdmf'], ['HDMF LOAN', 'hdmf_loan'], ['Cash advance', 'cash_advance'],
+                    ['HDMF', 'hdmf'], ['HDMF LOAN', 'hdmf_loan'],
+                    ['Withholding tax', 'withholding_tax'], ['Cash advance', 'cash_advance'],
                 ],
 
                 get slip() { return this.viewId ? this.slips[this.viewId] : null; },

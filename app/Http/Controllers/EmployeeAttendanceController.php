@@ -80,6 +80,17 @@ class EmployeeAttendanceController extends Controller
             ->get()
             ->keyBy(fn ($r) => Carbon::parse($r->date)->toDateString());
 
+        // Approved half-day leaves in the range: which half (morning or afternoon) was taken.
+        $halfLeaves = $employee->user_id
+            ? \App\Models\LeaveRequest::query()
+                ->forUser($employee->user_id)
+                ->approved()
+                ->where('half_day', true)
+                ->whereBetween('start_date', [$from->toDateString(), $to->toDateString()])
+                ->get()
+                ->keyBy(fn ($l) => Carbon::parse($l->start_date)->toDateString())
+            : collect();
+
         $nonWorking = NonWorkingDay::query()
             ->whereBetween('date', [$from->toDateString(), $to->toDateString()])
             ->get()
@@ -129,6 +140,25 @@ class EmployeeAttendanceController extends Controller
                 default => 0.0,
             };
 
+            // Half-day leave: only half the day is leave (paid as half a day); the other half
+            // counts only if the employee came in.
+            [$shiftIn, $shiftOut] = $scheduled ? [$this->clock($schedule->start), $this->clock($schedule->end)] : ['', ''];
+            $halfLeave = $halfLeaves->get($key);
+            if ($halfLeave && $record && (float) $record->leave_portion > 0 && (float) $record->leave_portion < 1) {
+                $pm = $halfLeave->half_day_period === 'pm';
+                $halfLabel = $pm ? 'afternoon' : 'morning';
+                if ($type === 'leave') {
+                    // Did not come in for the other half: only the leave half is on the DTR.
+                    $shiftType = $status.' (half day, '.$halfLabel.')';
+                    $required = round($required / 2, 2);
+                    [$shiftIn, $shiftOut] = $pm
+                        ? [$this->clock($schedule->lunchEnd), $this->clock($schedule->end)]
+                        : [$this->clock($schedule->start), $this->clock($schedule->lunchStart)];
+                } else {
+                    $shiftType .= ' + half-day leave ('.$halfLabel.')';
+                }
+            }
+
             $late = in_array($type, ['regular', 'proctoring'], true) && $timeIn ? (int) $schedule->lateMinutes($timeIn) : 0;
             $under = in_array($type, ['regular', 'proctoring'], true) && $timeOut ? (int) $schedule->undertimeMinutes($timeOut) : 0;
             $hours = $record ? $this->hoursForRecord($record, $schedule) : 0.0;
@@ -147,8 +177,8 @@ class EmployeeAttendanceController extends Controller
                 'day'         => $date->format('l'),
                 'type'        => $type,
                 'shift_type'  => $shiftType,
-                'shift_in'    => $scheduled ? $this->clock($schedule->start) : '',
-                'shift_out'   => $scheduled ? $this->clock($schedule->end) : '',
+                'shift_in'    => $shiftIn,
+                'shift_out'   => $shiftOut,
                 'time_in'     => $timeIn ? $timeIn->format('h:i A') : '',
                 'time_out'    => $timeOut ? $timeOut->format('h:i A') : '',
                 'required'    => number_format($required, 2),

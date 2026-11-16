@@ -587,7 +587,10 @@ class PayrollProcessingController extends Controller
                 continue;
             }
 
-            $daysWorked += Attendance::computeDaysWorked($record->status);
+            // On a half-day leave the employee can only work the other half.
+            $daysWorked += $portion > 0
+                ? min(Attendance::computeDaysWorked($record->status), max(0, 1 - $portion))
+                : Attendance::computeDaysWorked($record->status);
             $hoursWorked += $timeIn && $timeOut
                 ? $computedHours
                 : (float) $record->hours_worked;

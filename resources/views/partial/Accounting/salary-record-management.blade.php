@@ -96,9 +96,9 @@
 
         {{-- ============ Payslip modal ============ --}}
         <div x-show="slip" x-cloak x-transition.opacity @click.self="slipId = null"
-            class="fixed inset-0 z-[60] grid place-items-center bg-[rgba(17,24,39,0.48)] p-5">
+            class="fixed inset-0 z-[60] grid place-items-center bg-[rgba(17,24,39,0.48)] p-2 sm:p-5">
             <div role="dialog" aria-modal="true" aria-labelledby="historyModalTitle"
-                class="relative w-[min(820px,calc(100vw-40px))] rounded-[24px] bg-white px-3 pb-3 pt-2 shadow-[0_18px_40px_rgba(15,23,42,0.08)]">
+                class="relative flex max-h-[calc(100dvh-16px)] w-[min(820px,calc(100vw-40px))] flex-col rounded-[24px] bg-white px-3 pb-3 pt-2 shadow-[0_18px_40px_rgba(15,23,42,0.08)] sm:max-h-[calc(100dvh-40px)]">
 
                 <button type="button" @click="slipId = null" aria-label="Close employee details"
                     class="absolute right-3 top-3 grid h-8 w-8 cursor-pointer place-items-center rounded-full text-xl text-gray-500 transition hover:bg-[#fef2f2] hover:text-[#b22222]">
@@ -106,7 +106,7 @@
                 </button>
 
                 <template x-if="slip">
-                    <div class="bg-white">
+                    <div class="min-h-0 flex-1 overflow-y-auto overscroll-contain bg-white">
                         <div class="flex flex-col items-center gap-0.5 px-4 pb-4 pt-3 text-center">
                             <h3 id="historyModalTitle" class="text-[clamp(1.5rem,2vw,2.25rem)] font-extrabold leading-tight text-gray-900" x-text="slip.employee_name"></h3>
                             <span class="text-[0.82rem] text-gray-800" x-text="'ID: ' + slip.employee_number"></span>
@@ -222,7 +222,6 @@
                         ['MALASAKITAN', d.malasakitan],
                         ['Late', d.late],
                         ['Undertime', d.undertime],
-                        ['Withholding tax', d.withholding_tax],
                         ['SSS', d.sss],
                         ['SSS LOAN', d.sss_loan],
                         ['PhilHealth', d.philhealth],
@@ -230,6 +229,7 @@
                         ['PERAA/CEAP LOAN', d.peraa_ceap_loan],
                         ['HDMF', d.hdmf],
                         ['HDMF LOAN', d.hdmf_loan],
+                        ['Withholding tax', d.withholding_tax],
                         ['Cash advance', d.cash_advance],
                         ['Total deductions', s.total_deductions],
                     ];
