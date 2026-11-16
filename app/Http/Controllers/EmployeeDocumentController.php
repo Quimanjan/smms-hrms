@@ -42,7 +42,7 @@ class EmployeeDocumentController extends Controller
                     'status' => $status,
                     'file' => $latest?->name,
                     'size' => $latest?->size_label,
-                    'uploaded' => $latest?->created_at?->timezone(config('app.timezone'))->format('M j, Y'),
+                    'uploaded' => $latest?->created_at?->timezone(config('app.display_timezone'))->format('M j, Y'),
                     'url' => $latest ? route('employee.documents.file', $latest) : null,
                     'can_upload' => $status !== 'approved',
                 ];

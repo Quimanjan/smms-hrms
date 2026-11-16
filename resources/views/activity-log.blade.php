@@ -47,7 +47,7 @@
                             <tbody>
                                 @foreach ($logs as $log)
                                     <tr>
-                                        <td>{{ \Carbon\Carbon::parse($log->created_at)->timezone(config('app.timezone'))->format('M j, Y g:i A') }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($log->created_at)->timezone(config('app.display_timezone'))->format('M j, Y g:i A') }}</td>
                                         <td><strong>{{ $log->user_name ?? 'Unknown' }}</strong><small>{{ $log->role }}</small></td>
                                         <td><span class="al-action al-action--{{ str_replace(' ', '-', $log->action) }}">{{ ucfirst($log->action) }}</span></td>
                                         <td>{{ $log->description }}</td>

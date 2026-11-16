@@ -67,6 +67,9 @@ return [
 
     'timezone' => 'UTC',
 
+    // Times are stored in UTC and shown to people in Philippine time.
+    'display_timezone' => env('APP_DISPLAY_TIMEZONE', 'Asia/Manila'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration

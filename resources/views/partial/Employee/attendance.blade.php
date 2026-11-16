@@ -55,7 +55,7 @@
                         @if (! $payPeriod)
                             <p>Pick a pay period to confirm your DTR for payroll.</p>
                         @elseif ($confirmation)
-                            <p><strong>Confirmed</strong> on {{ $confirmation->confirmed_at->timezone(config('app.timezone'))->format('F j, Y g:i A') }}. Accounting can now process your payslip.</p>
+                            <p><strong>Confirmed</strong> on {{ $confirmation->confirmed_at->timezone(config('app.display_timezone'))->format('F j, Y g:i A') }}. Accounting can now process your payslip.</p>
                         @elseif (! $payPeriod['ended'])
                             <p>This pay period ends on {{ $payPeriod['end']->format('F j, Y') }}. You can confirm your DTR after that.</p>
                         @else

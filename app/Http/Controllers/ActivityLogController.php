@@ -43,10 +43,10 @@ class ActivityLogController extends Controller
             $out = fopen('php://output', 'w');
             fputcsv($out, ['Date and time', 'User', 'Role', 'Action', 'Record', 'Details', 'IP address']);
             foreach ($rows as $r) {
-                fputcsv($out, [$r->created_at, $r->user_name, $r->role, $r->action, $r->description, $this->changesText($r->changes), $r->ip]);
+                fputcsv($out, [\Carbon\Carbon::parse($r->created_at)->timezone(config('app.display_timezone'))->format('Y-m-d H:i:s'), $r->user_name, $r->role, $r->action, $r->description, $this->changesText($r->changes), $r->ip]);
             }
             fclose($out);
-        }, 'audit-trail-'.now()->format('Y-m-d').'.csv', ['Content-Type' => 'text/csv']);
+        }, 'audit-trail-'.now(config('app.display_timezone'))->format('Y-m-d').'.csv', ['Content-Type' => 'text/csv']);
     }
 
     private function query(array $f)
@@ -56,8 +56,8 @@ class ActivityLogController extends Controller
                 ->where('user_name', 'like', "%{$s}%")
                 ->orWhere('description', 'like', "%{$s}%")))
             ->when($f['action'] ?? null, fn ($q, $a) => $q->where('action', $a))
-            ->when($f['from'] ?? null, fn ($q, $d) => $q->whereDate('created_at', '>=', $d))
-            ->when($f['to'] ?? null, fn ($q, $d) => $q->whereDate('created_at', '<=', $d))
+            ->when($f['from'] ?? null, fn ($q, $d) => $q->where('created_at', '>=', \Carbon\Carbon::parse($d, config('app.display_timezone'))->startOfDay()->utc()))
+            ->when($f['to'] ?? null, fn ($q, $d) => $q->where('created_at', '<=', \Carbon\Carbon::parse($d, config('app.display_timezone'))->endOfDay()->utc()))
             ->orderByDesc('id');
     }
 

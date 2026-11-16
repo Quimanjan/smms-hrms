@@ -56,7 +56,7 @@ class MessageController extends Controller
                 'name' => $r->name,
                 'role' => User::find($r->user_id)?->getRoleNames()->first(),
                 'last' => $last ? (($last->user_id === $me ? 'You: ' : '').mb_strimwidth($last->body, 0, 70, '...')) : '',
-                'when' => $last ? Carbon::parse($last->created_at)->timezone(config('app.timezone'))->format('M j, g:i A') : '',
+                'when' => $last ? Carbon::parse($last->created_at)->timezone(config('app.display_timezone'))->format('M j, g:i A') : '',
                 'unread' => $unread,
             ];
         });
@@ -81,7 +81,7 @@ class MessageController extends Controller
                 'id' => $m->id,
                 'mine' => (int) $m->user_id === (int) $me,
                 'body' => $m->body,
-                'when' => Carbon::parse($m->created_at)->timezone(config('app.timezone'))->format('M j, g:i A'),
+                'when' => Carbon::parse($m->created_at)->timezone(config('app.display_timezone'))->format('M j, g:i A'),
             ]);
 
         if ($messages->isNotEmpty()) {
