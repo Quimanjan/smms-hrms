@@ -4,7 +4,7 @@
     Buttons: [data-open-apply-modal] opens the apply choice, [data-open-signup] opens Create your account,
     #jobs-login-trigger and #jobs-signup-trigger are the header buttons.
 --}}
-@php($errors = $errors ?? new \Illuminate\Support\ViewErrorBag)
+@php(view()->share("errors", $errors ?? new \Illuminate\Support\ViewErrorBag))
 <style>
     :root { --primary: #b22222; }
     .modal-overlay {
