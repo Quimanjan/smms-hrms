@@ -231,7 +231,6 @@
                         ['HDMF LOAN', d.hdmf_loan],
                         ['Withholding tax', d.withholding_tax],
                         ['Cash advance', d.cash_advance],
-                        ['Total deductions', s.total_deductions],
                     ];
                 },
 
