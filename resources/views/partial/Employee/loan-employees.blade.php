@@ -110,7 +110,7 @@
                 </div>
 
                 {{-- Request form --}}
-                <form method="POST" action="{{ route('loan.loan-employee.store') }}"
+                <form method="POST" action="{{ route('loan.loan-employee.store') }}" data-autosave="loan"
                     x-data="{ type: @js(old('loan_type', 'Cash Advance')), amount: @js(old('amount', '')), reason: @js(old('reason', '')), limit: {{ \App\Models\LoanRequest::CASH_ADVANCE_LIMIT }} }"
                     class="{{ $card }}">
                     @csrf

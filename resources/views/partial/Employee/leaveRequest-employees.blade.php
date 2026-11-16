@@ -153,7 +153,7 @@
             <div class="w-full max-w-[560px] rounded-2xl bg-white p-6 shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="requestLeaveModalTitle">
                 <h2 id="requestLeaveModalTitle" class="mb-4 text-xl font-extrabold text-[#231f20]">Request Leave</h2>
 
-                <form method="POST" action="{{ route('leave-requests.store') }}" class="grid gap-4">
+                <form method="POST" action="{{ route('leave-requests.store') }}" class="grid gap-4" data-autosave="leave">
                     @csrf
 
                     <label class="grid gap-2">

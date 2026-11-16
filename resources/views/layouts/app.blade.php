@@ -200,6 +200,8 @@
             @endunless
         @endhasanyrole
 
+        @auth @include('partials.form-autosave') @endauth
+
         {{-- Keep the menu's scroll position when moving between pages. --}}
         <script>
             (() => {

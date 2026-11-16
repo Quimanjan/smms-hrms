@@ -80,6 +80,7 @@
 
             <form
                 x-ref="form"
+                data-autosave="application"
                 method="POST"
                 action="{{ route('applications.store') }}"
                 enctype="multipart/form-data"

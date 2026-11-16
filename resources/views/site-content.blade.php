@@ -31,7 +31,7 @@
 
                 <details class="cms-new" @if ($errors->hasAny(['title', 'body', 'posted_on']) && ! old('_announcement')) open @endif>
                     <summary>Post an announcement</summary>
-                    <form method="POST" action="{{ route('site-content.announcements.store') }}" class="cms-ann-form">
+                    <form method="POST" action="{{ route('site-content.announcements.store') }}" class="cms-ann-form" data-autosave="announcement">
                         @csrf
                         <label class="cms-field"><span>Title</span><input name="title" maxlength="160" required value="{{ old('_announcement') ? '' : old('title') }}" placeholder="e.g., Enrollment for School Year 2027 to 2028"></label>
                         <label class="cms-field"><span>Message</span><textarea name="body" rows="4" maxlength="3000" required placeholder="What should visitors know?">{{ old('_announcement') ? '' : old('body') }}</textarea></label>
@@ -129,7 +129,7 @@
                 </ol>
             </section>
 
-        <form method="POST" action="{{ route('site-content.update') }}" class="cms" id="page-text">
+        <form method="POST" action="{{ route('site-content.update') }}" class="cms" id="page-text" data-autosave="page-text">
             @csrf
             @method('PUT')
             <h3 class="cms-h cms-h--outside">Page text</h3>

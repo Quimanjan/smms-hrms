@@ -59,7 +59,7 @@
                 </div>
 
                 @if (! $hasCase)
-                    <form method="POST" action="{{ route('employee.offboarding.store') }}" class="grid gap-4">
+                    <form method="POST" action="{{ route('employee.offboarding.store') }}" class="grid gap-4" data-autosave="resignation">
                         @csrf
 
                         <div class="grid gap-4 sm:grid-cols-2">

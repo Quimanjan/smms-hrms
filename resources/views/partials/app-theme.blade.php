@@ -900,6 +900,8 @@ button.cx-day:focus-visible { outline: 2px solid var(--mg-gold); outline-offset:
 .cms-field textarea { resize: vertical; }
 .cms-field input:focus, .cms-field textarea:focus { outline: 2px solid var(--mg-gold); outline-offset: 1px; border-color: transparent; box-shadow: none; background: #fff; }
 .cms-error { color: #8f1420; font-weight: 600; }
+.autosave-note { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin: 0 0 14px; padding: 10px 14px; border: 1px solid #f1d7a6; border-radius: 12px; background: #fff8eb; color: #6b4a12; font-size: 0.88rem; }
+.autosave-note button { border: 0; background: none; padding: 0; color: var(--mg-crimson); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .cms-h { margin: 0; font-family: var(--mg-display); font-weight: 400; font-size: 1.35rem; color: var(--mg-oxblood); }
 .cms-h--outside { margin-top: 8px; }
 .cms-help { margin: -6px 0 0; font-size: 0.88rem; color: var(--mg-stone); }

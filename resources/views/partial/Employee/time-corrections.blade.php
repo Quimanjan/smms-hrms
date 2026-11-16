@@ -43,7 +43,7 @@
                 </div>
             @endunless
 
-            <form method="POST" action="{{ route('time-corrections.store') }}" enctype="multipart/form-data" class="grid gap-6">
+            <form method="POST" action="{{ route('time-corrections.store') }}" enctype="multipart/form-data" class="grid gap-6" data-autosave="time-correction">
                 @csrf
 
                 {{-- ============ Correction details ============ --}}
