@@ -45,6 +45,8 @@ class Application extends Model
         'gender',
         'civil_status',
         'education',
+        'education_school',
+        'education_year',
         'job_type',
         'position',
         'resume',

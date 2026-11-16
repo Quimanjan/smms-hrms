@@ -227,6 +227,18 @@
                                 <p class="mt-1 text-[13px] text-gray-500">Select your highest academic attainment</p>
                                 <p class="mt-1 text-[13px] font-semibold text-red-600">{{ $errors->first('education') }}</p>
                             </div>
+                            <div>
+                                <label for="education_school" class="mb-2 block font-semibold">School Name <span class="font-bold text-red-600">*</span></label>
+                                <input id="education_school" name="education_school" type="text" maxlength="160" required value="{{ old('education_school') }}" placeholder="e.g., Cavite State University" class="{{ $inputClass }}">
+                                <p class="mt-1 text-[13px] text-gray-500">The school where you finished your highest education</p>
+                                <p class="mt-1 text-[13px] font-semibold text-red-600">{{ $errors->first('education_school') }}</p>
+                            </div>
+                            <div>
+                                <label for="education_year" class="mb-2 block font-semibold">Year Graduated</label>
+                                <input id="education_year" name="education_year" type="text" inputmode="numeric" maxlength="4" value="{{ old('education_year') }}" placeholder="e.g., 2022" class="{{ $inputClass }}">
+                                <p class="mt-1 text-[13px] text-gray-500">Leave blank if you are still studying</p>
+                                <p class="mt-1 text-[13px] font-semibold text-red-600">{{ $errors->first('education_year') }}</p>
+                            </div>
                         </div>
 
                         {{-- Position (from the currently available job openings) --}}

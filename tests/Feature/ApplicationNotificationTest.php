@@ -35,6 +35,7 @@ test('a submitted application notifies HR and Admin with applicant and applicati
             'gender' => 'Female',
             'civil_status' => 'Single',
             'education' => "Bachelor's Degree",
+            'education_school' => 'Cavite State University',
             'position' => 'Teaching Position',
             'resume' => UploadedFile::fake()->create('resume.pdf', 100, 'application/pdf'),
             'coverletter' => UploadedFile::fake()->create('application-or-cover-letter.pdf', 100, 'application/pdf'),

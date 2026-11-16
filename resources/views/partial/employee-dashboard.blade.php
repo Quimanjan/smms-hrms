@@ -277,7 +277,7 @@
                                     <template x-for="row in (detail.education || [])" :key="row.level">
                                         <li>
                                             <span class="ed-edu-level" x-text="row.level"></span>
-                                            <span class="ed-edu-detail" x-text="row.detail || 'Completed'"></span>
+                                            <span class="ed-edu-detail"><span x-text="row.detail || 'Completed'"></span><small class="ed-edu-school" x-show="row.school" x-text="row.school"></small></span>
                                             <span class="ed-edu-years" x-text="row.years"></span>
                                         </li>
                                     </template>

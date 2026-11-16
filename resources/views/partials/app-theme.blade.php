@@ -424,6 +424,7 @@ body.app-body .calendar-day:not(.empty):hover { transform: translateY(-2px); bor
 }
 
 /* ---------- Employee cards (compact) ---------- */
+.ed-edu-school { display: block; margin-top: 2px; font-size: 0.82rem; color: var(--mg-stone); }
 .emp-hire-alert { display: flex; gap: 12px; align-items: flex-start; margin: 0 0 12px; padding: 12px 16px; border-radius: 14px; background: #fff6e6; border: 1px solid #f1d7a6; color: #6b4a12; font-size: 0.88rem; line-height: 1.5; }
 .emp-hire-alert i { color: #b7791f; margin-top: 3px; }
 .emp-hire-alert p { margin: 0; }

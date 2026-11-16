@@ -101,7 +101,9 @@ class OnboardingManagementController extends Controller
                 'birth_date' => $a->birth_date?->format('M d, Y') ?? 'N/A',
                 'gender' => $a->gender ?: 'N/A',
                 'civil_status' => $a->civil_status ?: 'N/A',
-                'education' => $a->education ?: 'N/A',
+                'education' => $a->education
+                    ? trim($a->education.($a->education_school ? ', '.$a->education_school : '').($a->education_year ? ' ('.$a->education_year.')' : ''))
+                    : 'N/A',
                 'submitted_at' => $a->created_at?->format('M d, Y h:i A') ?? 'N/A',
 
                 // Interview: display values

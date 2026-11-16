@@ -94,7 +94,10 @@ class EmployeeController extends Controller
         $attainment = DB::table('applications')
             ->whereIn('user_id', $employees->getCollection()->pluck('user_id')->filter())
             ->orderBy('id')
-            ->pluck('education', 'user_id');
+            ->get(['user_id', 'education', 'education_school', 'education_year'])
+            ->mapWithKeys(fn ($a) => [$a->user_id => trim($a->education
+                .($a->education_school ? ', '.$a->education_school : '')
+                .($a->education_year ? ' ('.$a->education_year.')' : ''))]);
 
         // Data for details and edit modal.
         $cards = $employees->getCollection()->mapWithKeys(
@@ -250,6 +253,7 @@ class EmployeeController extends Controller
                 $this->payload($data, $user?->id) + [
                     'employee_id' => $employeeId,
                     'zkteco_user_id' => $employeeId,
+                    'education' => $this->educationFromApplication($user?->id),
                 ]
             );
         });
@@ -551,6 +555,33 @@ class EmployeeController extends Controller
      *
      * @return array<int, array{level: string, detail: string, years: string}>
      */
+    /**
+     * Starts a hired applicant's Educational Background from what they wrote
+     * on their application (highest education, school, and year graduated).
+     */
+    private function educationFromApplication(?int $userId): ?array
+    {
+        if (! $userId) {
+            return null;
+        }
+        $app = DB::table('applications')->where('user_id', $userId)->orderByDesc('id')->first();
+        if (! $app || blank($app->education_school ?? null)) {
+            return null;
+        }
+        $level = match ($app->education) {
+            'Elementary' => 'primary',
+            'High School' => 'junior_high',
+            'Senior High School' => 'senior_high',
+            default => 'tertiary',
+        };
+        $entry = ['school' => $app->education_school, 'years' => (string) ($app->education_year ?? '')];
+        if ($level === 'tertiary') {
+            $entry['course'] = $app->education;
+        }
+
+        return [$level => $entry];
+    }
+
     private function educationRows($education): array
     {
         $education = is_array($education) ? $education : [];
@@ -565,7 +596,12 @@ class EmployeeController extends Controller
                 continue;
             }
 
-            $rows[] = ['level' => $config['label'], 'detail' => $detail, 'years' => $years];
+            $rows[] = [
+                'level' => $config['label'],
+                'detail' => $detail,
+                'school' => trim((string) ($entry['school'] ?? '')),
+                'years' => $years,
+            ];
         }
 
         return $rows;

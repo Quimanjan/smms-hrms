@@ -69,7 +69,7 @@ class HrmsNotifier
                 'Birth date: '.($application->birth_date?->format('M j, Y') ?? 'Not provided'),
                 "Gender: {$application->gender}",
                 "Civil status: {$application->civil_status}",
-                "Education: {$application->education}",
+                "Education: {$application->education}".($application->education_school ? ", {$application->education_school}" : '').($application->education_year ? " ({$application->education_year})" : ''),
                 'Submitted documents: '.$documents,
             ]),
             'applicants',

@@ -60,7 +60,10 @@ class MyAccountRequest extends FormRequest
         if (defined(Employee::class . '::EDUCATION_LEVELS')) {
             foreach (Employee::EDUCATION_LEVELS as $level => $config) {
                 foreach ($config['fields'] as $field => [$label, $placeholder, $max]) {
-                    $rules["education.$level.$field"] = ['nullable', 'string', "max:$max"];
+                    $others = collect(array_keys($config['fields']))->reject(fn ($f) => $f === $field)->map(fn ($f) => "education.$level.$f")->implode(',');
+                    $rules["education.$level.$field"] = $field === 'school'
+                        ? ['nullable', "required_with:$others", 'string', "max:$max"]
+                        : ['nullable', 'string', "max:$max"];
                 }
             }
         }

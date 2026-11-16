@@ -98,12 +98,16 @@ class ApplicationController extends Controller
             'gender' => 'required|in:Male,Female,Other',
             'civil_status' => 'required|in:Single,Married,Widowed,Separated,Divorced',
             'education' => ['required', Rule::in(self::EDUCATION)],
+            'education_school' => 'required|string|max:160',
+            'education_year' => ['nullable', 'regex:/^\d{4}$/', 'integer', 'min:1950', 'max:'.now()->year],
             // Must be one of the currently open positions
             'position' => ['required', 'string', Rule::exists('job_openings', 'title')->where('is_open', true)],
             'resume' => 'required|file|mimes:pdf|max:5120',
             'coverletter' => 'required|file|mimes:pdf|max:5120',
         ], [
             'birth_date.before_or_equal' => 'You must be at least 18 years old.',
+            'education_school.required' => 'Enter the name of the school where you finished your highest education.',
+            'education_year.*' => 'Enter the year you graduated as four digits, for example 2022.',
             'position.exists' => 'That position is no longer open. Please choose another one.',
         ]);
 
