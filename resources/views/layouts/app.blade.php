@@ -44,6 +44,14 @@
         <script>try { if (localStorage.getItem('smms.sidebar') === 'collapsed') document.documentElement.classList.add('sb-collapsed'); } catch (e) {}</script>
         {{-- The menu slides in once per sign-in, not on every page. --}}
         <script>try { if (!sessionStorage.getItem('smms.intro')) { document.documentElement.classList.add('sb-intro'); sessionStorage.setItem('smms.intro', '1'); } } catch (e) {}</script>
+        {{-- A page transition the browser cancels (for example when going to the homepage) is normal; don't report it as an error. --}}
+        <script>
+            (() => {
+                const quiet = (e) => { const t = e.viewTransition; if (t) [t.ready, t.finished, t.updateCallbackDone].forEach((p) => p && p.catch(() => {})); };
+                addEventListener('pageswap', quiet);
+                addEventListener('pagereveal', quiet);
+            })();
+        </script>
         {{-- Start loading a menu page while the pointer rests on its link, so the click opens it right away. --}}
         <script type="speculationrules">
         {"prefetch": [{"where": {"and": [{"selector_matches": "#sidebar a[href]"}, {"not": {"href_matches": "*/logout*"}}, {"not": {"href_matches": "*/export*"}}, {"not": {"href_matches": "*download*"}}]}, "eagerness": "moderate"}]}
