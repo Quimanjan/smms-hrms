@@ -1394,6 +1394,16 @@ button.modal-btn { font-family: inherit; font-size: inherit; cursor: pointer; }
     margin-top: 24px;
 }
 button, input, select, textarea, optgroup { font-family: inherit; } /* every control uses the page font */
+/* Sign up / log in windows: slim scrollbar inside the rounded corners */
+/* Firefox only: Chrome ignores the ::-webkit-scrollbar rules below when these are set */
+@supports not selector(::-webkit-scrollbar) {
+    #signup-modal .modal-card, .login-modal-content, .modal-card { scrollbar-width: thin; scrollbar-color: #d6c4c1 transparent; }
+}
+#signup-modal .modal-card::-webkit-scrollbar, .login-modal-content::-webkit-scrollbar, .modal-card::-webkit-scrollbar { width: 10px; }
+#signup-modal .modal-card::-webkit-scrollbar-button, .login-modal-content::-webkit-scrollbar-button, .modal-card::-webkit-scrollbar-button { display: none; height: 0; }
+#signup-modal .modal-card::-webkit-scrollbar-track, .login-modal-content::-webkit-scrollbar-track, .modal-card::-webkit-scrollbar-track { margin-block: 18px; background: transparent; }
+#signup-modal .modal-card::-webkit-scrollbar-thumb, .login-modal-content::-webkit-scrollbar-thumb, .modal-card::-webkit-scrollbar-thumb { border: 3px solid transparent; border-radius: 999px; background: #d6c4c1 padding-box; }
+#signup-modal .modal-card::-webkit-scrollbar-thumb:hover, .modal-card::-webkit-scrollbar-thumb:hover { background: #b89c98 padding-box; }
 </style>
 @endverbatim
 
