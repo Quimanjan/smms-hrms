@@ -50,6 +50,15 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        // Employees whose offboarding was final approved can no longer sign in.
+        if (Auth::user()?->employee?->separated_on) {
+            Auth::logout();
+
+            throw ValidationException::withMessages([
+                'email' => 'This account is closed because the employee has left the school.',
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 

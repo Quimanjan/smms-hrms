@@ -20,8 +20,6 @@ final class OnboardingRequirements
             ['name' => 'Confirmation Certificate (photocopy)', 'optional' => false],
             ['name' => 'Cedula (photocopy)', 'optional' => false],
             ['name' => 'NBI or Police Clearance', 'optional' => false],
-            ['name' => 'Application Letter (if applicable)', 'optional' => true],
-            ['name' => 'Comprehensive Resume with recent and colored picture', 'optional' => false],
             ['name' => 'Diploma (photocopy)', 'optional' => false],
             ['name' => 'Transcript of Record with Seal (photocopy)', 'optional' => false],
             ['name' => 'SSS ID / E-1 Form / E-4 Form (photocopy)', 'optional' => false],

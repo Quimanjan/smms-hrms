@@ -30,12 +30,19 @@ class SiteContentController extends Controller
 
     public function update(Request $request): RedirectResponse
     {
+        // Each part of the page text is saved on its own, so only its fields are sent.
         $rules = [];
         foreach (SiteContent::FIELDS as $key => [, , $rows]) {
-            $rules[$key] = ['nullable', 'string', $rows > 1 ? 'max:3000' : 'max:200'];
+            if ($request->has($key)) {
+                $rules[$key] = ['nullable', 'string', $rows > 1 ? 'max:3000' : 'max:200'];
+            }
         }
-        $rules['email'][] = 'email';
-        $rules['facebook'][] = 'url';
+        if (isset($rules['email'])) {
+            $rules['email'][] = 'email';
+        }
+        if (isset($rules['facebook'])) {
+            $rules['facebook'][] = 'url';
+        }
 
         $data = $request->validate($rules);
 
@@ -48,7 +55,11 @@ class SiteContentController extends Controller
 
         SiteContent::forget();
 
-        return back()->with('success', 'Homepage updated. Empty boxes use the original text.');
+        $section = (string) $request->input('_section', '');
+
+        return back()
+            ->with('success', ($section !== '' ? $section.' saved.' : 'Homepage updated.').' Empty boxes use the original text.')
+            ->withFragment($section !== '' ? 'pt-'.\Illuminate\Support\Str::slug($section) : 'page-text');
     }
 
     /* ---------- Announcements ---------- */

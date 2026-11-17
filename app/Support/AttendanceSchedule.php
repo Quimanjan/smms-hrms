@@ -118,6 +118,43 @@ class AttendanceSchedule
             : 0;
     }
 
+    /**
+     * Late minutes on a day with half-day leave. The employee only works one half:
+     * morning 7:00 AM to 12:00 NN, afternoon 1:30 PM to 4:30 PM (regular schedule).
+     * Coming in at or after the lunch break means the morning was the leave, so the
+     * afternoon start is the reference. No lateness is counted for the leave half.
+     */
+    public function lateMinutesOnHalfLeave(?Carbon $timeIn): int
+    {
+        if (! $timeIn) {
+            return 0;
+        }
+
+        if ($timeIn->greaterThanOrEqualTo($this->at($this->lunchStart, $timeIn))) {
+            $start = $this->at($this->lunchEnd, $timeIn);
+            $limit = $start->copy()->addMinutes($this->graceMinutes);
+
+            return $timeIn->greaterThan($limit) ? (int) abs($start->diffInMinutes($timeIn)) : 0;
+        }
+
+        return $this->lateMinutes($timeIn);
+    }
+
+    /** Hours of the half that was taken as leave (morning or afternoon). */
+    public function leaveHalfHours(?Carbon $timeIn, ?string $period = null): float
+    {
+        $ref = $timeIn ?? Carbon::today();
+        $morning = round(abs($this->at($this->start, $ref)->diffInMinutes($this->at($this->lunchStart, $ref))) / 60, 2);
+        $afternoon = round(abs($this->at($this->lunchEnd, $ref)->diffInMinutes($this->at($this->end, $ref))) / 60, 2);
+
+        if ($period !== null) {
+            return $period === 'pm' ? $afternoon : $morning;
+        }
+
+        // Worked the afternoon => the morning was the leave.
+        return $timeIn && $timeIn->greaterThanOrEqualTo($this->at($this->lunchStart, $ref)) ? $morning : $afternoon;
+    }
+
     public function undertimeMinutes(?Carbon $timeOut): int
     {
         if (! $timeOut) {

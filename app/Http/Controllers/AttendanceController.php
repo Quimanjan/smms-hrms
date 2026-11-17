@@ -358,7 +358,11 @@ class AttendanceController extends Controller
 
         if (! $nwd) {
             $daysWorked = Attendance::computeDaysWorked($status);
-            $lateMinutes = $status === Attendance::LATE ? $schedule->lateMinutes($timeIn) : 0;
+            $lateMinutes = match (true) {
+                (float) ($a->leave_portion ?? 0) > 0 => $schedule->lateMinutesOnHalfLeave($timeIn),
+                $status === Attendance::LATE => $schedule->lateMinutes($timeIn),
+                default => 0,
+            };
         } elseif ($nwd->isPaid() && ! $hasLogs) {
             $daysWorked = (float) $nwd->paid_days;
         }
@@ -396,7 +400,7 @@ class AttendanceController extends Controller
             'hours' => number_format($hoursWorked, 2),
             'days_worked' => $daysWorked,
             'late_minutes' => $lateMinutes,
-            'tardiness_minutes' => (int) $schedule->lateMinutes($timeIn),
+            'tardiness_minutes' => (float) ($a->leave_portion ?? 0) > 0 ? $schedule->lateMinutesOnHalfLeave($timeIn) : (int) $schedule->lateMinutes($timeIn),
             // No undertime on a half day or a day with half-day leave.
             'undertime_minutes' => ($a->status === Attendance::HALF_DAY || (float) ($a->leave_portion ?? 0) > 0) ? 0 : (int) $schedule->undertimeMinutes($timeOut),
             'status' => $status,

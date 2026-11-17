@@ -47,13 +47,13 @@ class DocumentController extends Controller
             ];
         })->values();
 
-        $cards = $requirements->map(function (SubmissionBox $r) use ($employees, $status) {
+        $cards = $requirements->values()->map(function (SubmissionBox $r, int $i) use ($employees, $status) {
             // Latest upload per employee.
             $latest = $r->documents->unique('employee_id');
 
             return [
                 'id' => $r->id,
-                'number' => $r->sort_order,
+                'number' => $i + 1,
                 'name' => $r->name,
                 'optional' => $r->is_optional,
                 'waiting' => $latest->filter(fn ($d) => $status($d) === 'pending')->count(),

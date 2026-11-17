@@ -230,7 +230,7 @@
                                 <label for="education" class="mb-2 block font-semibold">Highest Education <span class="font-bold text-red-600">*</span></label>
                                 <select id="education" name="education" required class="{{ $inputClass }}">
                                     <option value="" disabled @selected(! old('education')) hidden>Select Education</option>
-                                    @foreach (['Elementary', 'High School', 'Senior High School', 'Vocational', 'Associate Degree', "Bachelor's Degree", "Master's Degree"] as $e)
+                                    @foreach (['Elementary', 'High School', 'Senior High School', 'Vocational', "Bachelor's Degree", "Master's Degree"] as $e)
                                         <option value="{{ $e }}" @selected(old('education') === $e)>{{ $e }}</option>
                                     @endforeach
                                 </select>

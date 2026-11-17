@@ -18,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
          // Wrong-role visits to single-role pages return 403 instead of crashing.
          $middleware->appendToGroup('web', \App\Http\Middleware\RestrictPageToRole::class);
+         $middleware->appendToGroup('web', \App\Http\Middleware\BlockSeparatedEmployees::class);
 
          $middleware->alias([
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,

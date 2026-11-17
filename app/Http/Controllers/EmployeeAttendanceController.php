@@ -159,7 +159,12 @@ class EmployeeAttendanceController extends Controller
                 }
             }
 
-            $late = in_array($type, ['regular', 'proctoring'], true) && $timeIn ? (int) $schedule->lateMinutes($timeIn) : 0;
+            $onHalfLeave = $record && (float) $record->leave_portion > 0;
+            $late = match (true) {
+                ! in_array($type, ['regular', 'proctoring'], true) || ! $timeIn => 0,
+                $onHalfLeave => $schedule->lateMinutesOnHalfLeave($timeIn),
+                default => (int) $schedule->lateMinutes($timeIn),
+            };
             // No undertime on a half day or a day with half-day leave.
             $isHalf = $record && ($record->status === Attendance::HALF_DAY || (float) $record->leave_portion > 0);
             $under = in_array($type, ['regular', 'proctoring'], true) && $timeOut && ! $isHalf ? (int) $schedule->undertimeMinutes($timeOut) : 0;

@@ -66,8 +66,7 @@
             const box = document.createElement('div');
             box.className = 'autosave-note';
             box.setAttribute('role', 'status');
-            box.innerHTML = '<span>Your unsaved entries from earlier were put back.</span> <button type="button">Clear them</button>';
-            box.querySelector('button').addEventListener('click', () => { store.del(key); form.reset(); fieldsOf(form).forEach(fire); box.remove(); });
+            box.innerHTML = '<span>Your unsaved entries from earlier were put back.</span>';
             form.prepend(box);
             const fold = form.closest('details');
             if (fold) fold.open = true;

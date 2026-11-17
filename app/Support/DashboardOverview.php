@@ -107,8 +107,7 @@ class DashboardOverview
     private static function currentEmployees()
     {
         return DB::table('employees')->where(fn ($q) => $q
-            ->whereNull('separated_on')
-            ->orWhere('separated_on', '>=', now()->toDateString()));
+            ->whereNull('separated_on'));
     }
 
     /** People and workforce mix for the dashboard panels. */

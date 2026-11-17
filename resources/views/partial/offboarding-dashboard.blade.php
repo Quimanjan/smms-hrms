@@ -264,9 +264,11 @@
                             <section class="rounded-xl border border-[#f0dada] bg-gray-50 p-4">
                                 <div class="mb-3">
                                     <h4 class="text-base font-extrabold text-gray-900">Required documents and clearances</h4>
-                                    <p class="mt-1 text-xs text-gray-500">The school's fixed clearance list. Every resigning employee gets the same requirements.</p>
+                                    <p x-show="!detail.requirements_sent" class="mt-1 text-xs text-gray-500">The school's fixed clearance list. Every resigning employee gets the same requirements.</p>
                                 </div>
-                                @include('partials.offboarding-requirements')
+                                <div x-show="!detail.requirements_sent">
+                                    @include('partials.offboarding-requirements')
+                                </div>
                                 <form x-show="!detail.requirements_sent && detail.is_current" method="POST" :action="detail.requirements_url" class="mt-3">
                                     @csrf
                                     @method('PATCH')
@@ -275,7 +277,7 @@
                                         Send requirements to employee
                                     </button>
                                 </form>
-                                <p x-show="detail.requirements_sent" class="mt-3 rounded-md border border-[#f0dada] bg-white px-3 py-2.5 text-sm text-gray-600">
+                                <p x-show="detail.requirements_sent" class="rounded-md border border-[#f0dada] bg-white px-3 py-2.5 text-sm text-gray-600">
                                     Requirements sent to the employee.
                                 </p>
                             </section>

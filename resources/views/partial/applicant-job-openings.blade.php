@@ -159,6 +159,27 @@
         .applicant-jobs__card { flex-direction: column; gap: 12px; }
         .applicant-jobs__status { width: 100%; justify-content: space-between; }
     }
+
+    /* Modern look, same as the homepage */
+    .applicant-jobs { background: #faf6f3; --jobs-text: #2a1a1a; --jobs-muted: #7a6464; }
+    .applicant-jobs__filter { align-self: start; position: sticky; top: 90px; background: #fff; border: 1px solid #efe3e3; border-radius: 18px; padding: 22px 20px; box-shadow: 0 10px 30px rgba(92,15,15,.06); }
+    .applicant-jobs__filter h2 { font-family: Marcellus, serif; font-weight: 400; font-size: 22px; color: #5c0f0f; margin-bottom: 16px; }
+    .applicant-jobs__filter legend { font-size: 12px; font-weight: 600; color: #7a6464; margin-bottom: 10px; }
+    .applicant-jobs__filter fieldset { display: flex; flex-wrap: wrap; gap: 8px; }
+    .applicant-jobs__filter label { position: relative; margin: 0; padding: 8px 16px; border: 1px solid #ead9d9; border-radius: 999px; background: #fff; color: #5c0f0f; font-weight: 600; font-size: 13.5px; transition: background .15s, color .15s, border-color .15s; }
+    .applicant-jobs__filter label:hover { border-color: #b22222; }
+    .applicant-jobs__filter input { position: absolute; opacity: 0; pointer-events: none; }
+    .applicant-jobs__filter label:has(input:checked) { background: #b22222; border-color: #b22222; color: #fff; }
+    .applicant-jobs__filter label:has(input:focus-visible) { outline: 2px solid #b22222; outline-offset: 2px; }
+    .applicant-jobs__list { padding-top: 0; gap: 12px; }
+    .applicant-jobs__card { align-items: center; border: 1px solid #efe3e3; border-left: 4px solid #b22222; border-bottom: 1px solid #efe3e3; border-radius: 16px; padding: 20px 22px; box-shadow: 0 6px 20px rgba(92,15,15,.05); transition: transform .15s, box-shadow .15s; }
+    .applicant-jobs__card:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(92,15,15,.10); }
+    .applicant-jobs__card h3 { font-family: Marcellus, serif; font-weight: 400; font-size: 19px; color: #2a1a1a; }
+    .applicant-jobs__card-title:hover { color: #b22222; text-decoration: none; }
+    .applicant-jobs__card p { color: #3d7a45; font-weight: 600; font-size: 12.5px; }
+    .applicant-jobs__apply { border-radius: 999px; padding: 10px 22px; background: #b22222; border-color: #b22222; color: #fff; }
+    .applicant-jobs__apply:hover { background: #8f1c1c; color: #fff; }
+    @media (max-width: 700px) { .applicant-jobs__filter { position: static; } }
 </style>
 
 <section class="applicant-jobs" data-applicant-job-openings aria-label="Job openings">
@@ -175,16 +196,12 @@
                     <input type="checkbox" value="non-teaching" data-job-type-filter>
                     <span>Non-Teaching</span>
                 </label>
-                <label>
-                    <input type="checkbox" value="teaching-related" data-job-type-filter>
-                    <span>Teaching-Related</span>
-                </label>
             </fieldset>
         </aside>
 
         <div class="applicant-jobs__list">
             @forelse ($jobOpenings as $job)
-                <article class="applicant-jobs__card" data-applicant-job-card data-job-type="{{ $job->filterType() }}">
+                <article class="applicant-jobs__card" data-applicant-job-card data-job-type="{{ $job->filterType() === 'teaching-related' ? 'teaching' : $job->filterType() }}">
                     <div>
                         <h3>
                             <a class="applicant-jobs__card-title" href="{{ route('public.job-openings.show', $job) }}">

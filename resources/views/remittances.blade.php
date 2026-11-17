@@ -55,14 +55,14 @@
                             <thead>
                                 <tr>
                                     <th rowspan="2" class="rm-name">Employee</th>
-                                    <th colspan="3" x-show="show('sss')">SSS</th>
-                                    <th colspan="3" x-show="show('philhealth')">PhilHealth</th>
-                                    <th colspan="3" x-show="show('pagibig')">Pag-IBIG</th>
-                                    <th rowspan="2" x-show="show('bir')">Tax withheld (BIR)</th>
+                                    <th colspan="3" class="rm-grp" x-show="show('sss')">SSS</th>
+                                    <th colspan="3" class="rm-grp" x-show="show('philhealth')">PhilHealth</th>
+                                    <th colspan="3" class="rm-grp" x-show="show('pagibig')">Pag-IBIG</th>
+                                    <th rowspan="2" class="rm-grp" x-show="show('bir')">Tax withheld (BIR)</th>
                                 </tr>
                                 <tr>
                                     @foreach (['sss', 'philhealth', 'pagibig'] as $a)
-                                        <th x-show="show('{{ $a }}')">EE</th>
+                                        <th class="rm-grp" x-show="show('{{ $a }}')">EE</th>
                                         <th x-show="show('{{ $a }}')">ER</th>
                                         <th x-show="show('{{ $a }}')">Total</th>
                                     @endforeach
@@ -79,11 +79,11 @@
                                             <small x-show="agency === 'bir' && @js($r['tin'])">TIN {{ $r['tin'] }}</small>
                                         </td>
                                         @foreach (['sss', 'philhealth', 'pagibig'] as $a)
-                                            <td x-show="show('{{ $a }}')">{{ $peso($r[$a.'_ee']) }}</td>
+                                            <td class="rm-grp" x-show="show('{{ $a }}')">{{ $peso($r[$a.'_ee']) }}</td>
                                             <td x-show="show('{{ $a }}')">{{ $peso($r[$a.'_er']) }}</td>
                                             <td x-show="show('{{ $a }}')" class="rm-sum">{{ $peso($r[$a.'_ee'] + $r[$a.'_er']) }}</td>
                                         @endforeach
-                                        <td x-show="show('bir')" class="rm-sum">{{ $peso($r['tax']) }}</td>
+                                        <td x-show="show('bir')" class="rm-sum rm-grp">{{ $peso($r['tax']) }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -91,11 +91,11 @@
                                 <tr>
                                     <td class="rm-name">Total to remit</td>
                                     @foreach (['sss', 'philhealth', 'pagibig'] as $a)
-                                        <td x-show="show('{{ $a }}')">{{ $peso($totals[$a.'_ee']) }}</td>
+                                        <td class="rm-grp" x-show="show('{{ $a }}')">{{ $peso($totals[$a.'_ee']) }}</td>
                                         <td x-show="show('{{ $a }}')">{{ $peso($totals[$a.'_er']) }}</td>
                                         <td x-show="show('{{ $a }}')">{{ $peso($totals[$a.'_ee'] + $totals[$a.'_er']) }}</td>
                                     @endforeach
-                                    <td x-show="show('bir')">{{ $peso($totals['tax']) }}</td>
+                                    <td class="rm-grp" x-show="show('bir')">{{ $peso($totals['tax']) }}</td>
                                 </tr>
                             </tfoot>
                         </table>

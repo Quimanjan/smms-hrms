@@ -30,13 +30,14 @@ class EmployeeDocumentController extends Controller
         $requirements = SubmissionBox::requirements()
             ->with(['documents' => fn ($q) => $q->where('employee_id', $employee?->id ?? 0)->reorder()->latest('id')])
             ->get()
-            ->map(function (SubmissionBox $box) {
+            ->values()
+            ->map(function (SubmissionBox $box, int $i) {
                 $latest = $box->documents->first();
                 $status = $latest ? strtolower((string) $latest->status) : 'missing';
 
                 return [
                     'id' => $box->id,
-                    'number' => $box->sort_order,
+                    'number' => $i + 1,
                     'name' => $box->name,
                     'optional' => $box->is_optional,
                     'status' => $status,

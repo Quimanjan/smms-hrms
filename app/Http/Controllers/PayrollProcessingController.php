@@ -538,6 +538,9 @@ class PayrollProcessingController extends Controller
             if ($record->status === Attendance::PAID_LEAVE) {
                 // A half-day leave with no punches is half a day of leave.
                 $leaveDays += $portion > 0 ? $portion : 1;
+                if ($portion > 0) {
+                    $hoursWorked += $schedule->leaveHalfHours(null, 'am');
+                }
 
                 continue;
             }
@@ -575,7 +578,14 @@ class PayrollProcessingController extends Controller
             $hoursWorked += $timeIn && $timeOut
                 ? $computedHours
                 : (float) $record->hours_worked;
-            $lateMinutes += $schedule->lateMinutes($timeIn);
+            if ($portion > 0) {
+                // Half-day leave: the leave half counts as hours, and lateness is only
+                // checked against the half the employee actually works.
+                $hoursWorked += $schedule->leaveHalfHours($timeIn);
+                $lateMinutes += $schedule->lateMinutesOnHalfLeave($timeIn);
+            } else {
+                $lateMinutes += $schedule->lateMinutes($timeIn);
+            }
 
             // No undertime on a half day: a half day (or a half-day leave) is already paid as half.
             if ($record->status !== Attendance::HALF_DAY && $portion <= 0 && $timeOut) {

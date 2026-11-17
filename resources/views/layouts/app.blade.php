@@ -206,5 +206,6 @@
             })();
         </script>
         @include('partials.live-search')
+        @include('partials.keep-scroll')
     </body>
 </html>

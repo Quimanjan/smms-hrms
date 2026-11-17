@@ -163,15 +163,20 @@
                 </ol>
             </section>
 
-        <form method="POST" action="{{ route('site-content.update') }}" class="cms" id="page-text" data-autosave="page-text">
-            @csrf
-            @method('PUT')
+        <div class="cms" id="page-text">
             <h3 class="cms-h cms-h--outside">Page text</h3>
-            <p class="cms-help">Leave a box empty to go back to the original text.</p>
+            <p class="cms-help">Each part has its own Save button. Leave a box empty to go back to the original text.</p>
 
             @foreach (collect($fields)->groupBy(fn ($f) => $f[3], true) as $group => $items)
-                <fieldset class="cms-group">
-                    <legend>{{ $group }}</legend>
+                @php($slug = 'pt-'.\Illuminate\Support\Str::slug($group))
+                <form method="POST" action="{{ route('site-content.update') }}" class="cms-group cms-pt" id="{{ $slug }}" data-autosave="{{ $slug }}">
+                    @csrf
+                    @method('PUT')
+                    <input type="hidden" name="_section" value="{{ $group }}">
+                    <div class="cms-pt-head">
+                        <h4>{{ $group }}</h4>
+                        <button type="submit" class="hb hb--primary">Save</button>
+                    </div>
                     @foreach ($items as $key => [$label, $default, $rows])
                         <label class="cms-field">
                             <span>{{ $label }}</span>
@@ -183,13 +188,9 @@
                             @error($key) <small class="cms-error">{{ $message }}</small> @enderror
                         </label>
                     @endforeach
-                </fieldset>
+                </form>
             @endforeach
-
-            <div class="cms-actions">
-                <button type="submit">Save page text</button>
-            </div>
-        </form>
+        </div>
         </div>
     </div>
         </div>

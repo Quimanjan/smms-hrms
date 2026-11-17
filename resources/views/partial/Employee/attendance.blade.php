@@ -112,7 +112,6 @@
                             <li><span class="dtr-swatch dtr-swatch--rest"></span>Rest day</li>
                             <li><span class="dtr-swatch dtr-swatch--holiday"></span>Holiday</li>
                             <li><span class="dtr-swatch dtr-swatch--special"></span>Special day</li>
-                            <li><span class="dtr-swatch dtr-swatch--proctoring"></span>Proctoring</li>
                             <li><span class="dtr-swatch dtr-swatch--leave"></span>Leave</li>
                         </ul>
                     </header>

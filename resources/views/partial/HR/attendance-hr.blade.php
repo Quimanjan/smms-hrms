@@ -491,49 +491,6 @@
                     @endforelse
                 </div>
 
-                {{-- Exam proctoring days: regular working days, shown purple on each employee's DTR --}}
-                <div class="mt-8 border-t border-[#ecebea] pt-6">
-                    <h3 class="mb-1 text-xl font-bold tracking-tight text-gray-900">Proctoring days</h3>
-                    <p class="mb-4 text-sm text-gray-500">Exam proctoring days are normal working days. Marking them only shows them in purple on each employee's DTR.</p>
-
-                    <form method="POST" action="{{ route('proctoring-days.store') }}" class="proc-form">
-                        @csrf
-                        <label class="{{ $labelClass }}">
-                            Date
-                            <input type="date" name="date" required class="{{ $inputClass }}">
-                        </label>
-                        <label class="{{ $labelClass }}">
-                            Description
-                            <input type="text" name="name" maxlength="100" required placeholder="e.g., Midterm exam proctoring" class="{{ $inputClass }}">
-                        </label>
-                        <button type="submit"
-                            class="proc-btn">
-                            Save proctoring day
-                        </button>
-                        @if ($errors->proctoring->any())
-                            <p role="alert" class="text-sm font-semibold text-[#b22222] sm:col-span-3">{{ $errors->proctoring->first() }}</p>
-                        @endif
-                    </form>
-
-                    <div class="mt-4 grid gap-2.5">
-                        @forelse (\App\Models\ProctoringDay::orderBy('date')->get() as $pday)
-                            <div class="proc-item">
-                                <strong>{{ $pday->date->format('Y-m-d') }} - {{ $pday->name }}</strong>
-                                <form method="POST" action="{{ route('proctoring-days.destroy', $pday) }}"
-                                    data-confirm="Remove this proctoring day?" data-confirm-button="Remove">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" aria-label="Remove proctoring day {{ $pday->name }} on {{ $pday->date->format('Y-m-d') }}"
-                                        class="cursor-pointer rounded-lg border border-red-200 bg-white px-2.5 py-1.5 text-sm font-bold text-red-800 transition hover:bg-red-50">
-                                        Remove
-                                    </button>
-                                </form>
-                            </div>
-                        @empty
-                            <p class="text-sm text-gray-500">No proctoring days marked.</p>
-                        @endforelse
-                    </div>
-                </div>
             </div>
         </div>
     </div>

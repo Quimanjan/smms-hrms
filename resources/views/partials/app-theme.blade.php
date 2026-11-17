@@ -1373,5 +1373,17 @@ input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; a
 .cx-bday-icon { margin-top: 3px; font-size: .72rem; color: #e7c27a; }
 .cx-birthdays small { display: block; font-size: .7rem; opacity: .65; }
 .cx-bday-today span { font-weight: 700; color: #f6e7c8; }
+
+/* Revision 2: remittance dividers between SSS, PhilHealth, Pag-IBIG and tax */
+.rm-table th.rm-grp, .rm-table td.rm-grp { border-left: 2px solid #e2c4c4; }
+/* Revision 2: homepage editor tabs stay visible while scrolling */
+.cms-intro { position: sticky; top: 14px; z-index: 30; box-shadow: 0 8px 22px rgba(92,15,15,.08); }
+.cms-group, .cms .cms-pt, #page-text { scroll-margin-top: 150px; }
+/* Revision 2: each page text part has its own Save button at the top */
+.cms-pt { display: block; margin-top: 14px; }
+.cms-pt-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--mg-line); }
+.cms-pt-head h4 { margin: 0; font-family: Marcellus, serif; font-weight: 400; font-size: 20px; color: #5c0f0f; }
+.cms-pt-head .hb { min-width: 96px; }
+.app-shell { overflow-x: clip !important; overflow-y: visible !important; }
 </style>
 @endverbatim

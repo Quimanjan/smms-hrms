@@ -16,14 +16,7 @@
     @unless ($employee)
         <p class="rq-empty">Your account is not linked to an employee record yet. Please contact HR.</p>
     @else
-        <section class="rq-me" aria-label="Your onboarding progress">
-            <div>
-                <h3>Your onboarding requirements</h3>
-                <p>{{ $progress['approved'] }} of {{ $progress['required'] }} required documents approved{{ $progress['waiting'] ? ', '.$progress['waiting'].' waiting for HR' : '' }}.</p>
-            </div>
-            <div class="rq-bar rq-bar--lg" role="img" aria-label="{{ $pct }} percent complete"><span style="width: {{ $pct }}%"></span></div>
-            <p class="rq-note">Upload a PDF, Word file, or a photo (JPG or PNG), up to 5 MB each. If HR rejects a file, it is removed and you can upload a new one.</p>
-        </section>
+        <p class="rq-note">Upload a PDF, Word file, or a photo (JPG or PNG), up to 5 MB each. If HR rejects a file, it is removed and you can upload a new one.</p>
 
         <ol class="rq-list rq-list--mine">
             @foreach ($requirements as $r)
