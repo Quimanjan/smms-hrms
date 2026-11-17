@@ -533,6 +533,7 @@
                             :readonly="!editingId && form.employee_source === 'applicant'"
                             :class="!editingId && form.employee_source === 'applicant' ? 'cursor-not-allowed !bg-gray-100 text-gray-500' : ''"
                             class="{{ $inputClass }}">
+                        <p x-show="!editingId && form.employee_source === 'existing'" class="mt-1 text-xs text-gray-500">This email becomes their login. Default password: <strong>password123</strong></p>
                         <p class="{{ $errClass }}">{{ $errors->first('email') }}</p>
                     </div>
 
